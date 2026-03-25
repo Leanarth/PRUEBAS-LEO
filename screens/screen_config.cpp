@@ -102,7 +102,7 @@ void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpd
         }
     }
 
-    // Procesamiento de barras de entrada segun pestana activa
+    // Procesamiento de barras de entrada segun pestaña activa
     if (configSelected == configbuttons[0]->name)   // Credenciales
     {
         for (int b = 0; b < (int)termBars.size(); b++)
@@ -166,7 +166,7 @@ void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpd
     }
 }
 
-void screenConfigDraw(bool inputEmpty, bool invalidIp, bool errorUpdating, bool errorConfig)
+void screenConfigDraw(bool &inputEmpty, bool &invalidIp, bool &errorUpdating, bool &errorConfig)
 {
     DrawTextEx(fontTtf, "Panel de Configuracion"s.data(),
                (Vector2){(float)centertext("Panel de Configuracion"s, screenWidth, fontSize),
@@ -225,9 +225,8 @@ void screenConfigDraw(bool inputEmpty, bool invalidIp, bool errorUpdating, bool 
                (Vector2){saveConfigPtr->xloc + (float)centertext(saveConfigPtr->name, saveConfigPtr->xsize, mediumFontSize),
                           saveConfigPtr->yloc + (float)((saveConfigPtr->ysize - mediumFontSize) / 2)},
                mediumFontSize, 0, BLACK);
-
-    if (inputEmpty) shortmessage("Los datos se encuentran vacios", fontSize, inputEmpty);
-    else if (invalidIp) shortmessage("La IP digitada es invalida", fontSize, invalidIp);
+    if (inputEmpty) {shortmessage("Los datos se encuentran vacios", fontSize, inputEmpty);}
+    else if (invalidIp) {shortmessage("La IP digitada es invalida", fontSize, invalidIp);}
     else if (errorUpdating || errorConfig)
     {
         std::string errorMessage = "";

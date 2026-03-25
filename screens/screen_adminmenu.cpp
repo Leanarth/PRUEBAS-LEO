@@ -536,10 +536,10 @@ void screenAdminmenuUpdate(Screen &currentScreen,
 }
 
 // ── Frontend ──────────────────────────────────────────────────────────────────
-void screenAdminmenuDraw(bool invalidCredentials, bool inputEmpty, bool invalidIp,
-                         bool adminAuthenticated_local, bool& successfulPdfCreation,
-                         const std::string& explorarFinalOutput, std::string& modeInput,
-                         std::string outResultsMode)
+void screenAdminmenuDraw(bool &invalidCredentials, bool &inputEmpty, bool &invalidIp,
+                         bool &adminAuthenticated_local, bool &successfulPdfCreation,
+                         const std::string &explorarFinalOutput, std::string& modeInput,
+                         std::string &outResultsMode)
 {
     drawSelected(adminButtons, littleFontSize, adminSelected);
     DrawRectangle(adminPanel[0], adminPanel[1] + terminalBarPtr->ysize - 1,

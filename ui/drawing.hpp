@@ -40,7 +40,7 @@ int         logfunction(std::string selected, double lastColumnMeasures = 0, dou
 std::string drawcolumns(std::vector<sqlobject*>& cTables, std::vector<column*>& cVector,
                         std::string& tSelected, double fsize,
                         std::string& selected, char* mode = (char*)"default");
-int         shortmessage(std::string msg, double fs, bool& activator, int timeFps = 150);
+int         shortmessage(std::string msg, double fs, bool &activator, int timeFps = 150);
 std::vector<double> statistics(char* mode, std::string outputMode,
                                std::vector<double>& dataVec,
                                std::vector<sqlobject*> partVec,

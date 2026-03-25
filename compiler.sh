@@ -14,11 +14,11 @@
 
 # Compilado en modo depuración (el modo de depuración puede hacer que el ejecutable sea más lento y consuma más recursos, pero sirve para debuggear errores):
 
-#cmd="g++ -fsanitize=address -g -O0 -std=c++20"
+echo "\nCompilando en modo de depuración...\n\n" && cmd="g++ -fsanitize=address -g -O0 -std=c++20"
 
 # Compilado en modo release (el modo release es el modo en el que el ejecutable se compilará para su uso real, es más rápido y sirve para probar la velocidad real del ejecutable):
 
-cmd="g++ -s -DNDEBUG -O3 -std=c++20"
+#echo "\nCompilando en modo release...\n\n" && cmd="g++ -s -DNDEBUG -O3 -std=c++20"
 
 # Añade el resto de argumentos para el compilador:
 
