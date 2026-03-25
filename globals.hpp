@@ -1,0 +1,150 @@
+#pragma once
+
+// globals.hpp must be the FIRST include in every .cpp that uses MySQL + raylib together.
+// platform/compat.hpp handles the symbol-conflict resolution between windows.h and raylib.h.
+
+#include "platform/compat.hpp"
+#include "ui/widgets.hpp"
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <string.h>
+#include <setjmp.h>
+#include <memory>
+#include <fstream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
+using namespace std::string_literals;
+
+// ── Screen enum ─────────────────────────────────────────────────────────────
+typedef enum Screen { LOGO = 0, CONFIGURATION, ADMINMENU, MAINMENU, CONFIRMATION, VOTATION, ENDING } Screen;
+
+// ── Configuration ────────────────────────────────────────────────────────────
+extern std::vector<char*> configurations;
+extern char** admPassword;
+extern char** password;
+extern char** database;
+extern char** server;
+extern char** user;
+extern char** port;
+extern char** nameColumnPartidosNombre;
+extern char** nameColumnNuloPartido;
+extern char** nameColumnVotosNombre;
+extern char** nameColumnVotoNombre;
+extern char** nameTableEstudiantes;
+extern char** nameTablePartidos;
+extern char** pathProgramFont;
+extern char** pathPdfFont;
+extern char** informeName;
+
+// ── MySQL ────────────────────────────────────────────────────────────────────
+extern MYSQL_RES* res;
+extern MYSQL_ROW  row;
+extern MYSQL*     auth;
+extern MYSQL*     conn;
+
+// ── Colors ───────────────────────────────────────────────────────────────────
+extern Color VOCAVERDE;
+extern Color VOCAVERDESUAVE;
+extern Color VOCAAMARILLO;
+extern Color VOCAAMARILLOSUAVE;
+extern Color VOCADORADO;
+extern Color VOCADORADOSUAVE;
+
+// ── File / query state ───────────────────────────────────────────────────────
+extern std::ofstream configFile;
+extern std::vector<std::vector<std::string>> vecRows;
+extern std::vector<std::string> logCommands;
+extern std::vector<std::string> vecColumns;
+extern std::vector<std::string> namepartidos;
+extern std::vector<std::string> nametables;
+extern std::vector<double>      percentages;
+extern std::string oldTableSelected;
+extern std::string partidoSelected;
+extern std::string configSelected;
+extern std::string pdfErrorString;
+extern std::string tableSelected;
+extern std::string adminSelected;
+extern std::string butnames[7];
+extern std::string oldSelected;
+extern std::string outQuery;
+extern std::string oldbar;
+
+// ── Raylib / UI state ────────────────────────────────────────────────────────
+extern Font   fontTtf;
+extern double explorarSquare[4];
+extern double mediumFontSize;
+extern double littleFontSize;
+extern double adminPanel[4];
+extern double outSquare[4];
+extern double screenHeight;
+extern double screenWidth;
+extern double fontSize;
+
+extern bool adminAuthenticated;
+extern bool pdfRandomError;
+extern bool pdfFontError;
+extern bool tabRestart;
+extern bool nullOption;
+extern bool showBeam;
+extern bool pdfError;
+
+extern int statusCodeUpdating;
+extern int intentosRestantes;
+extern int statusCodeConfig;
+extern int columnSelected;
+extern int framesCounter;
+extern int stopBackspace;
+extern int maxBarLenght;
+extern int quanstudents;
+extern int quanpartidos;
+extern int quancolumns;
+extern int quantables;
+extern int stopArrows;
+extern int maxLenName;
+extern int nlSpacing;
+extern int stopCtrls;
+extern int inputpos;
+extern int opcSize;
+extern int logpos;
+extern int tabCnt;
+extern int value;
+extern int beam;
+extern int add;
+
+// ── jmp_buf for libhpdf error handling ───────────────────────────────────────
+extern jmp_buf env;
+
+// ── UI object vectors and raw pointer aliases ────────────────────────────────
+extern std::vector<std::unique_ptr<nxyxys>> adminObj;
+extern std::vector<sqlobject*> partidosVec;
+extern std::vector<sqlobject*> opcionesAct;
+extern std::vector<button*>    configbuttons;
+extern std::vector<sqlobject*> tablesVec;
+extern std::vector<inputBar*>  termBars;
+extern std::vector<inputBar*>  extraBars;
+extern std::vector<inputBar*>  pathBars;
+extern std::vector<column*>    columnsVec;
+extern std::vector<button*>    adminButtons;
+
+extern sqlobject* opcSelectedPtr;
+extern sqlobject* sinVotarPtr;
+extern inputBar*  barAdminTerminalPtr;
+extern inputBar*  admPasswordBarPtr;
+extern inputBar*  adminTerminalPtr;
+extern inputBar*  actBarPtr;
+extern inputBar*  terminalBarPtr;
+extern inputBar*  cedulaBarPtr;
+extern button*    opcionActPtr;
+extern button*    votarPtr;
+extern button*    cedulaPtr;
+extern button*    continuarPtr;
+extern button*    regresarPtr;
+extern button*    exitAdminPtr;
+extern button*    resTogglePtr;
+extern button*    informePtr;
+extern button*    saveConfigPtr;
+extern button*    enterConfigPtr;
+extern button*    refreshPtr;

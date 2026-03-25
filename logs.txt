@@ -1,0 +1,35 @@
+[ 2026-03-23 11:29:10.387072590 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-23 11:31:12.984005291 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-23 11:31:29.487217558 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-23 11:31:34.592924677 ]  | >>> Table 'Votaciones.Partido' doesn't exist
+
+[ 2026-03-23 11:31:48.501656666 ]  | >>> Unknown column 'Voto' in 'SELECT'
+
+[ 2026-03-23 11:32:10.140075951 ]  | >>> Unknown column 'Vot' in 'SELECT'
+
+[ 2026-03-23 21:17:20.043594533 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-24 11:43:21.954389209 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-24 11:44:24.242230100 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-24 11:44:31.118950860 ]  | >>> Unknown column 'Voto' in 'SELECT'
+
+[ 2026-03-24 11:44:38.160730666 ]  | >>> Unknown column 'Votos' in 'SELECT'
+
+[ 2026-03-24 13:55:20.750129296 ]  | >>> Estudiantes
+Partidos
+
+[ 2026-03-25 10:40:15.077760195 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-25 10:57:06.231548569 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-25 10:58:29.405693870 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-25 10:59:09.889212883 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
+[ 2026-03-25 11:03:46.711227810 ]  | >>> Can't connect to MySQL server on '127.0.0.0:3306' (111)
+
