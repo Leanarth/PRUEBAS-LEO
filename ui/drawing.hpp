@@ -13,7 +13,7 @@ inline void PrettyDrawRectangle(T obj)              // Esta función se encarga 
 {
     DrawRectangleRounded({(float)obj->xloc, (float)obj->yloc,           // Dibuja el objeto según sus propiedades xloc, yloc, xsize y ysize con bordes redondos
                           (float)obj->xsize, (float)obj->ysize},
-                         0.2f, 0, obj->status > 0 ? obj->highColor : obj->normalColor);       // Lo rellena con un color dependiendo de su estado, si el objeto tiene un estado mayor a cero, lo rellena con highColor, sino con normalColor
+                         0.2f, 0, obj->status > 1 ? obj->highColor : obj->normalColor);       // Lo rellena con un color dependiendo de su estado, si el objeto tiene un estado mayor a cero, lo rellena con highColor, sino con normalColor
     DrawRectangleRoundedLinesEx({(float)obj->xloc, (float)obj->yloc,    // Dibuja las líneas del borde del objeto según sus propiedades xloc, yloc, xsize y ysize con bordes redondos
                                  (float)obj->xsize, (float)obj->ysize},
                                 0.2f, 0, 1.0f, Fade(BLACK, 0.3f));

@@ -7,12 +7,12 @@
 void screenMainmenuUpdate(Screen& currentScreen, bool& existstudent, std::string& studentName)
 {
     cedulaBarPtr->status = isPressed(cedulaBarPtr);
-    if (cedulaBarPtr->status != 0)
+    if (cedulaBarPtr->status > 1)
         inputfunc("backend", cedulaBarPtr, 21, "allchars", fontSize);
 
     cedulaPtr->status = isPressed(cedulaPtr);
-
-    if ((IsKeyPressed(KEY_ENTER) || cedulaPtr->status == 3) &&
+    std::cout<<cedulaPtr->status<<"\n";
+    if ((IsKeyPressed(KEY_ENTER) || cedulaPtr->status == 4) &&
         cedulaBarPtr->input == *admPassword)
     {
         currentScreen = ADMINMENU;
@@ -21,7 +21,7 @@ void screenMainmenuUpdate(Screen& currentScreen, bool& existstudent, std::string
         return;
     }
 
-    if ((IsKeyPressed(KEY_ENTER) || cedulaPtr->status == 3) &&
+    if ((IsKeyPressed(KEY_ENTER) || cedulaPtr->status == 4) &&
         !cedulaBarPtr->input.empty())
     {
         cedulaPtr->selfquery += cedulaBarPtr->input;

@@ -144,7 +144,7 @@ int objectCreation()
     cedulaBar->yloc    = screenHeight * 0.5;
     cedulaBar->xsize   = screenWidth * 0.50;
     cedulaBar->ysize   = fontSize * 2;
-    cedulaBar->status  = 3;
+    cedulaBar->status  = 4;
     cedulaBar->input   = "";
     cedulaBar->input32 = U"";
     cedulaBarPtr = cedulaBar.get();
@@ -345,7 +345,7 @@ int objectCreation()
     adminTerminal->xloc        = screenWidth * 0.12;
     adminTerminal->yloc        = screenHeight * 0.17;
     adminTerminal->xsize       = screenWidth * 0.76;
-    adminTerminal->ysize       = screenHeight * 0.70;
+    adminTerminal->ysize       = screenHeight * 0.72;
     adminTerminal->status      = 0;
     adminTerminal->highColor   = BLACK;
     adminTerminal->normalColor = BLACK;
@@ -358,7 +358,7 @@ int objectCreation()
     auto barAdminTerminal = std::make_unique<inputBar>();
     barAdminTerminal->name        = "Terminal de Administrador";
     barAdminTerminal->xloc        = adminTerminalPtr->xloc;
-    barAdminTerminal->yloc        = adminTerminalPtr->yloc + adminTerminalPtr->ysize;
+    barAdminTerminal->yloc        = adminTerminalPtr->yloc + adminTerminalPtr->ysize*0.99;
     barAdminTerminal->xsize       = adminTerminalPtr->xsize;
     barAdminTerminal->ysize       = littleFontSize * 2;
     barAdminTerminal->status      = 0;

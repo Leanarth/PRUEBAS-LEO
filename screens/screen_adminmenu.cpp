@@ -41,7 +41,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
         enterConfigPtr->status = isPressed(enterConfigPtr);         // de los botones de salir, actualizar datos
         refreshPtr->status     = isPressed(refreshPtr);             // o ingresar a la pantalla CONFIGURATION
 
-        if (exitAdminPtr->status == 3 || enterConfigPtr->status == 3 || refreshPtr->status == 3)          // Si alguno de esos tres botones anteriores llega a recibir el estado 3 (fue presionado) se ejecutará el siguiente bloque de código
+        if (exitAdminPtr->status == 4 || enterConfigPtr->status == 4 || refreshPtr->status == 4)          // Si alguno de esos tres botones anteriores llega a recibir el estado 3 (fue presionado) se ejecutará el siguiente bloque de código
         {
             restartTerminal = true;                                                                       // Se activa el reinicio de las credenciales de la pestaña "Terminal"
             columnSelected  = columnsVec[0]->id;                                                          // La columna seleccionada ahora será la primera en el vector columnsVec
@@ -49,13 +49,13 @@ void screenAdminmenuUpdate(Screen &currentScreen,
 
             for (int z = 0; z < (int)adminButtons.size(); z++) {adminButtons[z]->outLog = "";}            // Este bucle recorre el atributo outLog de cada pestaña, para que en caso de volver a ingresar al panel, se encuentre limpio
 
-            if (exitAdminPtr->status == 3)                          // Si el botón presionado fue el de salir del panel de administración...
+            if (exitAdminPtr->status == 4)                          // Si el botón presionado fue el de salir del panel de administración...
             {
                 currentScreen = MAINMENU;                           // La pantalla actual ahora será MAINMENU
-                cedulaBarPtr->status = 3;                           // El estado de la barra de entrada cedulaBar, pasará a estado 3, para automáticamente recibir datos de entrada
+                cedulaBarPtr->status = 4;                           // El estado de la barra de entrada cedulaBar, pasará a estado 3, para automáticamente recibir datos de entrada
                 return;                                             // Retorno de la función
             }
-            else if (refreshPtr->status == 3)
+            else if (refreshPtr->status == 4)
             {
                 updateData();                                       // En caso de que el botón presionado fue el de actualizar los datos, procederá a ejecutar updateData()
                 objectCreation();                                   // Como se actualizaron los datos, existe la posibilidad de que botones, tablas o columnas ya no existan, entonces se vuelven a crear los objetos
@@ -74,14 +74,14 @@ void screenAdminmenuUpdate(Screen &currentScreen,
         {
             adminButtons[i]->status = isPressed(adminButtons[i]);   // Verifica el estado de cada pestaña
 
-            if (adminButtons[i]->status == 3)                       // Si la pestaña actual que está recorriendo el bucle tiene estado 3 (fue presionada), procederá a ejecutar el siguiente bloque de código...
+            if (adminButtons[i]->status == 4)                       // Si la pestaña actual que está recorriendo el bucle tiene estado 3 (fue presionada), procederá a ejecutar el siguiente bloque de código...
             {
                 add = 0;                                            // Declara a add igual a 0, es una variable que sirve para sobre el cuadro de las respuestas que reciben cada pestaña, más información en ./ui/drawing.cpp -> logfunction()
                 adminSelected = adminButtons[i]->name;              // Declara a adminSelected igual al nombre de la pestaña seleccionada
                 if      (adminSelected == butnames[4]) { restartExplorar  = true; rqst = true; }          // Si la pestaña presionada fue "Explorar" (butnames[4]) restartExplorar y rqst los declara true, para que actualice los datos
                 else if (adminSelected == butnames[5]) { restartResultados = true; }                      // Si la pestaña presionada fue "Resultados" (butnames[5]) restartExplorar lo declara true, para que actualice los datos
                 else if (adminSelected == butnames[6]) { tabRestart = true; }                             // Si la pestaña presionada fue "Terminal" (butnames[6]) tabRestart se pasa a true, no pasa como con las pestañas anteriores
-                else { columnsVec[0]->status = 3; }                                                       // En caso de que ninguno de esos botones fue el presionado, procede a declarar a la primera columna del vector columnsVec como activa
+                else { columnsVec[0]->status = 4; }                                                       // En caso de que ninguno de esos botones fue el presionado, procede a declarar a la primera columna del vector columnsVec como activa
             }
 
         }
@@ -122,14 +122,14 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                     {                                                                       // tabCnt se suma, y no debe sobrepasar a quancolumns
                         tabCnt++;                                         // Se le suma un valor a tabCnt, indicando la nueva posición de la columna actual
                         columnsVec[co]->status = 0;                       // Pone en estado 0 la columna actual del bucle for de la línea 93, la cual debe ser la que se estaba usando para escribir
-                        columnsVec[co + 1]->status = 1;                   // Cambia a 1 la columna siguiente, ahora sí permite escribir, esto logra el cambio entre las columnas
+                        columnsVec[co + 1]->status = 2;                   // Cambia a 2 la columna siguiente, ahora sí permite escribir, esto logra el cambio entre las columnas
                         columnSelected = columnsVec[co + 1]->id;          // Ahora nombra como columna seleccionada al id de la columna siguiente
                         beam = 0; break;                                  // beam es la variable para que el cursor parpadee, lo resetea a 0, y rompe el bucle for de la línea 93
                     }
                     else if (columnsVec[co]->id == columnSelected && tabCnt == quancolumns - 1)               // Si tabCnt es mayor o igual a quancolumns, significa que ya está en la última columan que aparece en pantalla, entonces...
                     {
                         columnsVec[co]->status = 0;                                                           // Pasa el estado de la columna actual en uso, proveniente del bucle for de la línea 93, a 0 (no permite escribir)
-                        columnsVec[co + 1 - quancolumns]->status = 1;                                         // Pasa a estado 1 la primera columna en las columnas de la tabla actual
+                        columnsVec[co + 1 - quancolumns]->status = 2;                                         // Pasa a estado 1 la primera columna en las columnas de la tabla actual
                         columnSelected = columnsVec[co + 1 - quancolumns]->id;                                // Ahora, la columna seleccionada es la primera de la tabla actual
                         beam = 0; tabCnt = 0; break;                                                          // Resetea a beam y rompe el bucle for de la línea 93
                     }
@@ -215,7 +215,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                 if (columnsVec[co]->fromTable == tableSelected)                                         // Ahora, si recordamos que estamos en un bucle desde la línea 29, podemos usarlo para buscar cuales son las columnas de la tabla actual
                 {
                     opcionActPtr->status = isPressed(opcionActPtr);                                     // Se verifica el estado de opcionAct
-                    if (opcionActPtr->status != 0 && (int)opcionesAct.size() < quancolumns)             // En caso de que se llegue a presionar opcionAct, para abrir la lista desplegable, y el vector opcionesAct es menor a la cantidad de columnas...
+                    if (opcionActPtr->status > 1 && (int)opcionesAct.size() < quancolumns)             // En caso de que se llegue a presionar opcionAct, para abrir la lista desplegable, y el vector opcionesAct es menor a la cantidad de columnas...
                     {
                         cnt++;                                                                          // Aumenta el contador, se usa para que opcionesAct no se llene infinitamente
                         auto opc = std::make_unique<sqlobject>();                                       // Se declara un objeto temporal llamado opc, el cual servorá para guardar entre las opciones a la columna actual del ciclo for padre
@@ -239,7 +239,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                         for (auto& opt : opcionesAct)                                                   // Por cada opción en el vector opcionesAct...
                         {
                             opt->status = isPressed(opt);                                               // Busca la opción que haya sido presionada
-                            if (opt->status == 3)                                                       // Si la opción en el bucle actual fue presionada...
+                            if (opt->status == 4)                                                       // Si la opción en el bucle actual fue presionada...
                             {
                                 opcSize      = opcionesAct.size();                                      // opcSize almacenará la cantidad total de opciones en opcionesAct
                                 opcSelectedPtr = opt;                                                   // La opción seleccionada será la que está usando el bucle ahora mismo
@@ -261,7 +261,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                         }
                         else if (opcSelectedPtr->type == "int")     modeInput = "regexponly";     // Si el tipo de dato de la columna es "int", modeInput será "regexponly"
                         else if (opcSelectedPtr->type == "varchar") modeInput = "allchars";       // Si el tipo de dato es varchar, modeInput será "allchars"
-                        if (actBarPtr->status != 0)                                               // Si el estado de la barra de datos de entrada NO es 0 (SÍ fue presionada)
+                        if (actBarPtr->status > 1)                                               // Si el estado de la barra de datos de entrada NO es 0 (SÍ fue presionada)
                             actBarPtr->input = inputfunc("backend", actBarPtr,                    // Se ejecutará la función inputfunc() para recibir datos de entrada, a la barra actBar
                                                          opcSelectedPtr->maxlen, modeInput,       // El tamaño máximo de los datos de entrada serán los especificados por el atributo maxlen, y el modo de entrada será el especificado antes
                                                          littleFontSize, WHITE,                   // El tamaño del font será littleFontSize, y la letra será blanca, aunque no aplica por ser desde el backend
@@ -323,15 +323,15 @@ void screenAdminmenuUpdate(Screen &currentScreen,
             tablesVec[t]->status = isPressed(tablesVec[t]);
             if (IsKeyPressed(KEY_TAB))
             {
-                if (tablesVec[t]->status != 0 && t + 1 < (int)tablesVec.size())
-                { tablesVec[t]->status = 0; tablesVec[t + 1]->status = 3; tableSelected = tablesVec[t + 1]->name; rqst = true; break; }
-                else if (tablesVec[t]->status != 0 && t + 1 == (int)tablesVec.size())
-                { tablesVec[t]->status = 0; tablesVec[0]->status = 3; tableSelected = tablesVec[0]->name; rqst = true; break; }
+                if (tablesVec[t]->status > 1 && t + 1 < (int)tablesVec.size())
+                { tablesVec[t]->status = 0; tablesVec[t + 1]->status = 4; tableSelected = tablesVec[t + 1]->name; rqst = true; break; }
+                else if (tablesVec[t]->status > 1 && t + 1 == (int)tablesVec.size())
+                { tablesVec[t]->status = 0; tablesVec[0]->status = 4; tableSelected = tablesVec[0]->name; rqst = true; break; }
             }
             else if (IsGestureDetected(GESTURE_TAP))
             {
-                if (tablesVec[t]->status != 3) {tablesVec[t]->status = 0;}
-                else if (tablesVec[t]->status == 3) {tableSelected = tablesVec[t]->name; rqst = true;}
+                if (tablesVec[t]->status > 1) {tablesVec[t]->status = 0;}
+                else if (tablesVec[t]->status == 4) {tableSelected = tablesVec[t]->name; rqst = true;}
             }
 
         }
@@ -340,7 +340,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
             if (restartExplorar)
             {
                 for (auto& tab : tablesVec) tab->status = 0;
-                tablesVec[0]->status = 3;
+                tablesVec[0]->status = 4;
                 tableSelected   = tablesVec[0]->name;
                 restartExplorar = false;
                 rqst = true;
@@ -422,14 +422,14 @@ void screenAdminmenuUpdate(Screen &currentScreen,
         }
 
         resTogglePtr->status = isPressed(resTogglePtr);
-        if (resTogglePtr->status == 3)
+        if (resTogglePtr->status == 4)
         {
             if ((std::string)outResultsMode == "quantity") { outResultsMode = "percentages"; resTogglePtr->name = "#"; }
             else                                           { outResultsMode = "quantity";    resTogglePtr->name = "%"; }
         }
 
         informePtr->status = isPressed(informePtr);
-        if (informePtr->status == 3)
+        if (informePtr->status == 4)
         {
             statistics("backend", "percentages", percentages, partidosVec);
             std::vector<int> quantities;
@@ -454,7 +454,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
             adminButtons[6]->outLog = "";
             for (int b = 0; b < (int)termBars.size(); b++)
             { termBars[b]->input32 = U""; termBars[b]->input = ""; termBars[b]->status = 0; }
-            termBars[0]->status = 3;
+            termBars[0]->status = 4;
             restartTerminal = false;
             invalidIp = false; invalidCredentials = false; inputEmpty = false;
             return;
@@ -463,10 +463,10 @@ void screenAdminmenuUpdate(Screen &currentScreen,
         {
             adminTerminalPtr->status   = isPressed(adminTerminalPtr);
             barAdminTerminalPtr->status = isPressed(barAdminTerminalPtr);
-            if (adminTerminalPtr->status != 0 || barAdminTerminalPtr->status != 0)
+            if (adminTerminalPtr->status > 1 || barAdminTerminalPtr->status > 1)
             {
-                if (adminTerminalPtr->status != 0 && barAdminTerminalPtr->status == 0)
-                { adminTerminalPtr->status = 0; barAdminTerminalPtr->status = 1; }
+                if (adminTerminalPtr->status > 1 && barAdminTerminalPtr->status == 0)
+                { adminTerminalPtr->status = 0; barAdminTerminalPtr->status = 2; }
                 inputfunc("backend", barAdminTerminalPtr, 1024, "allchars-admin", littleFontSize, WHITE, 6);
                 if (IsKeyPressed(KEY_ENTER))
                 {
@@ -488,14 +488,14 @@ void screenAdminmenuUpdate(Screen &currentScreen,
             {
                 if (IsKeyPressed(KEY_TAB))
                 {
-                    if (termBars[b]->status != 0 && b + 1 < (int)termBars.size())
-                    { termBars[b]->status = 0; termBars[b + 1]->status = 1; beam = 0; break; }
-                    else if (termBars[b]->status != 0 && b + 1 == (int)termBars.size())
-                    { termBars[b]->status = 0; termBars[0]->status = 1; beam = 0; break; }
+                    if (termBars[b]->status > 1 && b + 1 < (int)termBars.size())
+                    { termBars[b]->status = 0; termBars[b + 1]->status = 2; beam = 0; break; }
+                    else if (termBars[b]->status > 1 && b + 1 == (int)termBars.size())
+                    { termBars[b]->status = 0; termBars[0]->status = 2; beam = 0; break; }
                 }
                 else termBars[b]->status = isPressed(termBars[b]);
 
-                if (termBars[b]->status != 0)
+                if (termBars[b]->status > 1)
                 {
                     if (termBars[b]->name != termBars[1]->name)
                         inputfunc("backend", termBars[b], 45, "allchars", mediumFontSize, WHITE);
@@ -554,7 +554,7 @@ void screenAdminmenuDraw(bool &invalidCredentials, bool &inputEmpty, bool &inval
     {
         oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);
         PrettyDrawRectangle(opcionActPtr);
-        if (opcionActPtr->status != 0)
+        if (opcionActPtr->status > 1)
         {
             for (int counter = 0; counter < (int)opcionesAct.size(); counter++)
             {
@@ -621,8 +621,20 @@ void screenAdminmenuDraw(bool &invalidCredentials, bool &inputEmpty, bool &inval
     {
         if (adminAuthenticated)
         {
-            PrettyDrawRectangle(adminTerminalPtr);
-            PrettyDrawRectangle(barAdminTerminalPtr);
+            DrawRectangle(
+                adminTerminalPtr->xloc,
+                adminTerminalPtr->yloc,
+                adminTerminalPtr->xsize,
+                adminTerminalPtr->ysize,
+                BLACK
+                );
+            DrawRectangle(
+                barAdminTerminalPtr->xloc,
+                barAdminTerminalPtr->yloc,
+                barAdminTerminalPtr->xsize,
+                barAdminTerminalPtr->ysize,
+                BLACK
+                );
             inputfunc("frontend", barAdminTerminalPtr, 1024, "allchars-admin", littleFontSize, WHITE);
             logfunction(adminSelected);
         }

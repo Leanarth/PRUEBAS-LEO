@@ -60,7 +60,7 @@ int logfunction(std::string selected,                                           
         outSquare[0] = adminTerminalPtr->xloc;
         outSquare[1] = adminTerminalPtr->yloc;
         outSquare[2] = adminTerminalPtr->xsize;
-        outSquare[3] = adminTerminalPtr->ysize;
+        outSquare[3] = adminTerminalPtr->ysize*0.98;                            // Se le resta un piquito, para que visualmente no choque con barAdminTerminalPtr, ya que ese objeto está justo deajo de este
     }
 
     int cnt           = 0;                                      // cnt actúa como contador para cuántos carácteres lleva la línea desde que inició, y si la línea sobrepasa el valor de carácteres límite, introducirá un newline
@@ -200,7 +200,7 @@ std::string drawcolumns(std::vector<sqlobject*> &cTables,                   // V
         for (int numberTable = 0; numberTable < (int)cTables.size(); numberTable++)             // Procederá a recorrer todos los botones de las tablas disponibles
         {
             cTables[numberTable]->status = isPressed(cTables[numberTable]);                     // Esto para detectar si el mouse hace clic en alguna tabla
-            if (cTables[numberTable]->status == 3) {tSelected = cTables[numberTable]->name;}    // Y si se hace clic sobre alguna, la tabla seleccionada ahora será la que se hizo clic
+            if (cTables[numberTable]->status == 4) {tSelected = cTables[numberTable]->name;}    // Y si se hace clic sobre alguna, la tabla seleccionada ahora será la que se hizo clic
         }
         drawSelected(cTables, fsize, tSelected);                                                // Después, se procederá a dibujar cada tabla
     }
@@ -237,9 +237,9 @@ std::string drawcolumns(std::vector<sqlobject*> &cTables,                   // V
                            fsize, 2, BLACK);
                 PrettyDrawRectangle(cVector[number]);                                           // Dibuja ahora la barra de entrada de la columna actual con sus respectivos colores
                 cVector[number]->status = isPressed(cVector[number]);                           // Se verifica el estado de la columna, para detectar si debe de recibir datos de entrada o no
-                if (cVector[number]->status != 0)                                               // Si el estado de la columna NO es igual a 0, entonces recibirá datos de entrada
+                if (cVector[number]->status > 1)                                                // Si se interactúa con la columna, entonces recibirá datos de entrada
                 {
-                    if (cVector[number]->status == 3) {tabRestart = true;}                      // Si la columna recibe un clic, entonces tabRestart se activará, esto para reiniciar la función de tabulación y avisar que la columna actual cambió
+                    if (cVector[number]->status == 4) {tabRestart = true;}                      // Si la columna recibe un clic, entonces tabRestart se activará, esto para reiniciar la función de tabulación y avisar que la columna actual cambió
                     cVector[number]->input = inputfunc("backend", cVector[number],              // Se llama a la función inputfunc()) como modo backend para que reciba datos de entrada de la barra de la columna actual
                                                        std::stoi(cVector[number]->maxlen),
                                                        modeInput, fsize, BLACK);
@@ -262,7 +262,7 @@ std::string drawcolumns(std::vector<sqlobject*> &cTables,                   // V
     {
         for (int number = 0; number < (int)cVector.size(); number++)                                // Recorrerá todas las columnas
         {
-            if (cVector[number]->fromTable == tSelected) { cVector[number]->status = 3; break; }    // Y cuando llegue a encontrar la primera que coincida con la tabla actual, la declarará con estado 3 (activa) y romperá el bucle
+            if (cVector[number]->fromTable == tSelected) { cVector[number]->status = 4; break; }    // Y cuando llegue a encontrar la primera que coincida con la tabla actual, la declarará con estado 3 (activa) y romperá el bucle
         }                                                                                           // Esto sirve para que el administrador ya de una vez tenga activa la primera columna de la tabla actual sin tener que hacer clic
     }
     if (lastColumnMeasures != 0) logfunction(selected, lastColumnMeasures, fsize);                  // Si se dibujó al menos a una columna, se llama a logfunction() enviándole la ubicación sobre donde tiene que iniciar el cuadro de resultados

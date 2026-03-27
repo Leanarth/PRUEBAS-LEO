@@ -8,11 +8,11 @@ void screenVotationUpdate(Screen& currentScreen, bool& votoBlanco)
     for (int i = 0; i < (int)partidosVec.size(); i++)
     {
         partidosVec[i]->status = isPressed(partidosVec[i]);
-        if (partidosVec[i]->status == 3)
+        if (partidosVec[i]->status == 4)
             partidoSelected = partidosVec[i]->name;
     }
 
-    if (isPressed(votarPtr) == 3)
+    if (isPressed(votarPtr) == 4)
     {
         if (!partidoSelected.empty()) currentScreen = CONFIRMATION;
         else                          votoBlanco = true;

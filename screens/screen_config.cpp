@@ -22,11 +22,11 @@ void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpd
         for (int i = 0; i < (int)configbuttons.size(); i++)
         {
             configbuttons[i]->status = isPressed(configbuttons[i]);
-            if (configbuttons[i]->status == 3) configSelected = configbuttons[i]->name;
+            if (configbuttons[i]->status == 4) configSelected = configbuttons[i]->name;
         }
 
         // Boton Guardar
-        if (isPressed(saveConfigPtr) == 3)
+        if (isPressed(saveConfigPtr) == 4)
         {
             int emptyValues = 0;
             for (int v = 0; v < (int)extraBars.size(); v++)
@@ -109,16 +109,16 @@ void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpd
         {
             if (IsKeyPressed(KEY_TAB))
             {
-                if (termBars[b]->status != 0 && b + 1 < (int)termBars.size())
-                { termBars[b]->status = 0; termBars[b + 1]->status = 1; beam = 0; break; }
-                else if (termBars[b]->status != 0 && b + 1 == (int)termBars.size())
-                { termBars[b]->status = 0; admPasswordBarPtr->status = 1; beam = 0; break; }
-                else if (admPasswordBarPtr->status != 0)
-                { termBars[0]->status = 1; admPasswordBarPtr->status = 0; beam = 0; break; }
+                if (termBars[b]->status > 1 && b + 1 < (int)termBars.size())
+                { termBars[b]->status = 0; termBars[b + 1]->status = 2; beam = 0; break; }
+                else if (termBars[b]->status > 1 && b + 1 == (int)termBars.size())
+                { termBars[b]->status = 0; admPasswordBarPtr->status = 2; beam = 0; break; }
+                else if (admPasswordBarPtr->status > 1)
+                { termBars[0]->status = 2; admPasswordBarPtr->status = 0; beam = 0; break; }
             }
             else termBars[b]->status = isPressed(termBars[b]);
 
-            if (termBars[b]->status != 0)
+            if (termBars[b]->status > 1)
             {
                 if (termBars[b]->name != termBars[1]->name)
                     inputfunc("backend", termBars[b], 45, "allchars", mediumFontSize, WHITE);
@@ -127,7 +127,7 @@ void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpd
             }
         }
         admPasswordBarPtr->status = isPressed(admPasswordBarPtr);
-        if (admPasswordBarPtr->status != 0)
+        if (admPasswordBarPtr->status > 1)
             inputfunc("backend", admPasswordBarPtr, 25, "allchars", mediumFontSize, WHITE);
     }
     else if (configSelected == configbuttons[1]->name)  // Extra
@@ -136,14 +136,14 @@ void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpd
         {
             if (IsKeyPressed(KEY_TAB))
             {
-                if (extraBars[b]->status != 0 && b + 1 < (int)extraBars.size())
-                { extraBars[b]->status = 0; extraBars[b + 1]->status = 1; beam = 0; break; }
-                else if (extraBars[b]->status != 0 && b + 1 == (int)extraBars.size())
-                { extraBars[b]->status = 0; extraBars[0]->status = 1; beam = 0; break; }
+                if (extraBars[b]->status > 1 && b + 1 < (int)extraBars.size())
+                { extraBars[b]->status = 0; extraBars[b + 1]->status = 2; beam = 0; break; }
+                else if (extraBars[b]->status > 1 && b + 1 == (int)extraBars.size())
+                { extraBars[b]->status = 0; extraBars[0]->status = 2; beam = 0; break; }
             }
             else extraBars[b]->status = isPressed(extraBars[b]);
 
-            if (extraBars[b]->status != 0)
+            if (extraBars[b]->status > 1)
                 inputfunc("backend", extraBars[b], 45, "allchars", littleFontSize, WHITE);
         }
     }
@@ -153,14 +153,14 @@ void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpd
         {
             if (IsKeyPressed(KEY_TAB))
             {
-                if (pathBars[b]->status != 0 && b + 1 < (int)pathBars.size())
-                { pathBars[b]->status = 0; pathBars[b + 1]->status = 1; beam = 0; break; }
-                else if (pathBars[b]->status != 0 && b + 1 == (int)pathBars.size())
-                { pathBars[b]->status = 0; pathBars[0]->status = 1; beam = 0; break; }
+                if (pathBars[b]->status > 1 && b + 1 < (int)pathBars.size())
+                { pathBars[b]->status = 0; pathBars[b + 1]->status = 2; beam = 0; break; }
+                else if (pathBars[b]->status > 1 && b + 1 == (int)pathBars.size())
+                { pathBars[b]->status = 0; pathBars[0]->status = 2; beam = 0; break; }
             }
             else pathBars[b]->status = isPressed(pathBars[b]);
 
-            if (pathBars[b]->status != 0)
+            if (pathBars[b]->status > 1)
                 inputfunc("backend", pathBars[b], 45, "allchars", mediumFontSize, WHITE);
         }
     }

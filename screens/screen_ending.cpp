@@ -7,7 +7,7 @@ void screenEndingUpdate(Screen& currentScreen, int verifyvote, bool& correctstud
     framesCounter++;
     if (framesCounter > 600)  // 60 fps * 10 seg = 600 frames
     {
-        cedulaBarPtr->status = 3;
+        cedulaBarPtr->status = 4;
         cedulaBarPtr->input  = "";
         cedulaBarPtr->input32 = U"";
         currentScreen = MAINMENU;

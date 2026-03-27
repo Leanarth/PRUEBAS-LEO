@@ -10,9 +10,9 @@ void screenConfirmationUpdate(Screen& currentScreen,
 {
     if (!existstudent)
     {
-        if (isPressed(regresarPtr) == 3)
+        if (isPressed(regresarPtr) == 4)
         {
-            cedulaBarPtr->status = 3;
+            cedulaBarPtr->status = 4;
             correctstudent = false;
             cedulaPtr->selfquery  = "SELECT * FROM Estudiantes WHERE Cedula = '";
             votarPtr->selfquery   = "UPDATE Estudiantes SET Voto = '";
@@ -22,11 +22,11 @@ void screenConfirmationUpdate(Screen& currentScreen,
         return;
     }
 
-    if (isPressed(regresarPtr) == 3)
+    if (isPressed(regresarPtr) == 4)
     {
         if (!correctstudent)
         {
-            cedulaBarPtr->status = 3;
+            cedulaBarPtr->status = 4;
             correctstudent = false;
             cedulaPtr->selfquery  = "SELECT * FROM Estudiantes WHERE Cedula = '";
             votarPtr->selfquery   = "UPDATE Estudiantes SET Voto = '";
@@ -37,7 +37,7 @@ void screenConfirmationUpdate(Screen& currentScreen,
         return;
     }
 
-    if (isPressed(continuarPtr) == 3)
+    if (isPressed(continuarPtr) == 4)
     {
         if (!correctstudent)
         {
@@ -45,7 +45,7 @@ void screenConfirmationUpdate(Screen& currentScreen,
             continuarPtr->selfquery = cedulaPtr->selfquery + "' && Voto = '0'"s;
             sendquery(continuarPtr->selfquery.data(), 0, 0);
             verifyvote = outQuery.length();
-            currentScreen = verifyvote > 0 ? VOTATION : ENDING;
+            currentScreen = verifyvote > 1 ? VOTATION : ENDING;
         }
         else
         {
