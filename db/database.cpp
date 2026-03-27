@@ -13,7 +13,6 @@
 
 int sendquery(const char* query, int min, int sub, int response, std::string divisor)
 {
-    std::cout << query << "\n";             // Imprime la query a realizar, muy útil para debugging, debe de ser eliminada esta línea cunado ya se entregue finalizado
     int columns = 0;                        // Variable que almacenará la cantidad total del columnas resultantes en la query, se declara con 0, luego se modifica
     outQuery = "";                          // outQuery es variable global que tendrá almacenado siempre las respuestas/outputs de las queries, si no se declara vacía, se combinará con un resultado anterior, y provocar errores
     if (mysql_query(conn, query))           // Se realiza la query que se pasó como argumento, y se usa "conn" como la conexión que realice la query, si todo sale bien la función mysql_query() devolverá 0 por lo que este if no debería ejecutarse
@@ -97,7 +96,6 @@ int sendquery(const char* query, int min, int sub, int response, std::string div
     }
     while (!vecColumns.empty()) {vecColumns.pop_back();}  // Se limpian los vectores
     while (!vecRows.empty())    {vecRows.pop_back();}     // Se deben de limpiar para que funcionen correctamente en caso de que se invoque de nuevo la función sendquery() y funcione correctamente
-    std::cout << outQuery << "\n";                        // Imprime el resultado de la query, útil para debugging
     return 0;                                             // Retorna 0, código de estado exitoso
 }
 

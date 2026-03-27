@@ -474,7 +474,6 @@ int objectCreation()
                         {
                             namecolumnPtr->input    = "0";                                  // Se indicará de que de manera predeterminada en input, se introduzca un cero
                             namecolumnPtr->input32  = U"0";                                 // Y lo mismo en input32
-                            std::cout<<namecolumnPtr->name<<" ALMACENA BOOLEANOS\n";
                         }
                         else
                         {

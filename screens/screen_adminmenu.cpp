@@ -253,7 +253,6 @@ void screenAdminmenuUpdate(Screen &currentScreen,
 
                     if (opcSelectedPtr->name != opcionActPtr->name)                               // Si la opción seleccionada NO es la opción vacía
                     {
-                        std::cout<<opcSize<<"\n";
                         actBarPtr->status = isPressed(actBarPtr);                                 // Verifica el estado de la barra de entrada de la opción seleccionada
                         if      (opcSelectedPtr->type == "tinyint") {                             // Si el tipo de la columna es booleano/tinyint...
                           modeInput = "boolean";                                                  // modeInput será "boolean"
@@ -319,8 +318,6 @@ void screenAdminmenuUpdate(Screen &currentScreen,
         oldSelected = adminSelected;
         std::string line;
         std::vector<std::string> exploreList;
-        for (int t = 0; t < (int)tablesVec.size(); t++)
-        {std::cout<<tablesVec[t]->name<<"\t|\t"<<tablesVec[t]->status<<"\n";}
         for (int t = 0; t < (int)tablesVec.size(); t++)
         {
             tablesVec[t]->status = isPressed(tablesVec[t]);

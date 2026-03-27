@@ -6,7 +6,6 @@
 
 void screenMainmenuUpdate(Screen& currentScreen, bool& existstudent, std::string& studentName)
 {
-    std::cout<<columnsVec[4]->input<<" ---MAINMENU----------------- \n";
     cedulaBarPtr->status = isPressed(cedulaBarPtr);
     if (cedulaBarPtr->status != 0)
         inputfunc("backend", cedulaBarPtr, 21, "allchars", fontSize);
