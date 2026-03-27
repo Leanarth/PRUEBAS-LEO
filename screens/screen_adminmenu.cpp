@@ -98,9 +98,8 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                 columnsVec[co]->type == "tinyint" && actBarPtr->status == 0)                // el tipo de datos de la columna actual es booleano y el estado de la barra de entrada de la barra de actualizaciones es igual a 0 (para prevenir conflictos)
               // Se verifica si la barra de actualizaciones (actBar) tiene un estado 0, por que si el administrador se encuentra en la pestaña de actualizaciones y toca la tecla SPACE pueden ocurrir errores inesperados
             {
-                if (columnsVec[co]->input == "")       {columnsVec[co]->input = "0";}        // Procederá a llenar la input con un 0, si la input estaba vacía
-                else if (columnsVec[co]->input == "0") {columnsVec[co]->input = "1";}        // Llenará la input con un 1, si la input tenía un 0
-                else                                   {columnsVec[co]->input = "";}         // Si la input tenía un valor, procederá a vaciarlo
+                if (columnsVec[co]->input == "0") {columnsVec[co]->input = "1";}        // Llenará la input con un 1 si la input tenía un 0
+                else                                   {columnsVec[co]->input = "0";}         // Si la input tenía un cero, la llenará con un 1
             }
 
             // Al presionar la tecla TAB, se puede pasar de una columna a otra columna, es muy útil
@@ -131,60 +130,61 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                         columnsVec[co]->status = 0;                                                           // Pasa el estado de la columna actual en uso, proveniente del bucle for de la línea 93, a 0 (no permite escribir)
                         columnsVec[co + 1 - quancolumns]->status = 2;                                         // Pasa a estado 1 la primera columna en las columnas de la tabla actual
                         columnSelected = columnsVec[co + 1 - quancolumns]->id;                                // Ahora, la columna seleccionada es la primera de la tabla actual
-                        beam = 0; tabCnt = 0; break;                                                          // Resetea a beam y rompe el bucle for de la línea 93
+                        beam = 0; tabCnt = 0; break;                                                          // Resetea a beam y rompe el bucle for padre
                     }
                 }
             }
 
             // ── Consultar ────────────────────────────────────────────────────
-            if (adminSelected == butnames[0])
+            if (adminSelected == butnames[0])                                 // Si adminSelected almacena el nombre del primer índice de butnames, el cual sería "Consultar", entonces...
             {
-                if (columnsVec[co]->fromTable == tableSelected)
+                if (columnsVec[co]->fromTable == tableSelected)               // Si la columna que se está recorriendo desde el bucle for padre es de la tabla actual, entonces...
                 {
-                    if (IsKeyPressed(KEY_ENTER))
+                    if (IsKeyPressed(KEY_ENTER))                              // Si se presiona la tecla ENTER, procederá a realizar la query
                     {
-                        conCnt++;
-                        adminButtons[0]->selfquery += columnsVec[co]->name + " REGEXP '"s + columnsVec[co]->input + "'"s;
-                        if (conCnt < quancolumns) adminButtons[0]->selfquery += " AND ";
-                        else
+                        conCnt++;                                             // Aumenta el contador de "Consultar"
+                        adminButtons[0]->selfquery += columnsVec[co]->name + " REGEXP '"s + columnsVec[co]->input + "'"s;   // Empieza a armar la query, introduciendo el nombre de la columna actual, la palabra "REGEXP" y su valor a buscar
+                        if (conCnt < quancolumns)                   // Si el contador es menor a la cantidad de columnas actuales (quancolumns es la variable global que almacena las columnas de la tabla actual) entonces agregará un AND
+                        {                                           // Esto sirve para saber si la columna actual es la última o no
+                            adminButtons[0]->selfquery += " AND ";            // Se le agrega un AND para en el siguiente recorrido del bucle for padre, se almacene la siguiente columna
+                        }
+                        else                                                  // En caso de el contador SÍ iguale a la cantidad de columnas actuales...
                         {
-                            if (adminButtons[0]->outLog != "") adminButtons[0]->outLog += "\n";
-                            adminButtons[0]->outLog += adminButtons[0]->selfquery + ";\n"s;
-                            sendquery(adminButtons[0]->selfquery.data(), 0, 0, 1, " | ");
-                            adminButtons[0]->outLog    += outQuery;
-                            adminButtons[0]->selfquery  = "SELECT * FROM "s + tableSelected + " WHERE "s;
-                            conCnt = 0;
+                            if (adminButtons[0]->outLog != "") {adminButtons[0]->outLog += "\n";}     // Si el valor de outLog NO está vacío, se le agregará un newline, esto por pura estética con la función logfunction() de ui/drawing.cpp
+                            adminButtons[0]->outLog += adminButtons[0]->selfquery + ";\n"s;           // Ahora, al outLog, se le agrega la query que se armó para enviar a la base de datos
+                            sendquery(adminButtons[0]->selfquery.data(), 0, 0, 1, " | ");             // Se procede a enviar la query, y se pide como separador entre las columnas al símbolo pipe |
+                            adminButtons[0]->outLog    += outQuery;                                   // Se le agrega al outLog del botón actual la respuesta de la query
+                            adminButtons[0]->selfquery  = "SELECT * FROM "s + tableSelected + " WHERE "s;       // Se reinicia la query de la pestaña "Consultar", esto para prepararse en caso de otra query
+                            conCnt = 0;       // Reinicia el contador a cero
                         }
                     }
                 }
             }
             // ── Agregar ──────────────────────────────────────────────────────
-            else if (adminSelected == butnames[1])
+            else if (adminSelected == butnames[1])                          // Si el botón seleccionado es igual a "Agregar"...
             {
-                if (columnsVec[co]->fromTable == tableSelected)
+                if (columnsVec[co]->fromTable == tableSelected)             // Si la columna que se está recorriendo desde el bucle for padre es de la tabla actual, entonces...
                 {
-                    if (IsKeyPressed(KEY_ENTER))
+                    if (IsKeyPressed(KEY_ENTER))                            // Si se presiona la tecla ENTER, procederá a realizar la query
                     {
-                        if (columnsVec[co]->type == "tinyint" && columnsVec[co]->input.empty())
-                            columnsVec[co]->input = "0";
-                        if (agrCnt < quancolumns)
+                        if (agrCnt < quancolumns)                           // Si el contador de la pestaña "Agregar" es menor a la cantidad de columnas de la tabla actual, es decir, no es la última columna de la tabla actual
                         {
-                            agrCnt++;
-                            agregarCol += columnsVec[co]->name;
-                            agregarVal += columnsVec[co]->input;
-                            if (agrCnt != quancolumns) { agregarCol += ", "; agregarVal += "', '"; }
+                            agrCnt++;                                       // El contador aumentará un valor
+                            agregarCol += columnsVec[co]->name;             // Al string agregarCol se le sumará el nombre de la columna actual
+                            agregarVal += columnsVec[co]->input;            // Al string agregarVal se le sumará el valor que se haya introducido en su barra
+                            if (agrCnt != quancolumns) { agregarCol += ", "; agregarVal += "', '"; }    // Si aún la columna actual NO es la última, entonces se le agregarán comas, para recibir un siguiente valor
                         }
-                        if (agrCnt == quancolumns)
+                        if (agrCnt == quancolumns)                          // Si el contador es igual a la cantidad de columnas, es decir, ya se llegó a la última columna, entonces...
                         {
-                            agregarCol += ") VALUES ('";
-                            agregarVal += "')";
-                            adminButtons[1]->selfquery += agregarCol + agregarVal;
-                            if (adminButtons[1]->outLog != "") adminButtons[1]->outLog += "\n";
-                            adminButtons[1]->outLog    += adminButtons[1]->selfquery + ";\n"s;
-                            sendquery(adminButtons[1]->selfquery.data(), 0, 0, 2);
-                            adminButtons[1]->outLog    += outQuery;
-                            adminButtons[1]->selfquery  = "INSERT INTO "s + tableSelected + " (";
-                            agrCnt = 0;
+                            agregarCol += ") VALUES ('";                    // Al string agregarCol se le agregará ") VALUES (", esto para unir este string con agregarVal en la query
+                            agregarVal += "')";                             // agregarVal finaliza su contenido
+                            adminButtons[1]->selfquery += agregarCol + agregarVal;                    // Ahora, se unirán los strings para armar la query
+                            if (adminButtons[1]->outLog != "") adminButtons[1]->outLog += "\n";       // Si outLog NO está vacío, se le agrega un newline, esto para razones de estética
+                            adminButtons[1]->outLog    += adminButtons[1]->selfquery + ";\n"s;        // Se le agrega la query ya armada al outLog de la pestaña "Agregar"
+                            sendquery(adminButtons[1]->selfquery.data(), 0, 0, 2);                    // Se envía la query
+                            adminButtons[1]->outLog    += outQuery;                                   // Se introduce el resultado de la query a outLog, para visualizar la información de respuesta de la base de datos
+                            adminButtons[1]->selfquery  = "INSERT INTO "s + tableSelected + " (";     // Se reinicia la query de la pestaña "Agregar", esto para prepararse para otra futura query
+                            agrCnt = 0;       // Reinicia el contador a cero
                         }
                     }
                 }
@@ -261,7 +261,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                         }
                         else if (opcSelectedPtr->type == "int")     modeInput = "regexponly";     // Si el tipo de dato de la columna es "int", modeInput será "regexponly"
                         else if (opcSelectedPtr->type == "varchar") modeInput = "allchars";       // Si el tipo de dato es varchar, modeInput será "allchars"
-                        if (actBarPtr->status > 1)                                               // Si el estado de la barra de datos de entrada NO es 0 (SÍ fue presionada)
+                        if (actBarPtr->status > 1)                                                // Si el estado de la barra de datos de entrada NO es 0 (SÍ fue presionada)
                             actBarPtr->input = inputfunc("backend", actBarPtr,                    // Se ejecutará la función inputfunc() para recibir datos de entrada, a la barra actBar
                                                          opcSelectedPtr->maxlen, modeInput,       // El tamaño máximo de los datos de entrada serán los especificados por el atributo maxlen, y el modo de entrada será el especificado antes
                                                          littleFontSize, WHITE,                   // El tamaño del font será littleFontSize, y la letra será blanca, aunque no aplica por ser desde el backend
@@ -271,71 +271,86 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                         if (IsKeyPressed(KEY_ENTER) && !actBarPtr->input.empty())                 // Si se presiona ENTER y actBar no se encuentra vacío...
                         {
                             actCnt++;               // actCnt empieza a sumarse
-                            adminButtons[2]->selfquery += columnsVec[co]->name + " REGEXP '"s + columnsVec[co]->input + "'"s;
-                            if (actCnt < quancolumns) adminButtons[2]->selfquery += " AND ";
-                            else
+                            adminButtons[2]->selfquery += columnsVec[co]->name + " REGEXP '"s + columnsVec[co]->input + "'"s;     // Empieza a armar la query
+                            if (actCnt < quancolumns) adminButtons[2]->selfquery += " AND ";                    // Si la columna actual NO es la última en el bucle for padre, entonces agregará un AND
+                            else                                                                                // Si SÍ es la última, no agregará un AND, y entonces...
                             {
-                                if (adminButtons[2]->outLog != "") adminButtons[2]->outLog += "\n";
-                                adminButtons[2]->outLog += adminButtons[2]->selfquery + ";\n"s;
-                                if (!sendquery(adminButtons[2]->selfquery.data(), 0, 0, 2)) actBarPtr->input = "";
-                                adminButtons[2]->outLog    += outQuery;
-                                adminButtons[2]->selfquery  = "UPDATE "s + tableSelected + " SET "s;
-                                actCnt = 0;
+                                if (adminButtons[2]->outLog != "") adminButtons[2]->outLog += "\n";             // Si outLog no está vacío, agregará un newline por pura estética
+                                adminButtons[2]->outLog += adminButtons[2]->selfquery + ";\n"s;                 // Se le agrega a outLog la query ya armada
+                                sendquery(adminButtons[2]->selfquery.data(), 0, 0, 2);                          // Se envía la query
+                                adminButtons[2]->outLog    += outQuery;                                         // El resultado de la query se introduce en outLog para mostrarlo en el frontend
+                                adminButtons[2]->selfquery  = "UPDATE "s + tableSelected + " SET "s;            // Se reinicia la query de la pestaña "Actualizar" para prepararse en caso de una query nueva
+                                actCnt = 0;   // Se reinicia el contador
                             }
                         }
                     }
-                    else { actBarPtr->input = ""; }
+                    else { actBarPtr->input = ""; }       // En caso de que NO se haya seleccionado ninguna opción, la barra de actualizar tendrá un valor vacío
                 }
             }
             // ── Borrar ───────────────────────────────────────────────────────
-            else if (adminSelected == butnames[3])
+            else if (adminSelected == butnames[3])                // Si la pestaña seleccionada es la pestaña "Borrar", entonces...
             {
-                if (columnsVec[co]->fromTable == tableSelected)
+                if (columnsVec[co]->fromTable == tableSelected)   // Verifica que la columna del bucle padre perteneza a la tabla seleccionada
                 {
-                    if (IsKeyPressed(KEY_ENTER))
+                    if (IsKeyPressed(KEY_ENTER))                  // Si se presiona la tecla ENTER...
                     {
-                        borCnt++;
-                        adminButtons[3]->selfquery += columnsVec[co]->name + " REGEXP '"s + columnsVec[co]->input + "'"s;
-                        if (borCnt < quancolumns) adminButtons[3]->selfquery += " AND ";
-                        else
+                        borCnt++;                                 // Aumenta un valor al contador
+                        adminButtons[3]->selfquery += columnsVec[co]->name + " REGEXP '"s + columnsVec[co]->input + "'"s;       // Se empieza a armar la query
+                        if (borCnt < quancolumns) adminButtons[3]->selfquery += " AND ";                      // Si la columna actual en el bucle for padre NO es la última, agregará un AND a la query
+                        else                                                                                  // En caso de que sí sea la última...
                         {
-                            if (adminButtons[3]->outLog != "") adminButtons[3]->outLog += "\n";
-                            adminButtons[3]->outLog    += adminButtons[3]->selfquery + ";\n"s;
-                            sendquery(adminButtons[3]->selfquery.data(), 0, 0, 2);
-                            adminButtons[3]->outLog    += outQuery;
-                            adminButtons[3]->selfquery  = "DELETE FROM "s + tableSelected + " WHERE "s;
-                            borCnt = 0;
+                            if (adminButtons[3]->outLog != "") adminButtons[3]->outLog += "\n";               // Agrega un newline al outLog de "Borrar", por pura estética
+                            adminButtons[3]->outLog    += adminButtons[3]->selfquery + ";\n"s;                // Agrega la query ya armada
+                            sendquery(adminButtons[3]->selfquery.data(), 0, 0, 2);                            // Se envía la query
+                            adminButtons[3]->outLog    += outQuery;                                           // Se almacena el resultado de la query dentro de outLog, para ver la respuesta en el frontend
+                            adminButtons[3]->selfquery  = "DELETE FROM "s + tableSelected + " WHERE "s;       // Se reinicia la query de la pestaña "Borrar", esto para prepararse en caso de una futura query
+                            borCnt = 0;       // Se reinicia el contador
                         }
                     }
                 }
             }
-        }
-    }
+        }   // <---- FÏN DEL BUCLE FOR PADRE QUE RECORRE TODAS LAS COLUMNAS
+    }   // FÍN DEL IF QUE VERIFICABA QUE LA PESTAÑA ACTUAL NO FUERA NI EXPLORAR, NI RESULTADOS, NI TERMINAL
 
     // ── Explorar ──────────────────────────────────────────────────────────────
-    else if (adminSelected == butnames[4])
+    else if (adminSelected == butnames[4])                              // Si la pestaña actual seleccionada es "Explorar"...
     {
-        oldSelected = adminSelected;
-        std::string line;
-        std::vector<std::string> exploreList;
-        for (int t = 0; t < (int)tablesVec.size(); t++)
+        oldSelected = adminSelected;                                    // Se actualizará manualmente a oldSelected, ya que antes se actualizaba con la función drawcolumns, pero esa función solo se llama en las primeras 4 pestañas
+        std::string line;                                               // Se declara line como un string
+        std::vector<std::string> exploreList;                           // Se declara exploreList, vector cuyo propósito es almacenar los strings de outLog de la pestaña "Explorar", para luego traducirlos a explorarFinalOutput
+
+        for (int t = 0; t < (int)tablesVec.size(); t++)                 // Se recorrerá cada tabla a continuación
         {
-            tablesVec[t]->status = isPressed(tablesVec[t]);
-            if (IsKeyPressed(KEY_TAB))
+            tablesVec[t]->status = isPressed(tablesVec[t]);                       // Se verifica el estado de cada tabla
+            std::cout<<tablesVec[t]->name<<" | "<<tablesVec[t]->status<<"\n";     // Un cout, para que se pueda apreciar mejor el funcionamiento de los status de las tablas, debe eliminarse si fuera la versión final
+            if (IsKeyPressed(KEY_TAB))                                            // Si se presiona el tabulador debe de provocar que cambie entre las tablas, así que justo eso hará
             {
-                if (tablesVec[t]->status > 1 && t + 1 < (int)tablesVec.size())
-                { tablesVec[t]->status = 0; tablesVec[t + 1]->status = 4; tableSelected = tablesVec[t + 1]->name; rqst = true; break; }
-                else if (tablesVec[t]->status > 1 && t + 1 == (int)tablesVec.size())
-                { tablesVec[t]->status = 0; tablesVec[0]->status = 4; tableSelected = tablesVec[0]->name; rqst = true; break; }
+                if (tablesVec[t]->status > 1 && t + 1 < (int)tablesVec.size())    // Si el estado de la tabla actual es superior a 1 (se interactuó con ella) y NO es la última tabla (por eso t + 1), entonces...
+                {
+                    tablesVec[t]->status = 0;                                     // Su estado pasa a ser cero, se pasa a cero ya que la función del TAB es cambiar la tabla, entonces "apaga" esta y "activa" la otra por decir así
+                    tablesVec[t + 1]->status = 4;                                 // La siguiente tabla pasa a simular que recibió un clic al modificar status
+                    tableSelected = tablesVec[t + 1]->name;                       // La tabla seleccionada pasa a ser la tabla que se acaba de activar
+                    rqst = true; break;                                           // Se activa rqst y se realiza un break, ya no se necesita recorrer más este bucle
+                }
+                else if (tablesVec[t]->status > 1 && t + 1 == (int)tablesVec.size())    // Si el estado de la tabla actual es superior a uno, pero es la última tabla de la lista, entonces...
+                {
+                    tablesVec[t]->status = 0;                                           // Se apaga la tabla actual
+                    tablesVec[0]->status = 4;                                           // Se activa la PRIMERA tabla, ya que no existe una siguiente por que es la última tabla de la lista
+                    tableSelected = tablesVec[0]->name;                                 // La primera tabla se nombra como la tabla seleccionada
+                    rqst = true; break;                                                 // Se activa rqst y se realiza un break
+                }
             }
-            else if (IsGestureDetected(GESTURE_TAP))
+            else if (IsGestureDetected(GESTURE_TAP))                                    // En caso de que se haya recibido un clic...
             {
-                if (tablesVec[t]->status > 1) {tablesVec[t]->status = 0;}
-                else if (tablesVec[t]->status == 4) {tableSelected = tablesVec[t]->name; rqst = true;}
+                if (tablesVec[t]->status == 4)                                          // Si alguna la tabla actual en el bucle recibió ese clic...
+                {
+                  tableSelected = tablesVec[t]->name;                                   // Declara esa tabla como la tabla seleccionada
+                  rqst = true;                                                          // Activa a rqst
+                }
             }
 
         }
-        if (restartExplorar || rqst)
+        if (restartExplorar || rqst)                                                    // Si restartExplorar o rqst se encuentra activo, se procederán a actualizar los datos
         {
             if (restartExplorar)
             {

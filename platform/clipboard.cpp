@@ -43,11 +43,12 @@ std::u32string clipboard()                                            // Declaro
 
     else {cmd = "xclip -selection clipboard -o";}                     // En caso contrario, se usará el comando que suelen usar entornos distintos para obtener el portapapeles
 
+    auto closer = [](FILE* fp) { pclose(fp); };   // Es una lambda para limpiar a la variable de tipo FILE
     // Se declara un puntero para los datos que se reciban de resultado del comando ejecutado
     // FILE es el lugar que recibirá los datos
     // La función popen() se encarga de ejecutar el comando cmd al convertirlo en formato legible para C (ya que la función popen() está hecha en C) por medio de data()
     // El argumento que se le pasa a pipe() el cual es una "r" significa que hará la accion "read" (leer) la salida del comando
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.data(), "r"), pclose);
+    std::unique_ptr<FILE, decltype(closer)> pipe(popen(cmd.data(), "r"), closer);
     if (!pipe) return U"";                                            // Si ocurre un error en la línea anterior, devolverá un string en UTF-32 vacío
 
     while (true)                                                      // Se ejecutará un bucle infinito que solo se romperá cuando detecte que n sea igual a 0 en las líneas siguientes...
