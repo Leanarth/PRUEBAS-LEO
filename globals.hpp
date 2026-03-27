@@ -73,15 +73,15 @@ extern std::string outQuery;
 extern std::string oldbar;
 
 // ── Raylib / UI state ────────────────────────────────────────────────────────
-extern Font   fontTtf;
-extern double explorarSquare[4];
-extern double mediumFontSize;
-extern double littleFontSize;
-extern double adminPanel[4];
-extern double outSquare[4];
-extern double screenHeight;
-extern double screenWidth;
-extern double fontSize;
+extern Font  fontTtf;
+extern float explorarSquare[4];
+extern float mediumFontSize;
+extern float littleFontSize;
+extern float adminPanel[4];
+extern float outSquare[4];
+extern float screenHeight;
+extern float screenWidth;
+extern float fontSize;
 
 extern bool adminAuthenticated;
 extern bool pdfRandomError;

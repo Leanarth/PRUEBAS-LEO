@@ -23,17 +23,15 @@ void screenEndingDraw(int verifyvote)
 {
     if (verifyvote == 0)
     {
-        char* cantvote = "Ya usted ha votado, no puede hacerlo de nuevo";
-        DrawTextEx(fontTtf, cantvote,
-                   (Vector2){(float)centertext(cantvote, screenWidth, fontSize),
+        DrawTextEx(fontTtf, "Ya usted ha votado, no puede hacerlo de nuevo",
+                   (Vector2){(float)centertext("Ya usted ha votado, no puede hacerlo de nuevo", screenWidth, fontSize),
                               (float)(screenHeight * 0.5)},
                    fontSize, 2, BLACK);
     }
     else
     {
-        char* thanks = "Muchas gracias por su voto, puede retirarse";
-        DrawTextEx(fontTtf, thanks,
-                   (Vector2){(float)centertext(thanks, screenWidth, fontSize),
+        DrawTextEx(fontTtf, "Muchas gracias por su voto, puede retirarse",
+                   (Vector2){(float)centertext("Muchas gracias por su voto, puede retirarse", screenWidth, fontSize),
                               (float)(screenHeight * 0.5)},
                    fontSize, 2, BLACK);
     }

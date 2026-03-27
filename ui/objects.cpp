@@ -4,29 +4,75 @@
 #include <memory>
 #include <string>
 
+// Esta función a continuación, tiene como propósito la creación de todos los objetos del programa, desde objetos simples como los botones, hasta objetos más especiales como los objetos de tipo column, que se cargan desde la base de datos
+
 int objectCreation()
 {
-    // Limpiar colecciones
-    while (!adminObj.empty())    adminObj.pop_back();
-    while (!tablesVec.empty())   tablesVec.pop_back();
-    while (!partidosVec.empty()) partidosVec.pop_back();
-    while (!columnsVec.empty())  columnsVec.pop_back();
-    while (!adminButtons.empty())     adminButtons.pop_back();
-    while (!configbuttons.empty()) configbuttons.pop_back();
-    while (!termBars.empty())    termBars.pop_back();
-    while (!extraBars.empty())   extraBars.pop_back();
-    while (!pathBars.empty())    pathBars.pop_back();
 
+    // Procedo a limpiar todos los vectores que almacenan los objetos del programa, esto para prevenir de que si la llamaba de esta función ocurre más de una vez, no guarde objetos duplicados en cada vector
+
+    while (!adminObj.empty())    adminObj.pop_back();                   // Es el vector padre, este vector almacena absolutamente todos los objetos del programa
+    while (!tablesVec.empty())   tablesVec.pop_back();                  // Es el vector que almacena las tablas cargadas de la base de datos
+    while (!partidosVec.empty()) partidosVec.pop_back();                // Es el vector que almacena los partidos cargados de la base de datos
+    while (!columnsVec.empty())  columnsVec.pop_back();                 // Es el vector que almacena todas las columnas cargadas de la base de datos
+    while (!adminButtons.empty())     adminButtons.pop_back();          // Este vector tiene todas las pestañas del panel de administracion
+    while (!configbuttons.empty()) configbuttons.pop_back();            // Este vector tiene todas las pestañas del panel de configuracion
+    while (!termBars.empty())    termBars.pop_back();                   // Este vector almacena todas las barras que aparecen en "Terminal", también aparecen en la pestaña "Credenciales" del panel de configuracion
+    while (!extraBars.empty())   extraBars.pop_back();                  // Este vector almacena todas las barras que aparecen en la pestaña "Extra" del panel de configuracion
+    while (!pathBars.empty())    pathBars.pop_back();                   // Este vector almacena todas las barras que aparecen en la pestaña "Paths" del panel de configuracion
+
+    // explorarSquare es el cuadro de fondo de la pestaña "Explorar" del panel de administracion, aquí defino las dimensiones del cuadro
     explorarSquare[0] = screenWidth  * 0.12;
     explorarSquare[1] = screenHeight * 0.24;
     explorarSquare[2] = screenWidth  * 0.76;
     explorarSquare[3] = screenHeight * 0.66;
 
+    // adminPanel es el cuadro del panel de administracion, aquí defino las dimensiones del cuadro
     adminPanel[0] = 0.0;
     adminPanel[1] = screenHeight * 0.1;
     adminPanel[2] = screenWidth;
     adminPanel[3] = screenHeight * 0.9;
 
+    /* A continuación, se iniciará la creación de los objetos, pero hay que primero entender esto:
+       Siempre se le tiene que asignar un tipo auto a la hora de crear el objeto, y después de escribir auto, se le pasa como argumento el nombre del objeto
+       Además, los objetos se deben de crear con un puntero, los punteros se crean por medio de std::make_unique y se le pasa de argumento el tipo de objeto que se desea crear, por ejemplo, si quiero crear un botón, iniciaría su creación así:
+
+       auto botonCreado = std::make_unique<button>();
+
+       Luego de esto, se le asignan las propiedades, que son las variables que tiene el objeto dependiendo de su clase, para tener más información sobre las clases, pueden leer el archivo ./ui/widgets.hpp
+       Si la clase, por ejemplo, es de tipo button, el objeto button tiene las siguientes propiedades:
+
+        name
+        xloc
+        yloc
+        xsize
+        ysize
+        status
+        highColor
+        normalColor
+        selfquery
+        outLog
+        oType
+
+       Para yo modificar alguna propiedad, como por ejemplo la propiedad name, solo tengo que escribir esto:
+
+       botonCreado->name = "Botón Creado";
+
+       Se escribe con una flecha -> por que se apunta a la propiedad de un objeto que accede por medio de un puntero, en este caso, el objeto puntero sería botonCreado, y la propiedad sería name, entonces se accede por medio de una flecha
+
+       Otro punto importante a considerar es el hecho de que al final de las declaraciones se nombra un puntero extra, el cual sirve para usarse en el resto del código para acceder al objeto, ya que el puntero original se guardará en adminObj
+       La razón por la que todos los objetos se guardan en adminObj es por que ayuda a que todos los objetos sin necesidad de llamarlos uno por uno puedan ser eliminados en caso de que se tengan que actualizar propiedades como sus tamaños, y
+       los objetos al guardarse en adminObj, la propiedad sobre ellos ahora la tiene adminObj, entonces se necesita otro puntero para acceder a ellos, el cual es el puntero extra, que siempre, por razones de orden, debe tener el siguiente formato:
+
+       <nombre original del objeto>Ptr
+
+        Ejemplo: botonCreadoPtr
+
+       Ese puntero es preferible que se declare en globals.cpp para que el puntero pueda ser accedido de manera global, ya que la mayoría de estos objetos se necesitan acceder de forma global
+
+       Después, se procederá a almacenar el objeto dentro de adminObj, comentaré algunas partes del código para aclarar esto en caso de que no haya quedado muy bien explicado  */
+
+    // butnames es la lista que contiene los nombres de las pestañas del panel de administracion
     butnames[0] = "Consultar";
     butnames[1] = "Agregar";
     butnames[2] = "Actualizar";
@@ -35,48 +81,50 @@ int objectCreation()
     butnames[5] = "Resultados";
     butnames[6] = "Terminal";
 
-    // Botones de las pestanas del panel de administracion
-    for (int i = 0; i < 7; i++)
+    // Botones de las pestañas del panel de administracion
+    for (int i = 0; i < 7; i++)                                     // Este es un bucle para crear varios botones que comparten ancho, alto y ubicación en el eje Y (altura) | Para no tener que crear todos uno por uno, uso un bucle
     {
-        auto btn = std::make_unique<button>();
-        btn->name        = butnames[i];
-        btn->xloc        = adminPanel[2] / 7.22 * i + (7.22 * i);
-        btn->yloc        = adminPanel[1] + screenHeight * 0.005;
-        btn->xsize       = adminPanel[2] / 7.22;
-        btn->ysize       = adminPanel[3] * 0.05;
-        btn->outLog      = "";
-        btn->status      = 0;
-        btn->highColor   = VOCADORADOSUAVE;
-        btn->normalColor = VOCAAMARILLOSUAVE;
-        adminButtons.push_back(btn.get());
-        adminObj.push_back(std::move(btn));
+        auto btn = std::make_unique<button>();                      // Declaro a btn, el puntero temporal para cada botón
+        btn->name        = butnames[i];                             // Declaro que el nombre de btn, será según el índice en el bucle actual pero usandolo para acceder a un índice en butnames, por ejemplo, si i vale 0, el nombre será "Consultar"
+        btn->xloc        = adminPanel[2] / 7.22 * i + (7.22 * i);   // Declaro la ubicación en X (ubicación en el ancho de la pantalla), esto debe de cambiar según el índice en el bucle, así declaro a todos en diferentes posiciones
+        btn->yloc        = adminPanel[1] + screenHeight * 0.005;    // Declaro la posición en el eje Y (altura)
+        btn->xsize       = adminPanel[2] / 7.22;                    // Declaro el ancho del botón
+        btn->ysize       = adminPanel[3] * 0.05;                    // Declaro el tamaño de la altura del botón
+        btn->outLog      = "";                                      // Esta variable almacenará los resultados de las queries según el botón en el panel de administracion, para más información revisar la función logfunction() en ui/drawing.cpp
+        btn->status      = 0;                                       // Se declara el estado del botón, el cual por defecto es 0 (inactivo)
+        btn->highColor   = VOCADORADOSUAVE;                         // Se declara el color del botón cuando tenga que ser resaltado
+        btn->normalColor = VOCAAMARILLOSUAVE;                       // Se declara el color del botón cuando no debe ser resaltado
+        adminButtons.push_back(btn.get());                          // Se introduce el botón al vector adminButtons, pero solo el puntero del botón
+        adminObj.push_back(std::move(btn));                         // Ahora, el botón se introduce a adminObj, y ahora adminObj tiene su propiedad
     }
 
-    // Botones de las pestanas de configuracion
+    // Botones de las pestañas de configuracion
     std::string confignames[] = {"Credenciales", "Extra", "Paths"};
     for (int i = 0; i < 3; i++)
     {
         auto btn = std::make_unique<button>();
         btn->name        = confignames[i];
         btn->xloc        = adminPanel[2] / 7.22 * (i + 2) + (7.22 * (i + 2));
-        btn->yloc        = adminPanel[1];
+        btn->yloc        = adminPanel[1] + screenHeight * 0.005;
         btn->xsize       = adminPanel[2] / 7.22;
         btn->ysize       = adminPanel[3] * 0.05;
         btn->outLog      = "";
         btn->status      = 0;
+        btn->highColor   = VOCADORADOSUAVE;                         // Se declara el color del botón cuando tenga que ser resaltado
+        btn->normalColor = VOCAAMARILLOSUAVE;                       // Se declara el color del botón cuando no debe ser resaltado
         configbuttons.push_back(btn.get());
         adminObj.push_back(std::move(btn));
     }
 
-    // opcionAct — opcion seleccionada en la pestana "Actualizar"
-    auto opcionAct = std::make_unique<button>();
-    opcionAct->name   = "...";
-    opcionAct->xloc   = screenWidth * 0.12;
-    opcionAct->yloc   = 0;
-    opcionAct->xsize  = 0;
-    opcionAct->ysize  = adminPanel[3] * 0.05;
-    opcionActPtr = opcionAct.get();
-    adminObj.push_back(std::move(opcionAct));
+    // opcionAct — botón de la lista desplegable de la pestaña "Actualizar"
+    auto opcionAct = std::make_unique<button>();    // Declaro a opcionAct, el puntero original del botón
+    opcionAct->name   = "...";                      // Declaro su nombre predeterminado
+    opcionAct->xloc   = screenWidth * 0.12;         // Declaro su ubicación en el eje X (ancho de la pantalla)
+    opcionAct->yloc   = 0;                          // Declaro su ubiación en el alto de la pantalla (es cero, ya que se declarará más tarde en la pestaña "Actualizar", para más informacion, revisar screens/screen_adminmenu.cpp)
+    opcionAct->xsize  = 0;                          // Declaro su ancho (es cero, ya que se declarará después)
+    opcionAct->ysize  = adminPanel[3] * 0.05;       // Declaro la altura del botón
+    opcionActPtr = opcionAct.get();                 // opcionActPtr es el puntero que apuntará al puntero original del botón
+    adminObj.push_back(std::move(opcionAct));       // Se introduce el botón a adminObj, y ahora adminObj tiene su propiedad
 
     // cedula button
     auto cedula = std::make_unique<button>();
@@ -185,7 +233,7 @@ int objectCreation()
     informe->name   = "Informe";
     informe->xloc   = screenWidth * 0.8;
     informe->yloc   = screenHeight * 0.4;
-    informe->xsize  = littleFontSize * (double)informe->name.length();
+    informe->xsize  = littleFontSize * (float)informe->name.length();
     informe->ysize  = littleFontSize * 1.5;
     informe->status = 0;
     informePtr = informe.get();
@@ -321,7 +369,7 @@ int objectCreation()
     barAdminTerminalPtr = barAdminTerminal.get();
     adminObj.push_back(std::move(barAdminTerminal));
 
-    // actBar (barra de la pestana "Actualizar")
+    // actBar (barra de la pestaña "Actualizar")
     auto actBar = std::make_unique<inputBar>();
     actBar->xloc    = 0;
     actBar->yloc    = opcionActPtr->yloc;
@@ -333,7 +381,7 @@ int objectCreation()
     actBarPtr = actBar.get();
     adminObj.push_back(std::move(actBar));
 
-    // opcSelected
+    // opcSelected (la opción seleccionada de la pestaña "Actualizar")
     auto opcSelected = std::make_unique<sqlobject>();
     opcSelected->name        = opcionActPtr->name;
     opcSelected->normalColor = VOCAVERDE;
@@ -341,10 +389,10 @@ int objectCreation()
     opcSelectedPtr = opcSelected.get();
     adminObj.push_back(std::move(opcSelected));
 
-    adminSelected  = butnames[0];
-    configSelected = "Credenciales";
+    adminSelected  = butnames[0];             // Define la pestaña seleccionada en el panel de administracion como "Consultar" de manera predeterminada, así cuando el administrador entre, esta será la pestaña seleccionada por defecto
+    configSelected = "Credenciales";          // Define la pestaña seleccionada en el panel de configuración como "Credenciales" de manera predeterminada, así cuando el administrador entre esta será la pestaña seleccionada por defecto
 
-    if (statusCodeUpdating == 0)
+    if (statusCodeUpdating == 0)              // Si la función updateData() se ejecutó con exito (esta función se encarga de actualizar los datos y comprobar que todo esté bien), entonces se crearán los objetos relacionados a la base de datos
     {
         partidosVec.reserve(quanpartidos);
         tablesVec.reserve(quantables);
@@ -369,62 +417,83 @@ int objectCreation()
 
         tableSelected = tablesVec[0]->name;
 
-        // Columnas
-        int identifier = 0, typed = 0, named = 0;
-        column* namecolumnPtr = nullptr;
-        std::string typecolumn    = "";
-        std::string varNameColumn = "";
-        std::string maxlencolumn  = "";
-        std::string strnamecolumns = "";
-        std::string queryForColumns = "DESC ";
+        /* Columnas | La creación de las columnas es la más compleja, esta, necesita el tipo de dato que almacena la columna, el tamaño máximo que admite como dato, y también este objeto tiene un ID para identificarlo de otras columnas con
+           el mismo nombre, todos estos datos se cargan haciendo una query a la base de datos con el uso del método DESC propio de SQL, lo que hace DESC es mostrar toda la información de las columnas de una tabla mas o menos de esta manera:
 
-        for (int table = 0; table < (int)nametables.size(); table++)
+           DESC Estudiantes;              <- Esa es la query que se le realiza a la base de datos, se entra en un bucle que recorra las tablas, y se arma la query, luego la respuesta se guarda en strnamecolumns
+                                             Se puede apreciar que la respuesta viene sin simbolos de "|", "+" o "-" para decorar el gráfico, esto es por que mysql detecta cuando se realiza una query desde un programa
+           Cedula            varchar(20)     // Como podemos apreciar, el primer valor que aparece es el nombre de la columna, en este caso, ese valor es Cedula
+           Primer_Apellido   varchar(18)     // El segundo valor es el tipo de dato, en este caso ese tipo de dato es un varchar (string), ese valor se almacena en typecolumn y en el objeto column se guarda en column->type
+           Segundo_Apellido  varchar(18)     // Y el tercer valor que necesitamos es la cantidad maxima de datos que admite esta columna, el cual ese valor se almacena en maxlencolumn, y en el objeto en column->maxlen
+           Nombre            varchar(30)
+           Voto              tinyint(1)
+
+          */
+
+        bool named                   = false;         // Verifica si ya se nombró la columna actual con su nombre correspondiente
+        bool typed                   = false;         // Verifica si ya se le atribuyó un tipo de datoa la columna actual
+        int identifier               = 0;             // identifier es un contador que almacenará el id de cada columna dependiendo del bucle for de abajo, este id almacenado luego se guardará el la propiedad .id de cada columna
+        std::string typecolumn       = "";            // Almacenará el tipo de columna
+        std::string varNameColumn    = "";            // Almacenará el nombre de la columna
+        std::string maxlencolumn     = "";            // Almacenará máximo de datos de entrada de la columna
+        std::string descOutputString = "";            // Almacenará la output de la query con el método DESC para recibir los datos de todas las columnas de la tabla actual que se esté leyendo
+        column* namecolumnPtr        = nullptr;       // Vamos a declarar un puntero nulo el cual almacenará cada columna en el bucle for de abajo de manera temporal, para ser así agregado a adminObj y a columnsVec
+
+        for (int table = 0; table < (int)nametables.size(); table++)                      // Empieza a recorrer cada tabla, almacena el nombre de cada tabla en table
         {
-            queryForColumns += nametables[table];
-            if (sendquery(queryForColumns.data(), 0, 4)) return 20;
-            if (outQuery.empty()) return 20;
-            strnamecolumns = outQuery;
+            if (sendquery(("DESC " + nametables[table]).data(), 0, 4)) {return 21;}       // Realiza la query con el método DESC de SQL para recibir todos los datos de todas las columnas SQL, y si hay un error retorna 21
+            if (outQuery.empty()) {return 21;}                                            // En caso de que no ocurriera un error, pero la respuesta está vacía, también retornará 21
+            descOutputString = outQuery;                                                  // En caso de que todo haya salido bien, se almacenará la respuesta en descOutputString
 
-            for (int c = 0; c < (int)strnamecolumns.size(); c++)
+            for (int c = 0; c < (int)descOutputString.size(); c++)                        // Este bucle recorrerá TODOS los carácteres de descOutputString
             {
-                if (strnamecolumns[c] != '\n')
+                if (descOutputString[c] != '\n')                                          // Si el carácter actual NO es un newline...
                 {
-                    if (strnamecolumns[c] != ' ' && !named)
-                        varNameColumn.push_back(strnamecolumns[c]);
-                    else if (strnamecolumns[c] == ' ' && !named)
+                    if (descOutputString[c] != ' ' && !named)                             // Si el carácter actual que se está recorriendo de descOutputString NO es un espacio y la columna NO ha sido nombrada, entonces
+                        varNameColumn.push_back(descOutputString[c]);                     // Se almacenará en el string del nombre temporal el carácter
+                    else if (descOutputString[c] == ' ' && !named)                        // En caso de que SÍ sea un espacio el carácter actual y la columna NO ha sido nombrada, significa que ya terminó de leer el nombre, entonces...
                     {
-                        auto namecolumn = std::make_unique<column>();
-                        namecolumn->name      = varNameColumn;
-                        namecolumn->fromTable = nametables[table];
-                        named = 1;
-                        namecolumn->status  = 0;
-                        namecolumn->id      = ++identifier;
-                        namecolumn->type    = "";
-                        namecolumn->maxlen  = "";
-                        namecolumn->input   = "";
-                        namecolumn->input32 = U"";
-                        namecolumnPtr = namecolumn.get();
-                        columnsVec.push_back(namecolumn.get());
-                        adminObj.push_back(std::move(namecolumn));
+                        auto namecolumn = std::make_unique<column>();                     // Se declara un puntero único que sea el correspondiente a la columna actual
+                        namecolumn->name      = varNameColumn;                            // Se le asigna como nombre a la columna, el nombre temporal que se acumuló con varNameColumn
+                        namecolumn->fromTable = nametables[table];                        // Estamos en un bucle que recorre todas las tablas, la variable table almacena la tabla actual, así que le asignamos que la columna pertenece a table
+                        namecolumn->status  = 0;                                          // Declara el estado de la columna
+                        namecolumn->id      = ++identifier;                               // Aumenta a identifier y al mismo tiempo declara que el id actual es el valor de identifier
+                        namecolumn->type    = "";                                         // Declara el tipo de dato actual como vacío, luego se le asignará el tipo de dato, ya que en este momento aún no se ha llegado a leer
+                        namecolumn->maxlen  = "";                                         // También declara a maxlen como vacío, por que aún no se ha logrado leer
+                        named               = true;                                       // Declara a named verdadero, es decir, ya se nombró la columna
+                        namecolumnPtr = namecolumn.get();                                 // El puntero que previamente habíamos declarado como vacío, ahora apunta a la columna actual, esto sirve para luego almacenar los valores de type e input
+                        columnsVec.push_back(namecolumn.get());                           // Se introduce la columna actual en el vector columnsVec, con su respectivo puntero
+                        adminObj.push_back(std::move(namecolumn));                        // Se la columna en adminObj, ahora la columna solo es accesible por medio del puntero temporal namecolumnPtr
                     }
-                    else if (strnamecolumns[c] != '(' && !typed)
-                        typecolumn.push_back(strnamecolumns[c]);
-                    else if (strnamecolumns[c] == '(' && !typed)
+                    else if (descOutputString[c] != '(' && !typed)                        // Si el carácter NO es un paréntesis (el paréntesis es el inicio del máximo de datos, osea, maxlen)) y NO se ha especificado su tipo, entonces...
+                        typecolumn.push_back(descOutputString[c]);                        // Procederá a acumular los carácteres en el string typecolumn
+                    else if (descOutputString[c] == '(' && !typed)                        // Si el carácter SI es un paréntesis y NO se ha especificado su tipo, entonces
                     {
-                        namecolumnPtr->type += typecolumn;
-                        typed = 1;
+                        namecolumnPtr->type += typecolumn;                                // Se procederá a guardar el string que almacenó el tipo de dato a la propiedad type de la columna actual por medio de su puntero temporal
+                        if (namecolumnPtr->type == "tinyint")                             // En el caso especial de que la columna actual solo maneje valores booleanos (1 y 0)...
+                        {
+                            namecolumnPtr->input    = "0";                                  // Se indicará de que de manera predeterminada en input, se introduzca un cero
+                            namecolumnPtr->input32  = U"0";                                 // Y lo mismo en input32
+                            std::cout<<namecolumnPtr->name<<" ALMACENA BOOLEANOS\n";
+                        }
+                        else
+                        {
+                            namecolumnPtr->input   = "";                                         // input tiene que estar vacío ya que no puede almacenar ningun dato de entrada, por que no se ha digitado nada en la columna
+                            namecolumnPtr->input32 = U"";                                        // Lo mismo que con input
+                        }
+                        typed = true;                                                     // Y ahora se declara que su tipo fue especificado
                     }
-                    else if (strnamecolumns[c] != ')' && typed)
-                        maxlencolumn.push_back(strnamecolumns[c]);
-                    else if (strnamecolumns[c] == ')' && typed)
+                    else if (descOutputString[c] != ')' && typed)                         // Si el carácter NO es un paréntesis final (el paréntesis final es el final de la cantidad de carácteres que se pueden introducir) entonces...
+                        maxlencolumn.push_back(descOutputString[c]);                      // Se procederán a acumular los carácteres en maxlencolumn
+                    else if (descOutputString[c] == ')' && typed)                         // Si ya se llega a encontrar el paréntesis final, entonces...
                     {
-                        namecolumnPtr->maxlen += maxlencolumn;
-                        named = 0; typed = 0;
-                        varNameColumn = ""; typecolumn = ""; maxlencolumn = "";
+                        namecolumnPtr->maxlen += maxlencolumn;                            // Se procederá a guardar el string que almacenó la cantidad máxima de datos de entrada a la propiedad maxlen de la columna actual
+                        named = false; typed = false;                                     // Se resetean los activadores
+                        varNameColumn = ""; typecolumn = ""; maxlencolumn = "";           // Se resetean los strings que se usaron
                     }
                 }
             }
-            strnamecolumns = ""; queryForColumns = "DESC ";
+            descOutputString = "";
         }
 
         // Partidos

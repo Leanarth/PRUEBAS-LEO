@@ -182,15 +182,15 @@ void screenConfigDraw(bool &inputEmpty, bool &invalidIp, bool &errorUpdating, bo
         for (int b = 0; b < (int)termBars.size(); b++)
         {
             DrawTextEx(fontTtf, termBars[b]->name.data(),
-                       (Vector2){screenWidth * 0.15,
-                                  termBars[b]->yloc + ((termBars[b]->ysize * 0.5) - (mediumFontSize * 0.5))},
+                       (Vector2){(float)screenWidth * 0.15f,
+                                  (float)termBars[b]->yloc + ((termBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
                        mediumFontSize, 0, BLACK);
             PrettyDrawRectangle(termBars[b]);
             inputfunc("frontend", termBars[b], 0, "allchars", mediumFontSize);
         }
         DrawTextEx(fontTtf, admPasswordBarPtr->name.data(),
-                   (Vector2){screenWidth * 0.15,
-                              admPasswordBarPtr->yloc + ((admPasswordBarPtr->ysize * 0.5) - (mediumFontSize * 0.5))},
+                   (Vector2){(float)screenWidth * 0.15f,
+                              (float)admPasswordBarPtr->yloc + ((admPasswordBarPtr->ysize * 0.5f) - (mediumFontSize * 0.5f))},
                    mediumFontSize, 0, BLACK);
         PrettyDrawRectangle(admPasswordBarPtr);
         inputfunc("frontend", admPasswordBarPtr, 0, "allchars", mediumFontSize);
@@ -200,8 +200,8 @@ void screenConfigDraw(bool &inputEmpty, bool &invalidIp, bool &errorUpdating, bo
         for (int b = 0; b < (int)extraBars.size(); b++)
         {
             DrawTextEx(fontTtf, extraBars[b]->name.data(),
-                       (Vector2){screenWidth * 0.15,
-                                  extraBars[b]->yloc + ((extraBars[b]->ysize * 0.5) - (littleFontSize * 0.5))},
+                       (Vector2){(float)screenWidth * 0.15f,
+                                  (float)extraBars[b]->yloc + ((extraBars[b]->ysize * 0.5f) - (littleFontSize * 0.5f))},
                        littleFontSize, 0, BLACK);
             PrettyDrawRectangle(extraBars[b]);
             inputfunc("frontend", extraBars[b], 0, "allchars", littleFontSize);
@@ -212,8 +212,8 @@ void screenConfigDraw(bool &inputEmpty, bool &invalidIp, bool &errorUpdating, bo
         for (int b = 0; b < (int)pathBars.size(); b++)
         {
             DrawTextEx(fontTtf, pathBars[b]->name.data(),
-                       (Vector2){screenWidth * 0.15,
-                                  pathBars[b]->yloc + ((pathBars[b]->ysize * 0.5) - (mediumFontSize * 0.5))},
+                       (Vector2){(float)screenWidth * 0.15f,
+                                  (float)pathBars[b]->yloc + ((pathBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
                        mediumFontSize, 0, BLACK);
             PrettyDrawRectangle(pathBars[b]);
             inputfunc("frontend", pathBars[b], 0, "allchars", mediumFontSize);

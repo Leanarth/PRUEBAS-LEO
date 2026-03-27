@@ -89,14 +89,14 @@ std::string oldbar            = "";     // Variable que almacena la última barr
 
 // ── Raylib / UI state ─────────────────────────────────────────────────────────
 Font   fontTtf;             // Guardará el font del programa para funciones de la parte gráfica
-double explorarSquare[4];   // Lista que guardará ubicacion en el eje x, ubicacion en el eje y, tamaño de ancho y tamaño de alto, para un rectángulo que se usará de fondo en la pestaña "Explorar"
-double mediumFontSize;      // Tamaño del font del programa mediano
-double littleFontSize;      // Tamaño del font del programa pequeño
-double adminPanel[4];       // Lista que guardará ubicacion en el eje x, ubicacion en el eje y, tamaño de ancho y tamaño de alto, para un rectángulo que se usará de fondo para todo el panel de administración
-double outSquare[4];        // Lista que guardará ubicacion en el eje x, ubicacion en el eje y, tamaño de ancho y tamaño de alto, para un rectángulo que se usará de fondo para el resultado de las pestañas en el panel de administración
-double screenHeight;        // Valor del tamaño de alto de la ventana
-double screenWidth;         // Valor del tamaño de ancho de la ventana
-double fontSize;            // Tamaño del font del programa
+float explorarSquare[4];    // Lista que guardará ubicacion en el eje x, ubicacion en el eje y, tamaño de ancho y tamaño de alto, para un rectángulo que se usará de fondo en la pestaña "Explorar"
+float mediumFontSize;       // Tamaño del font del programa mediano
+float littleFontSize;       // Tamaño del font del programa pequeño
+float adminPanel[4];        // Lista que guardará ubicacion en el eje x, ubicacion en el eje y, tamaño de ancho y tamaño de alto, para un rectángulo que se usará de fondo para todo el panel de administración
+float outSquare[4];         // Lista que guardará ubicacion en el eje x, ubicacion en el eje y, tamaño de ancho y tamaño de alto, para un rectángulo que se usará de fondo para el resultado de las pestañas en el panel de administración
+float screenHeight;         // Valor del tamaño de alto de la ventana
+float screenWidth;          // Valor del tamaño de ancho de la ventana
+float fontSize;             // Tamaño del font del programa
 
 bool adminAuthenticated = false;  // Verifica si el administrador fue autenticado en la pestaña "Terminal" del panel de administración
 bool pdfRandomError     = false;  // Verifica si hubo un error en la creación de los PDFs

@@ -169,10 +169,18 @@ std::string drawcolumns(std::vector<sqlobject*> &cTables,                   // V
 
     if (oldSelected != selected || oldTableSelected != tSelected)                 // La función principal de este if es detectar si se llega a cambiar de pestaña en el panel de administración, o si se llega a cambiar de tabla, si eso ocurre...
     {
-        for (int number = 0; number < (int)cVector.size(); number++)              // Se procederá a recorrer cada columna
+        for (int number = 0; number < (int)cVector.size(); number++)              // Se procederá a recorrer cada columna y vaciar su contenido, además de resetear su estado a 0
         {
-            cVector[number]->input   = "";                                        // Se vaciará el contenido de cada columna 
-            cVector[number]->input32 = U"";
+            if (cVector[number]->type == "tinyint")                               // En el caso especial de que la columna actual solo maneje valores booleanos (1 y 0)...
+            {
+                cVector[number]->input    = "0";                                  // Se indicará de que de manera predeterminada en input, se introduzca un cero
+                cVector[number]->input32  = U"0";                                 // Y lo mismo en input32
+            }
+            else
+            {
+                cVector[number]->input   = "";                                    // input tiene que estar vacío ya que no puede almacenar ningun dato de entrada, por que no se ha digitado nada en la columna
+                cVector[number]->input32 = U"";                                   // Lo mismo que con input
+            }
             cVector[number]->status  = 0;                                         // Y el estado de cada una pasará a 0 (inactiva, no recibe datos de entrada)
             changed = true;
         }
@@ -289,7 +297,7 @@ int shortmessage(std::string msg, double fs, bool &activator, int timeFps)      
 
 // Esta función a continuación, es la responsable de mostrar la gráfica de los porcentajes y cantidades de votos por cada partido en la pestaña "Resultados"
 
-std::vector<double> statistics(char* mode,                          // El modo puede ser "backend" o "frontend"
+std::vector<double> statistics(std::string mode,                          // El modo puede ser "backend" o "frontend"
                                std::string outputMode,              // "percentages" o "quantity"
                                std::vector<double>& dataVec,        // Vector con los datos (votos o porcentajes)
                                std::vector<sqlobject*> partVec,     // Vector con los partidos y sus nombres
