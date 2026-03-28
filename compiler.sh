@@ -36,12 +36,12 @@ $cmd                                                                    # Ejecut
 if [ $? -eq 0 ]; then                 # Verifica el código de estado del compilado, si ocurrió con éxito (código de estado 0) procederá a declararlo con permisos de ejecución
   chmod +x ./bin/linux/main
 else                                # En caso de que ocurran errores, imprimirá en pantalla que abortará el programa
-  echo "La creación del compilado tuvo errores, abortando..."
+  echo "\nLa creación del compilado tuvo errores, abortando..."
   exit
 fi
 
 # Ejecutar el archivo compilado:
-export LD_LIBRARY_PATH=$PWD/bin/linux:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$PWD/bin/linux:$LD_LIBRARY_PATH              # En linux, el ejecutable necesita la librería dinámica que se encuentra en la carpeta bin/linux para poder ejecutarse, entonces la almacena en la variable LD_LIBRARY_PATH
 ./bin/linux/main
 
 # Cuando ya termina el programa, se procede a borrar el archivo compilado, esto para automatizar no tener que borrarlo de nuevo para compilarlo otra vez
@@ -49,20 +49,20 @@ export LD_LIBRARY_PATH=$PWD/bin/linux:$LD_LIBRARY_PATH
 if [ $? -eq 0 ]; then                 # Verifica el código de estado del compilado, si ocurrió con éxito (código de estado 0) procederá a declararlo con permisos de ejecución
   rm ./bin/linux/main
 else
-  echo "Hubo un error en el programa"
+  echo "\nHubo un error en el programa"
   exit
 fi
 
 if [ $? -ne 0 ]; then                 # Verifica el código de estado del borrado, si no ocurrió con éxito (código de estado distinto a 0) procederá a dar un mensaje
-  echo "Hubo un error en el borrado del archivo compilado"
+  echo "\nHubo un error en el borrado del archivo compilado"
 fi
 
 # Se verifica si el compilador tuvo algún error | Si el código de estado NO es 0, entonces ocurrió un error en alguna parte del compilador
 
 if [ $? -eq 0 ]; then                 # Verifica el código de estado del compilado, si ocurrió con éxito (código de estado 0) procederá a declararlo con permisos de ejecución
-  echo "El proceso de compilado y de borrado resultaron de manera exitosa"
+  echo "\n\nEl proceso de compilado y de borrado resultaron de manera exitosa"
 else
-  echo "Hubo un error en alguna parte del proceso de compilado y borrado"
+  echo "\n\nHubo un error en alguna parte del proceso de compilado y borrado"
 fi
 
 # En caso de que no quiera que se borre, solo comente la línea que dice "rm ./main" agregando un hashtag # al inicio

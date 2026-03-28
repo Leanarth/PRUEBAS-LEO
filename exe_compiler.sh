@@ -1,10 +1,10 @@
 # Este compilador lo que hace es específicamente compilar para dar como resultado un archivo .exe ejecutable de windows
 
-# Compilado en modo depuración (el modo de depuración puede hacer que el ejecutable sea más lento y consuma más recursos, pero sirve para debuggear errores):
+# Compilado en mínima optimización
 
-echo "\nCompilando en modo de depuración...\n\n" && cmd="x86_64-w64-mingw32-g++ -s -DNDEBUG -O0 -std=c++20"
+echo "\nCompilando en mínima optimización...\n\n" && cmd="x86_64-w64-mingw32-g++ -s -DNDEBUG -O0 -std=c++20"
 
-# Compilado en modo release (el modo release es el modo en el que el ejecutable se compilará para su uso real, es más rápido y sirve para probar la velocidad real del ejecutable):
+# Compilado en modo release (máxima optimización) (el modo release es el modo en el que el ejecutable se compilará para su uso real, es más rápido y sirve para probar la velocidad real del ejecutable):
 
 #echo "\nCompilando en modo release...\n\n" && cmd="x86_64-w64-mingw32-g++ -s -DNDEBUG -O3 -std=c++20"
 
@@ -22,22 +22,23 @@ $cmd                                                                    # Ejecut
 # Darle permisos de ejecución al archivo del código compilado para poder ejecutarse | chmod es un comando que permite otorgar permisos de lectura, escritura y ejecución, con esto, le doy permisos de ejecución
 
 if  [ $? -eq 0 ]; then                                                  # Si el compilado fue exitoso (código de estado 0) procede a eliminar el .rar viejo y crear uno nuevo
-  echo "Se pudo crear el archivo compilado con éxito"
+  echo "\nSe pudo crear el archivo compilado con éxito"
   echo "Eliminando .rar anterior para crear el actualizado..."
   rm ./bin/windows/SistemaVotaciones.rar
   chmod +x ./bin/windows/main.exe
-  rar a ./bin/windows/SistemaVotaciones.rar ./bin/windows/dlls/*
-  rar a ./bin/windows/SistemaVotaciones.rar ./bin/windows/mariadb-11.4.10-winx64/*
-  rar a ./bin/windows/SistemaVotaciones.rar ./bin/windows/main.exe
+  rar a -ep ./bin/windows/SistemaVotaciones.rar ./bin/windows/dlls/*
+  rar a -ep1 ./bin/windows/SistemaVotaciones.rar ./bin/windows/mariadb-11.4.10-winx64/*
+  rar a ./bin/windows/SistemaVotaciones.rar ./fonts/*
+  rar a -ep ./bin/windows/SistemaVotaciones.rar ./bin/windows/main.exe
   rm ./bin/windows/main.exe
 else
-  echo "La creación del compilado tuvo errores, abortando..."
+  echo "\nLa creación del compilado tuvo errores, abortando..."
   exit
 fi
 
 if  [ $? -eq 0 ]; then      # Si el comprimido con sus dependencias se compiló correctamente (código de estado 0) mostrará un mensaje de que todo ocurrió perfectamente
-  echo "Archivo ./bin/windows/SistemaVotaciones.rar creado con éxito listo para su uso"
+  echo "\n\nArchivo ./bin/windows/SistemaVotaciones.rar creado con éxito listo para su uso"
 else                        # Si el comprimido tuvo errores, mostrará un mensaje diciendo de que falló
-  echo "No se pudo crear el comprimido con éxito"
+  echo "\n\nNo se pudo crear el comprimido con éxito"
   exit
 fi

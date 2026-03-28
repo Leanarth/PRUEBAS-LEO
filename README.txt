@@ -1,5 +1,16 @@
+Primero que nada, para poder ejecutar el programa, actualmente hay 2 compiladores automáticos:
 
-Para entender mejor el código, esta vez, está organizado de la siguiente manera
+./compiler.sh: Se encarga de específicamente compilar el programa en el entorno de Linux
+
+./exe_compiler.sh: Se encarga de compilar específicamente un ejecutable para windows, osea un archivo .exe, pero desde linux, además de cargar sus dependencias y archivos importantes, se comprime todo en un rar para que solo deba descomprimirse y ejecutarse
+
+exe_compiler tiene 2 dependencias muy importantes para poder funcionar, tener actualmente mingw y rar instalado en linux
+
+La manera más fácil de compilar el código es a través de compiler.sh
+
+Ahora sí, para entender mejor el código, esta vez, está organizado de la siguiente manera:
+
+POR FAVOR INTENTAR NO USAR LIBRERÍAS EXTRA EN EL CÓDIGO, O LIBRERÍAS POCO CONOCIDAS
 
 ── config/ ───────────────────────────────────────────────────────────────────
 Esta carpeta lo que contiene son las funciones relacionadas a la configuración del programa, como la carga de los valores del archivo de configuración, el
