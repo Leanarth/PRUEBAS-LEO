@@ -350,197 +350,221 @@ void screenAdminmenuUpdate(Screen &currentScreen,
             }
 
         }
-        if (restartExplorar || rqst)                                                    // Si restartExplorar o rqst se encuentra activo, se procederán a actualizar los datos
+        if (restartExplorar || rqst)                                                    // Si restartExplorar o rqst se encuentra activo, se procederán a actualizar los datos o a reiniciar la pestaña
         {
-            if (restartExplorar)
+            if (restartExplorar)                                                        // Si específicamente quien se encuentra activo es restartExplorar, entonces reiniciará la pestaña
             {
-                for (auto& tab : tablesVec) tab->status = 0;
-                tablesVec[0]->status = 4;
-                tableSelected   = tablesVec[0]->name;
-                restartExplorar = false;
-                rqst = true;
+                for (auto& tab : tablesVec) tab->status = 0;                            // Todas las tablas tendrán su status a 0, es decir, estarán apagadas sin recibir alguna interacción
+                tablesVec[0]->status = 4;                                               // La primera tabla será la única en tener un status igual a 4, simulando que recibió un clic, esto hace que sea automáticamente seleccionada
+                tableSelected   = tablesVec[0]->name;                                   // Se actualizará la variable tableSelected para almacenar el nombre de la primera tabla como la tabla seleccionada (principalmente para la funcion drawcolumns)
+                while (!exploreList.empty()) exploreList.pop_back();                        // Procederá a vaciar a exploreList para reiniciarlo
+                restartExplorar = false;                                                // restartExplorar se reinicia a false, ya que sino pasará por este if eternamente
+                rqst = true;                                                            // rqst se activa a true, ya que necesita actualizar los datos por la selección de la primera tabla como la activa
             }
-            if (rqst)
+            if (rqst)                                                                   // Si rqst se encuentra activa, entonces procederá a realizar una query a la base de datos
             {
-                adminButtons[4]->selfquery = "SELECT * FROM "s + tableSelected;
-                sendquery(adminButtons[4]->selfquery.data(), 0, 0, 1, " | ");
-                adminButtons[4]->outLog = outQuery;
-                rqst = false; add = 0;
+                adminButtons[4]->selfquery = "SELECT * FROM "s + tableSelected;         // Arma la query con la tabla actual, la query busca todos los valores de la tabla
+                sendquery(adminButtons[4]->selfquery.data(), 0, 0, 1, " | ");           // Envía la query a la base de datos y le dice que use al carácter pipe | como separador
+                adminButtons[4]->outLog = outQuery;                                     // Almacena la respuesta en el outLog de la pestaña actual (adminButtons[4] es la pestaña "Explorar")
+                rqst = false; add = 0;                                                  // Desactiva a rqst y reinicia a add, add es una variable que sirve para el scroll en la información que aparezca, este scroll debe reiniciarse así que pasa a 0
             }
         }
 
-        if (adminButtons[4]->outLog != "")
+        if (adminButtons[4]->outLog != "")                                              // Si actualmente NO está vacía la respuesta de la base de datos con respecto a todos los valores de la tabla
         {
-            while (!exploreList.empty()) exploreList.pop_back();
-            explorarFinalOutput = "";
-            if (GetTouchX() > explorarSquare[0] && GetTouchX() < explorarSquare[0] + explorarSquare[2] &&
-                GetTouchY() > explorarSquare[1] && GetTouchY() < explorarSquare[1] + explorarSquare[3])
-                add += GetMouseWheelMove();
+            while (!exploreList.empty()) exploreList.pop_back();                                                    // Procederá a vaciar a exploreList para volverlo a llenar eventualmente
+            explorarFinalOutput = "";                                                                               // Vacía la salida de los datos que se pasa en el frontend
+            if (GetTouchX() > explorarSquare[0] && GetTouchX() < explorarSquare[0] + explorarSquare[2] &&           // Verificará si el cursor se encuentra en el ancho del objeto explorarSquare, el cual es el cuadro de fondo de "Explorar"
+                GetTouchY() > explorarSquare[1] && GetTouchY() < explorarSquare[1] + explorarSquare[3] &&           // Y también si se encuentra en el alto del objeto, es decir, con las dos veificaciones se fija si está adentro del cuadro
+                GetMouseWheelMove() != 0)                                                                           // Y también verifica que el scroll del mouse NO sea igual a 0, si el scroll sube, procederá a tener un valor 1, y si baja -1
+                add += GetMouseWheelMove();                                                                         // En caso de que todo el if anterior fuera verdadero, entonces se le sumará un valor a add, el cual sirve para el scroll
 
-            double possibleNLexplore = (explorarSquare[3] - explorarSquare[1] * 0.1) / (littleFontSize + nlSpacing);
-            if (possibleNLexplore - (int)possibleNLexplore > 0.5) possibleNLexplore = (int)possibleNLexplore + 1;
-            else                                                   possibleNLexplore = (int)possibleNLexplore;
+            double possibleNLexplore = (explorarSquare[3] - explorarSquare[1] * 0.1) / (littleFontSize + nlSpacing);              // Verifica cuantas newlines pueden caber en el cuadro explorarSquare
+            if (possibleNLexplore - (int)possibleNLexplore > 0.5) possibleNLexplore = (int)possibleNLexplore + 1;                 // Se redondea el valor para evitar newlines partidos, se suma uno si el decimal es mayor a 0.5
+            else                                                   possibleNLexplore = (int)possibleNLexplore;                    // Se resta el decimal si NO es mayor a 0.5
 
-            for (int o = 0; o < (int)adminButtons[4]->outLog.size(); o++)
+            for (int ch = 0; ch < (int)adminButtons[4]->outLog.size(); ch++)                          // Ahora procederá a recorrer cada carácter en el outLog de la pestaña "Explorar", que es donde se almacenó la respuesta de la tabla actual
             {
-                if (adminButtons[4]->outLog[o] != '\n') line += adminButtons[4]->outLog[o];
-                else { line += "\n"; exploreList.push_back(line); line = ""; }
+                if (adminButtons[4]->outLog[ch] != '\n') line += adminButtons[4]->outLog[ch];         // Si el carácter actual NO es un newline, se le sumará el caracter actual al string line
+                else { line += "\n"; exploreList.push_back(line); line = ""; }                        // Si el carácter actual SÍ es un newline, se le sumará el newline al string line, line se introducirá al vector exploreList, y se vaciará line
             }
-            while ((int)exploreList.size() - add < possibleNLexplore) add -= 1;
-            if (add < 0) add = 0;
+            while ((int)exploreList.size() - add < possibleNLexplore) add -= 1;                       // Si add es mayor al tamaño total de exploreList, se le restará uno hasta que lo iguale, para prevenir que el scroll se desborde
+            if (add < 0) add = 0;                                                                     // En cambio, si add es negativo, procederá a ser igual a cero, esto para también evitar que el scroll se desborde
 
-            int nc = 0;
-            for (int l = 0 + add; l < (int)exploreList.size(); l++)
+            int newlns = 0;                                                             // newlns almacenará la cantidad de newlines que se han escrito dentro de explorarFinalOutput, el cual será el string de la respuesta para el frontend
+            for (int l = 0 + add; l < (int)exploreList.size(); l++)                     // Se recorrerán todas las líneas del vector exploreList comenzando desde la variable add
             {
-                if (add == 0) { if (nc > possibleNLexplore - 1) break; }
-                else          { if (nc >= possibleNLexplore) break; }
-                explorarFinalOutput += exploreList[l]; nc++;
+                if (add == 0) { if (newlns > possibleNLexplore - 1) break; }            // Si add es igual a 0 y la cantidad de newlines es mayor a la cantidad de newlines posibles menos 1, romperá el bucle
+                else          { if (newlns >= possibleNLexplore) break; }               // En caso de que add NO sea igual a cero, entonces si la cantidad de newlines es mayor o igual a la de la cantidad de newlines posibles, romperá el bucle
+                explorarFinalOutput += exploreList[l];                                  // La línea actual se suma al string explorarFinalOutput
+                newlns++;                                                               // La cantidad de newlines que se agregan al string se suman uno por uno dentro de newlns
             }
         }
-        else { explorarFinalOutput = "NO HAY DATOS\n"; }
+        else { explorarFinalOutput = "NO HAY DATOS\n"; }                                // Si actualmente el outLog de la pestaña "Explorar" se encuentra vacío, solo mostrará el string explorarFinalOutput diciendo "NO HAY DATOS"
     }
 
     // ── Resultados ────────────────────────────────────────────────────────────
-    else if (adminSelected == butnames[5])
+    else if (adminSelected == butnames[5])        // En caso de que la pestaña seleccionada sea "Resultados"
     {
-        oldSelected = adminSelected;
-        if (restartResultados)
+        oldSelected = adminSelected;              // Actualiza a oldSelected por la misma razón por la que se actualiza en "Explorar"
+        if (restartResultados)                    // restartResultados indica que debería de actualizar los resultados que muestra en pantalla, restartResultados se activa cuando se entra a esta pestaña
         {
-            if (nullOption)
+            if (nullOption)                       // Si nullOption se encuentra activo, es decir, sí encontró un partido que sea la opción NULO, entonces procederá a hacer una consulta
             {
-                std::string q1 = "SELECT "s + *nameColumnVotosNombre + " FROM "s + *nameTablePartidos +
+                std::string q1 = "SELECT "s + *nameColumnVotosNombre + " FROM "s + *nameTablePartidos +                         // q1 consulta acerca de la cantidad de votos de los partidos que NO sean el partido nulo
                                  " WHERE "s + *nameColumnPartidosNombre + " != '"s + *nameColumnNuloPartido + "';"s;
                 sendquery(q1.data(), 0, 0);
-                strresultados = outQuery;
-                std::string q2 = "SELECT "s + *nameColumnVotosNombre + " FROM "s + *nameTablePartidos +
+                strresultados = outQuery;                                                                                       // La respuesta se almacena en strresultados
+                std::string q2 = "SELECT "s + *nameColumnVotosNombre + " FROM "s + *nameTablePartidos +                         // q2 consulta acerca de la catidad de votos que tiene el partido nulo
                                  " WHERE "s + *nameColumnPartidosNombre + " = '"s + *nameColumnNuloPartido + "';"s;
                 sendquery(q2.data(), 0, 0);
-                strresultados += outQuery;
+                strresultados += outQuery;                                                                                      // La respuesta se almacena en strresultados
             }
-            else
+            else                                // Si no se encontró el partido nulo, entonces ejecuta la query normalmente
             {
                 std::string q = "SELECT "s + *nameColumnVotosNombre + " FROM "s + *nameTablePartidos;
                 sendquery(q.data(), 0, 0);
-                strresultados = outQuery;
+                strresultados = outQuery;     // Y almacena el resultado de todos los partidos en strresultados
             }
-            std::string qAbs = "SELECT COUNT(*) FROM "s + *nameTableEstudiantes +
+            std::string qAbs = "SELECT COUNT(*) FROM "s + *nameTableEstudiantes +           // Procede a realizar la query para obtener la cantidad de estudiantes cuyo valor de la columna Voto es igual a 0, es decir, no votaron
                                " WHERE "s + *nameColumnVotoNombre + " = '0';";
             sendquery(qAbs.data(), 0, 0);
-            strresultados += outQuery;
-            restartResultados = false;
+            strresultados += outQuery;                                  // Y la cantidad de estudiantes que no votaron se almacena en strresultados, estos estudiantes serían el valor de la cantidad de abstensionismo
+            restartResultados = false;            // Y como ya actualizó los datos, procede a desactivar a restartResultados
         }
 
-        for (int chr = 0; chr < (int)strresultados.length(); chr++)
+        for (int chr = 0; chr < (int)strresultados.length(); chr++)           // Ahora, por cada carácter de strresultados...
         {
-            if (strresultados[chr] != '\n') votes += strresultados[chr];
-            else if (!votes.empty()) { percentages.push_back(std::stoi(votes)); votes = ""; }
-        }
-
-        resTogglePtr->status = isPressed(resTogglePtr);
-        if (resTogglePtr->status == 4)
-        {
-            if ((std::string)outResultsMode == "quantity") { outResultsMode = "percentages"; resTogglePtr->name = "#"; }
-            else                                           { outResultsMode = "quantity";    resTogglePtr->name = "%"; }
-        }
-
-        informePtr->status = isPressed(informePtr);
-        if (informePtr->status == 4)
-        {
-            statistics("backend", "percentages", percentages, partidosVec);
-            std::vector<int> quantities;
-            for (int chr = 0; chr < (int)strresultados.length(); chr++)
-            {
-                if (strresultados[chr] != '\n') votes += strresultados[chr];
-                else if (!votes.empty()) { quantities.push_back(std::stoi(votes)); votes = ""; }
+            if (strresultados[chr] != '\n') votes += strresultados[chr];      // Si el carácter NO es un newline, acumulará los carácteres recorridos en votes
+            else if (!votes.empty()) {                                        // Ahora, si ocurre este if, significa que el carácter sí es un newline, y de paso verificará si votes NO está vacío, así que...
+              percentages.push_back(std::stoi(votes));                        // Se introducirá el valor de votes como un valor entero con stoi, y se introducirá en el vector percentages
+              votes = "";                                                     // Luego, vacía a votes, para almacenar el siguiente valor en el bucle
             }
-            successfulPdfCreation = inform(percentages, quantities);
         }
-        statistics("backend", outResultsMode, percentages, partidosVec);
+
+        resTogglePtr->status = isPressed(resTogglePtr);                       // Se verifica el estado del botón resToggle, el cual es el que se encuentra encima de la gráfica con un símbolo de # o de %, cambiará la gráfica
+        if (resTogglePtr->status == 4)                                        // Si el botón fue presionado...
+        {                                                                                                                         // outResultsMode es la variable que modifica el modo de mostrar la gráfica, si en porcentajes o en cantidades
+            if ((std::string)outResultsMode == "quantity") { outResultsMode = "percentages"; resTogglePtr->name = "#"; }          // Si el valor de outResultsMode era "quantity", lo pasa a percentages, y cambia el símbolo del botón
+            else                                           { outResultsMode = "quantity";    resTogglePtr->name = "%"; }          // Si el valor más bien era "percentages", cambiará el valor a "quantity", y cambiará el símbolo del botón
+        }
+
+        informePtr->status = isPressed(informePtr);                           // Se verifica el estado del botón inforne, el cual es el que se encarga de enviar la señal de generar un PDF
+        if (informePtr->status == 4)                                          // Si el estado de informe es igual a 4, es decir, si el botón informe fue presionado...
+        {
+            statistics("backend", "percentages", percentages, partidosVec);   // Llamará a la función statistics, que internamente se encarga de convertir los valores de las votaciones de cantidades a porcentajes por medio de "percentages"
+            std::vector<int> quantities;                                      // Declarará un vector llamado quantities, el cual almacenará las cantidades de los votos, NO porcentajes, ya que están ya almacenados en el vector percentages
+            for (int chr = 0; chr < (int)strresultados.length(); chr++)       // Recorrerá cada carácter de strresultados, el cual por defecto ya almacena las cantidades de los votos
+            {
+                if (strresultados[chr] != '\n') votes += strresultados[chr];                          // Este bucle es casi el mismo que el que se encuentra alrededor de la línea 440, su propósito es guardar los valores del string strresultados
+                else if (!votes.empty()) { quantities.push_back(std::stoi(votes)); votes = ""; }      // como valores enteros dentro del nuevo vector quantities
+            }
+            successfulPdfCreation = inform(percentages, quantities);      // Ahora con los vectores que almacenan las cantidades y porcentajes, se puede llamar a inform() para crear el pdf, y el código de estado lo almacenará successfulPdfCreation
+        }
+
+        statistics("backend", outResultsMode, percentages, partidosVec);      // Esta función se encarga de siempre llamar la gráfica, se llama siempre al final de la pestaña
     }
 
     // ── Terminal ──────────────────────────────────────────────────────────────
-    else if (adminSelected == butnames[6])
+    else if (adminSelected == butnames[6])          // En caso de que la pestaña seleccionada sea igual a "Terminal"...
     {
-        oldSelected = adminSelected;
-        if (restartTerminal)
+        oldSelected = adminSelected;                // Se actualiza oldSelected por la misma razón que se actualiza en "Explorar"
+        if (restartTerminal)                        // Si se debe de reiniciar la terminal, entonces...
         {
-            if (adminAuthenticated) intentosRestantes = 3;
-            adminAuthenticated = false;
-            adminButtons[6]->outLog = "";
-            for (int b = 0; b < (int)termBars.size(); b++)
-            { termBars[b]->input32 = U""; termBars[b]->input = ""; termBars[b]->status = 0; }
-            termBars[0]->status = 4;
-            restartTerminal = false;
-            invalidIp = false; invalidCredentials = false; inputEmpty = false;
+            if (adminAuthenticated) intentosRestantes = 3;                                          // Los intentos de autenticación se reinician a 3
+            adminAuthenticated = false;                                                             // La variable que verifica si se autenticó a la terminal se asigna a false, para reiniciar la autenticación
+            adminButtons[6]->outLog = "";                                                           // El log de la terminal se vacía, para no mostrar comandos digitados en sesiones anteriores
+            for (int b = 0; b < (int)termBars.size(); b++)                                          // A continuación, un bucle recorrerá todas las barras de entrada de la terminal, estas barras son las que sirven para autenticarse
+            { termBars[b]->input32 = U""; termBars[b]->input = ""; termBars[b]->status = 0; }       // Y procederá a vaciar todas las barras, y las declarará como inactivas con status igual a cero
+            termBars[0]->status = 4;                                                                // Luego, procederá a declarar automáticamente a la primera barra como activa
+            restartTerminal = false;                                                                // Además, desactivará el reinicio de la terminal para que no se reinicie eternamente
+            invalidIp = false; invalidCredentials = false; inputEmpty = false;                      // Y reiniciará las variables que avisan si se digitó una IP inválida, si las credenciales son inválidas, o si alguna credencial está vacía
             return;
         }
-        else if (adminAuthenticated)
+        else if (adminAuthenticated)              // Si el administrador SÍ se encuentra autenticado...
         {
-            adminTerminalPtr->status   = isPressed(adminTerminalPtr);
-            barAdminTerminalPtr->status = isPressed(barAdminTerminalPtr);
-            if (adminTerminalPtr->status > 1 || barAdminTerminalPtr->status > 1)
+            adminTerminalPtr->status   = isPressed(adminTerminalPtr);                                                     // El cuadro de la terminal estará constantemente revisando su estado
+            barAdminTerminalPtr->status = isPressed(barAdminTerminalPtr);                                                 // Como también, la barra de comandos estará revisando su estadp
+            if (adminTerminalPtr->status > 1 || barAdminTerminalPtr->status > 1)                                          // Si se está interactuando con el cuadro de la terminal o con la barra de comandos, entonces...
             {
-                if (adminTerminalPtr->status > 1 && barAdminTerminalPtr->status == 0)
-                { adminTerminalPtr->status = 0; barAdminTerminalPtr->status = 2; }
-                inputfunc("backend", barAdminTerminalPtr, 1024, "allchars-admin", littleFontSize, WHITE, 6);
-                if (IsKeyPressed(KEY_ENTER))
+                if (adminTerminalPtr->status > 1 && barAdminTerminalPtr->status == 0)                                     // En caso de que sea de que se interactúe en este instante con el cuadro y NO con la barra de comandos, entonces...
+                { adminTerminalPtr->status = 0; barAdminTerminalPtr->status = 2; }                                        // Asignará al cuadro de la terminal como inactivo y a la barra como activa, ya que es la que debe de recibir la input
+                inputfunc("backend", barAdminTerminalPtr, 1024, "allchars-admin", littleFontSize, WHITE, 6);              // Ahora, a la barra de comandos se le estará recibiendo datos de entrada a través de inputfunc()
+                if (IsKeyPressed(KEY_ENTER))                                                                              // Si se presiona la tecla ENTER...
                 {
-                    outputTerm = ptyfunc(barAdminTerminalPtr->input,
-                                         termBars[3]->input, termBars[4]->input,
-                                         termBars[0]->input, termBars[1]->input,
-                                         termBars[2]->input);
-                    adminButtons[6]->outLog += barAdminTerminalPtr->input + "\n" + outputTerm;
-                    logCommands.push_back(barAdminTerminalPtr->input);
-                    barAdminTerminalPtr->input32 = U"";
-                    barAdminTerminalPtr->input   = "";
-                    logpos = 0;
+                    if (barAdminTerminalPtr->input != "clear") {                                          // Si el comando digitado NO es igual a "clear"
+                        outputTerm = ptyfunc(barAdminTerminalPtr->input,                                                      // outputTerm almacenará los datos de salida de la función ptyfunc(), la cual se encarga de enviar el comando digitado
+                                             termBars[3]->input, termBars[4]->input,                                          // A través de las credenciales previamente usadas para la autenticación
+                                             termBars[0]->input, termBars[1]->input,
+                                             termBars[2]->input);
+                        adminButtons[6]->outLog += barAdminTerminalPtr->input + "\n" + outputTerm;                            // El log de los comandos se actualizará con el comando digitado, un newline, y la respuesta recibida del comando
+                        logCommands.push_back(barAdminTerminalPtr->input);                                                    // Y el comando digitado se guardará en el historial deo comandos logCommands
+                        barAdminTerminalPtr->input32 = U"";                                                                   // Se vaciará la barra de datos de entrada
+                        barAdminTerminalPtr->input   = "";
+                        logpos = 0;                                                                                           // Y la posición en el historial se reiniciará a cero
+                    }
+                    else                        //  En caso de que el comando SÍ era igual a clear, procederá a limpiar la terminal
+                    {
+                        barAdminTerminalPtr->input32 = U"";                                             // Se vaciará la barra de datos de entrada
+                        barAdminTerminalPtr->input   = "";
+                        adminButtons[6]->outLog = "";                                                   // Se vacía el log
+                        logpos = 0;                                                                     // Reiniciará la posición en el historial
+                    }
                 }
             }
         }
-        else  // No autenticado — formulario de credenciales
+        else                                // Si el administrador NO se encuentra autenticado...
         {
-            for (int b = 0; b < (int)termBars.size(); b++)
+            for (int b = 0; b < (int)termBars.size(); b++)                                                        // Recorrerá cada barra de entrada encargada de recibir las credenciales de acceso
             {
-                if (IsKeyPressed(KEY_TAB))
+                if (IsKeyPressed(KEY_TAB))                                                                        // Si se presiona la tecla TAB podrá cambiar de barra de entrada rápidamente a la siguiente o a la primera
                 {
-                    if (termBars[b]->status > 1 && b + 1 < (int)termBars.size())
-                    { termBars[b]->status = 0; termBars[b + 1]->status = 2; beam = 0; break; }
-                    else if (termBars[b]->status > 1 && b + 1 == (int)termBars.size())
-                    { termBars[b]->status = 0; termBars[0]->status = 2; beam = 0; break; }
+                    if (termBars[b]->status > 1 && b + 1 < (int)termBars.size())                                  // Si la barra actual en el bucle está recibiendo interacción alguna ya que su estado > 1 y NO es la última barra...
+                    {
+                        termBars[b]->status = 0;                                                                  // Su estado cambiará a cero
+                        termBars[b + 1]->status = 2;                                                              // El estado de la siguiente barra cambiará a 2, suficiente para activarse y recibir datos de entrada
+                        beam = 0; break;                                                                          // Reiniciará el parpadeo de la barra parpadeante y romperá el bucle
+                    }
+                    else if (termBars[b]->status > 1 && b + 1 == (int)termBars.size())                            // Si la barra actual está recibiendo interacción alguna ya que su estado es mayor a 1 y SÍ es la última barra...
+                    {
+                        termBars[b]->status = 0;                                                                  // Su estado cambiará a cero
+                        termBars[0]->status = 2;                                                                  // El estado de la primera barra cambiará a 2
+                        beam = 0; break;                                                                          // Reiniciará el parpadeo de la barra parpadeante y romperá el bucle
+                    }
                 }
-                else termBars[b]->status = isPressed(termBars[b]);
+                else termBars[b]->status = isPressed(termBars[b]);                                                // En caso de que NO se presione la tecla tab, solo estará vigilando el estado de cada barra
 
-                if (termBars[b]->status > 1)
+                if (termBars[b]->status > 1)                                                                      // Si el estado de la barra actual es superior a 1, es decir, se está interactuando con esa barra
                 {
-                    if (termBars[b]->name != termBars[1]->name)
-                        inputfunc("backend", termBars[b], 45, "allchars", mediumFontSize, WHITE);
-                    else
-                        inputfunc("backend", termBars[b], 50, "numberonly", mediumFontSize, WHITE);
+                    if (termBars[b]->name != termBars[1]->name)                                                   // Y si la barra actual no es la del índice 1 (osea la segunda, la cual recibe el puerto a conectar) entonces...
+                        inputfunc("backend", termBars[b], 45, "allchars", mediumFontSize, WHITE);                 // Procederá a recibir datos de cualquier tipo de carácter
+                    else                                                                                          // En cambio de que sí sea la del índice 1 (la segunda, la del puerto a conectar) entonces...
+                        inputfunc("backend", termBars[b], 10, "numberonly", mediumFontSize, WHITE);               // Solo recibirá datos de entrada que sea únicamente números
                 }
 
-                if (IsKeyPressed(KEY_ENTER))
+                if (IsKeyPressed(KEY_ENTER))                                                                      // Si se presiona la tecla ENTER, significa que se desea conectar a la base de datos con las credenciales proveídas
                 {
-                    if (!termBars[0]->input.empty() && !termBars[1]->input.empty() &&
+                    if (!termBars[0]->input.empty() && !termBars[1]->input.empty() &&                             // Se comprueba si ninguna barra excepto la de password está vacía (ya que dependiendo la configuración, password puede ser vacía)
                         !termBars[2]->input.empty() && !termBars[3]->input.empty())
                     {
-                        if (validIP(termBars[0]->input))
+                        if (validIP(termBars[0]->input))                                                          // Se verificará si la IP es válda, si SÍ es válida, entrará al siguiente para la autenticación
                         {
-                            auth = mysql_init(NULL);
-                            if (!mysql_real_connect(auth,
+                            auth = mysql_init(NULL);                                                              // Inicializa el puntero auth, el cual almacenará la dirección en memoria de la autenticación desde la terminal
+                            if (!mysql_real_connect(auth,                                                         // Si mysql_real_connect() llega a tener un error significa que las credenciales NO son válidas, entonces...
                                                     termBars[0]->input.data(), termBars[3]->input.data(),
                                                     termBars[4]->input.data(), termBars[2]->input.data(),
                                                     std::stoi(termBars[1]->input), NULL, 0))
                             {
-                                mysql_close(auth); auth = nullptr;
-                                intentosRestantes--;
-                                invalidCredentials = true;
+                                mysql_close(auth); auth = nullptr;                                                // Se cerrará la conexión a la que apuntaba el puntero auth, y declarará a auth como un puntero vacío, para limpiar la conexión
+                                intentosRestantes--;                                                              // Resta los intentosRestantes 
+                                invalidCredentials = true;                                                        // Activa a invalidCredentials, para avisar en el frontend que las credenciales son inválidas
                                 break;
                             }
-                            else adminAuthenticated = true;
+                            else adminAuthenticated = true;                                                       // Si el if anterior no llega a tener un error, significa que las credenciales SÍ son válidas, entonces adminAuthenticated será true
                         }
-                        else invalidIp = true;
+                        else invalidIp = true;                                                                    // En caso de que la IP sea inválida, declarará a invalidIp como true para avisar de esto y enviar un mensaje en el frontend
                     }
-                    else inputEmpty = true;
+                    else inputEmpty = true;                                                                       // En caso de que haya alguna barra vacía, declarará a inputEmpty como true, para avisar de esto y enviar un mensaje en el frontend
                 }
             }
         }
@@ -548,138 +572,153 @@ void screenAdminmenuUpdate(Screen &currentScreen,
 }
 
 // ── Frontend ──────────────────────────────────────────────────────────────────
-void screenAdminmenuDraw(bool &invalidCredentials, bool &inputEmpty, bool &invalidIp,
-                         bool &adminAuthenticated_local, bool &successfulPdfCreation,
-                         const std::string &explorarFinalOutput, std::string& modeInput,
-                         std::string &outResultsMode)
+void screenAdminmenuDraw(bool &invalidCredentials,                                              // Llama a variables que
+                         bool &inputEmpty,                                                      // sirven para verificar
+                         bool &invalidIp,                                                       // principalmente errores
+                         bool &adminAuthenticated_local,                                        // en la autenticación en "Terminal"
+                         bool &successfulPdfCreation,                                           // y la creación del pdf de informe
+                         const std::string &explorarFinalOutput,                                // como también la output de "Explorar"
+                         std::string& modeInput,                                                // el modo de entrada de la columna actual
+                         std::string &outResultsMode)                                           // y el tipo de modo para la gráfica en "Resultados"
 {
-    drawSelected(adminButtons, littleFontSize, adminSelected);
-    DrawRectangle(adminPanel[0], adminPanel[1] + terminalBarPtr->ysize - 1,
+    drawSelected(adminButtons, littleFontSize, adminSelected);                                  // Empieza a dibujar los botones de las pestañas del panel de administración
+    DrawRectangle(adminPanel[0], adminPanel[1] + terminalBarPtr->ysize - 1,                     // Dibuja el cuadro del fonto
                   adminPanel[2], adminPanel[3], VOCADORADOSUAVE);
-    DrawTextEx(fontTtf, "Panel de Administracion"s.data(),
+    DrawTextEx(fontTtf, "Panel de Administracion"s.data(),                                      // Y escribe el título "Panel de Administracion"
                (Vector2){(float)centertext("Panel de Administracion"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.05)},
                fontSize, 2, BLACK);
 
-    if (adminSelected == butnames[0])
-        oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);
-    else if (adminSelected == butnames[1])
-        oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);
-    else if (adminSelected == butnames[2])
+    // ── Consultar ──────────────────────────────────────────────────────────────────────────
+    if (adminSelected == butnames[0])                                                                         // Si la pestaña actual es "Consultar"
+        oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);       // Dibuja las columnas y tablas normalmente
+    // ── Agregar ────────────────────────────────────────────────────────────────────────────
+    else if (adminSelected == butnames[1])                                                                    // Si la pestaña actual es "Agregar"
+        oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);       // Dibuja las columnas y tablas normalmente
+    // ── Actualizar ─────────────────────────────────────────────────────────────────────────
+    else if (adminSelected == butnames[2])                                                                    // Si la pestaña actual es "Actualizar"
     {
-        oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);
-        PrettyDrawRectangle(opcionActPtr);
-        if (opcionActPtr->status > 1)
+        oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);       // Dibuja las columnas y tablas normalmente y...
+        PrettyDrawRectangle(opcionActPtr);                                                                    // Dibuja la opción de la lista desplegable
+        if (opcionActPtr->status > 1)                                                                         // Si el estado del botón es mayor a uno, es decir, está recibiendo interacción alguna, entonces...
         {
-            for (int counter = 0; counter < (int)opcionesAct.size(); counter++)
+            for (int counter = 0; counter < (int)opcionesAct.size(); counter++)                               // Recorrerá todo el vector de opciones y...
             {
-                PrettyDrawRectangle(opcionesAct[counter]);
-                DrawTextEx(fontTtf, opcionesAct[counter]->name.data(),
+                PrettyDrawRectangle(opcionesAct[counter]);                                                    // Dibujará el cuadro de cada opción
+                DrawTextEx(fontTtf, opcionesAct[counter]->name.data(),                                        // Además del nombre de cada opción
                            (Vector2){(float)(opcionActPtr->xloc + littleFontSize),
                                       (float)(opcionesAct[counter]->yloc + (opcionesAct[counter]->ysize * 0.5) - (littleFontSize * 0.5))},
                            littleFontSize, 2, BLACK);
             }
         }
-        else
+        else                                                                                                  // En caso de que el estado del botón NO es mayor a uno, es decir, no se está interactuando con él
         {
-            if (opcSelectedPtr->name == opcionActPtr->name)
+            if (opcSelectedPtr->name == opcionActPtr->name)                                                   // Verifica si opcSelected tiene el nombre por defecto de opcionAct
             {
-                DrawTextEx(fontTtf, opcionActPtr->name.data(),
+                DrawTextEx(fontTtf, opcionActPtr->name.data(),                                                // Y dibuja el nombre por defecto de opcionAct
                            (Vector2){(float)(opcionActPtr->xloc + littleFontSize),
                                       (float)(opcionActPtr->yloc + (opcionActPtr->ysize * 0.5) - (littleFontSize * 0.5))},
                            littleFontSize, 2, BLACK);
             }
-            else
+            else                                                                                              // Si la opción opcSelected NO es el nombre por defecto de opcionAct, es decir, SÍ se seleccionó una opción de la lista desplegable
             {
-                DrawTextEx(fontTtf, opcSelectedPtr->name.data(),
+                DrawTextEx(fontTtf, opcSelectedPtr->name.data(),                                              // Escribirá el nombre de la opción seleccionada
                            (Vector2){(float)(opcionActPtr->xloc + littleFontSize),
                                       (float)(opcionActPtr->yloc + (opcionActPtr->ysize * 0.5) - (littleFontSize * 0.5))},
                            littleFontSize, 2, BLACK);
-                PrettyDrawRectangle(actBarPtr);
-                if      (opcSelectedPtr->type == "tinyint") modeInput = "boolean";
+                PrettyDrawRectangle(actBarPtr);                                                               // Procederá a dibujar la barra de datos de entrada
+                if      (opcSelectedPtr->type == "tinyint") modeInput = "boolean";                            // Y declarará el modo de datos de entrada
                 else if (opcSelectedPtr->type == "int")     modeInput = "regexponly";
                 else if (opcSelectedPtr->type == "varchar") modeInput = "allchars";
-                inputfunc("frontend", actBarPtr, opcSelectedPtr->maxlen, modeInput, littleFontSize);
+                inputfunc("frontend", actBarPtr, opcSelectedPtr->maxlen, modeInput, littleFontSize);          // Para luego mostrar los datos introducidos en la barra de datos de entrada
             }
         }
     }
-    else if (adminSelected == butnames[3])
-        oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);
-    else if (adminSelected == butnames[4])
+    // ── Borrar ─────────────────────────────────────────────────────────────────────────────
+    else if (adminSelected == butnames[3])                                                                    // Si la pestaña actual es "Borrar"
+        oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);       // Dibuja las columnas y tablas normalmente
+    // ── Explorar ───────────────────────────────────────────────────────────────────────────
+    else if (adminSelected == butnames[4])                                                                    // Si la pestaña actual es "Explorar"
     {
-        DrawRectangle(explorarSquare[0], explorarSquare[1], explorarSquare[2], explorarSquare[3],
+        DrawRectangle(explorarSquare[0], explorarSquare[1], explorarSquare[2], explorarSquare[3],             // Dibuja el cuadro de fondo de los datos de "Explorar"
                       Fade(VOCADORADO, 0.5f));
-        drawSelected(tablesVec, littleFontSize, tableSelected);
-        DrawTextEx(fontTtf, explorarFinalOutput.data(),
+        drawSelected(tablesVec, littleFontSize, tableSelected);                                               // Dibuja las tablas
+        DrawTextEx(fontTtf, explorarFinalOutput.data(),                                                       // Y dibuja la salida de la información de la tabla actual
                    (Vector2){(float)(screenWidth * 0.13), (float)(explorarSquare[1] * 1.095)},
                    littleFontSize, 2, BLACK);
     }
-    else if (adminSelected == butnames[5])
+    // ── Resultados ─────────────────────────────────────────────────────────────────────────
+    else if (adminSelected == butnames[5])                                                                    // Si la pestaña actual es resultados
     {
-        statistics("frontend", outResultsMode, percentages, partidosVec, screenWidth * 0.15, screenHeight * 0.5);
-        PrettyDrawRectangle(resTogglePtr);
-        DrawTextEx(fontTtf, resTogglePtr->name.data(),
+        statistics("frontend", outResultsMode, percentages, partidosVec, screenWidth * 0.15, screenHeight * 0.5);               // Dibujará el gráfico
+        PrettyDrawRectangle(resTogglePtr);                                                                                      // Dibujará el botón encargado de cambiar de porcentajes a cantidades
+        DrawTextEx(fontTtf, resTogglePtr->name.data(),                                                                          // Dibujará el nombre del botón
                    (Vector2){(float)(resTogglePtr->xloc + littleFontSize / 2),
                               (float)(resTogglePtr->yloc + littleFontSize / 3)},
                    littleFontSize, 2, BLACK);
-        PrettyDrawRectangle(informePtr);
-        DrawTextEx(fontTtf, informePtr->name.data(),
+        PrettyDrawRectangle(informePtr);                                                      // Dibujará el botón para hacer el informe en PDF
+        DrawTextEx(fontTtf, informePtr->name.data(),                                          // Dibujará el nombre del botón del PDF
                    (Vector2){(float)(informePtr->xloc + (informePtr->xsize * 0.5) - (informePtr->name.length() * littleFontSize) * 0.35),
                               (float)(informePtr->yloc + (informePtr->ysize * 0.5) - littleFontSize * 0.5)},
                    littleFontSize, 2, BLACK);
-        if (pdfError)            shortmessage("ERROR: Ocurrio un error al crear el PDF", fontSize, pdfError);
-        else if (pdfFontError)   shortmessage("ERROR: Ocurrio un error al cargar la fuente de texto", fontSize, pdfFontError);
-        else if (pdfRandomError) shortmessage(pdfErrorString, fontSize, pdfRandomError);
-        else if (successfulPdfCreation) shortmessage("PDF creado con exito!", fontSize, successfulPdfCreation);
+        // Verificación de errores de la función informe() relacionados a la creación del PDF
+        if (pdfError)            shortmessage("ERROR: Ocurrio un error al crear el PDF", fontSize, pdfError);                     // Si se activa pdfError desde la función informe(), mostrará ese mensaje
+        else if (pdfFontError)   shortmessage("ERROR: Ocurrio un error al cargar la fuente de texto", fontSize, pdfFontError);    // Si hubo un error con la fuente de texto, se activa pdfFontError desde la función informe(), y muestra ese mensaje
+        else if (pdfRandomError) shortmessage(pdfErrorString, fontSize, pdfRandomError);                                          // Si hubo un error muy específico desde la función informe(), entonces muestra el código de error
+        else if (successfulPdfCreation) shortmessage("PDF creado con exito!", fontSize, successfulPdfCreation);                   // Si el PDF se creó con éxito, muestra ese mensaje
     }
-    else if (adminSelected == butnames[6])
+    // ── Terminal ───────────────────────────────────────────────────────────────────────────
+    else if (adminSelected == butnames[6])                              // Si la pestaña actual es "Terminal"
     {
-        if (adminAuthenticated)
+        if (adminAuthenticated)                                         // Si el administrador se encuentra autenticado...
         {
-            DrawRectangle(
+            DrawRectangle(                                              // Dibujará el cuadro de la terminal
                 adminTerminalPtr->xloc,
                 adminTerminalPtr->yloc,
                 adminTerminalPtr->xsize,
                 adminTerminalPtr->ysize,
                 BLACK
                 );
-            DrawRectangle(
+            DrawRectangle(                                              // Y también la barra de comandos de la terminal
                 barAdminTerminalPtr->xloc,
                 barAdminTerminalPtr->yloc,
                 barAdminTerminalPtr->xsize,
                 barAdminTerminalPtr->ysize,
                 BLACK
                 );
-            inputfunc("frontend", barAdminTerminalPtr, 1024, "allchars-admin", littleFontSize, WHITE);
-            logfunction(adminSelected);
+            inputfunc("frontend", barAdminTerminalPtr, 1024, "allchars-admin", littleFontSize, WHITE);        // Además de que dibujará los datos de entrada que se están escribiendo en la terminal
+            logfunction(adminSelected);                                                                       // Luego, muestra los datos con logfunction()
         }
-        else if (!adminAuthenticated && intentosRestantes > 0)
+        else if (!adminAuthenticated && intentosRestantes > 0)                            // Verifica si no se han agotado los intentos de autenticación, en caso de que no se hayan agotado, entonces...
         {
-            for (int b = 0; b < (int)termBars.size(); b++)
+            for (int b = 0; b < (int)termBars.size(); b++)                                // Recorrerá todas las barras de entrada para las credenciales de autenticación
             {
-                DrawTextEx(fontTtf, termBars[b]->name.data(),
+                DrawTextEx(fontTtf, termBars[b]->name.data(),                             // Dibujará el nombre de cada barra
                            (Vector2){(float)(screenWidth * 0.12),
                                       (float)(termBars[b]->yloc + (termBars[b]->ysize * 0.5) - (mediumFontSize * 0.5))},
                            mediumFontSize, 0, BLACK);
-                PrettyDrawRectangle(termBars[b]);
-                inputfunc("frontend", termBars[b], 0, "allchars", mediumFontSize);
+                PrettyDrawRectangle(termBars[b]);                                         // Y también dibujará la barra misma
+                inputfunc("frontend", termBars[b], 0, "allchars", mediumFontSize);        // Además de dibujar los dtos que se hayan introducido en la barra actual del bucle
             }
         }
-        else
+        else                          // En caso de que se hayan agotado los intentos de autenticación...
         {
-            DrawTextEx(fontTtf, "Ha agotado sus intentos, retirese"s.data(),
+            DrawTextEx(fontTtf, "Ha agotado sus intentos, retirese"s.data(),              // Mostrará un mensaje diciendo que se agotaron los intentos
                        (Vector2){(float)centertext("Ha agotado sus intentos, retirese"s, screenWidth, fontSize),
                                   (float)(screenHeight * 0.5)},
                        fontSize, 2, BLACK);
         }
-        if (invalidCredentials)
-            shortmessage("Credenciales invalidas, tiene "s + std::to_string(intentosRestantes) + " intentos restantes"s,
+        // Verificación de errores relacionados a la autenticación
+        if (invalidCredentials)                 // Si las credenciales son inválidas...
+            shortmessage("Credenciales invalidas, tiene "s + std::to_string(intentosRestantes) + " intentos restantes"s,        // Mostrará el siguiente mensaje con la cantidad de intentos restantes
                          mediumFontSize, invalidCredentials);
-        else if (inputEmpty) shortmessage("Los datos se encuentran vacios", fontSize, inputEmpty);
-        else if (invalidIp)  shortmessage("La IP digitada es invalida",     fontSize, invalidIp);
+        else if (inputEmpty) shortmessage("Los datos se encuentran vacios", fontSize, inputEmpty);          // Si hay credenciales vacías, mostrará el siguiente mensaje
+        else if (invalidIp)  shortmessage("La IP digitada es invalida",     fontSize, invalidIp);           // Si la IP es inválida, mostrará el siguiente mensaje
     }
 
-    PrettyDrawRectangle(enterConfigPtr);
-    PrettyDrawRectangle(exitAdminPtr);
-    PrettyDrawRectangle(refreshPtr);
+    // Botones en las esquinas
+
+    PrettyDrawRectangle(enterConfigPtr);      // Dibuja el botón para entrar a la configuración del programa
+    PrettyDrawRectangle(exitAdminPtr);        // Dibuja el botón para salir del panel de administración
+    PrettyDrawRectangle(refreshPtr);          // Dibuja el botón para refrescar los datos cargados desde la base de datos
 }

@@ -26,11 +26,13 @@ if  [ $? -eq 0 ]; then                                                  # Si el 
   echo "Eliminando .rar anterior para crear el actualizado..."
   rm ./bin/windows/SistemaVotaciones.rar
   chmod +x ./bin/windows/main.exe
+  mv ./bin/windows/main.exe "./bin/windows/Sistema de Votaciones.exe"   # Renombro el ejecutable de "main.exe" a "Sistema de Votaciones.exe"
   rar a -ep ./bin/windows/SistemaVotaciones.rar ./bin/windows/dlls/*
   rar a -ep1 ./bin/windows/SistemaVotaciones.rar ./bin/windows/mariadb-11.4.10-winx64/*
+  rar a ./bin/windows/SistemaVotaciones.rar ./bin/windows/VC_redist.x64.exe
   rar a ./bin/windows/SistemaVotaciones.rar ./fonts/*
-  rar a -ep ./bin/windows/SistemaVotaciones.rar ./bin/windows/main.exe
-  rm ./bin/windows/main.exe
+  rar a -ep ./bin/windows/SistemaVotaciones.rar "./bin/windows/Sistema de Votaciones.exe"
+  rm "./bin/windows/Sistema de Votaciones.exe"
 else
   echo "\nLa creación del compilado tuvo errores, abortando..."
   exit
