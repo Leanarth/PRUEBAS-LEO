@@ -11,35 +11,48 @@
 #include <chrono>
 #include <string.h>
 
-void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpdating,
-                        bool& invalidIp, bool& inputEmpty, bool& fromAdmin)
-{
-    if (IsWindowResized()) loadConfig();
+// Esta función se encarga del backend de la pantalla CONFIGURATION
 
-    if (IsGestureDetected(GESTURE_TAP))
+void screenConfigUpdate(Screen& currentScreen,            // La función necesita el valor de la pantalla actual
+                        bool& errorConfig,                // Necesita la variable que verifica si hubo un error en la función configureData()
+                        bool& errorUpdating,              // Necesita la variable que verifica si hubo un error en la función updateData()
+                        bool& invalidIp,                  // Necesita saber si hubo un error con la IP introducida
+                        bool& inputEmpty,                 // Necesita saber si hay datos de entrada vacíos
+                        bool& fromAdmin)                  // Variable que sirve para saber si se llegó a entrar al panel de configuración desde la pantalla ADMINMENU y no desde LOGO
+{
+    if (IsWindowResized()) loadConfig();                  /* Si la ventana cambia de tamaño, se llamará a objectCreation() para crear los objetos de nuevo y modificar sus tamaños, así que también se debe cargar la configuración
+                                                             en las barras de entrada automáticamente para que no se pierdan los datos */
+
+    if (IsGestureDetected(GESTURE_TAP))                   // Si se percibe un clic...
     {
-        // Seleccion de pestana de configuracion
-        for (int i = 0; i < (int)configbuttons.size(); i++)
+        // Seleccion de pestaña de configuracion
+
+        for (int i = 0; i < (int)configbuttons.size(); i++)         // Recorrerá todas las pestañas de la pantalla CONFIGURATION
         {
-            configbuttons[i]->status = isPressed(configbuttons[i]);
-            if (configbuttons[i]->status == 4) configSelected = configbuttons[i]->name;
+            configbuttons[i]->status = isPressed(configbuttons[i]);                             // Se actualiza el estado de cada pestaña
+            if (configbuttons[i]->status == 4) configSelected = configbuttons[i]->name;         // Y si la pestaña actual en el bucle fue la que recibió el clic entonces actualizará a configSelected para que almacene la nueva pestaña seleccionada
         }
 
-        // Boton Guardar
-        if (isPressed(saveConfigPtr) == 4)
-        {
-            int emptyValues = 0;
-            for (int v = 0; v < (int)extraBars.size(); v++)
-                if (extraBars[v]->input32.empty()) emptyValues++;
-            for (int v = 0; v < (int)pathBars.size(); v++)
-                if (pathBars[v]->input32.empty()) emptyValues++;
+        // Botón saveConfig, el cual se encarga de guardar la configuración en el archivo de configuración, y de paso cargar la nueva configuración al programa
 
-            if (!termBars[0]->input.empty() && !termBars[1]->input.empty() &&
-                !termBars[2]->input.empty() && !termBars[3]->input.empty() &&
-                !admPasswordBarPtr->input.empty() && emptyValues == 0)
+        saveConfigPtr->status = isPressed(saveConfigPtr);
+        if (saveConfigPtr->status == 4)                  // Si se detecta que el botón saveConfig fue presionado...
+        {
+            int emptyValues = 0;        // Almacena la cantidad de barras que se encuentran vacías
+            for (int v = 0; v < (int)extraBars.size(); v++)             // Recorrerá todas las barras de entrada pertenecientes a extraBars (pestaña "Extra")
+                if (extraBars[v]->input32.empty()) emptyValues++;       // Si hay una barra vacía, se sumará un valor a emptyValues
+            for (int v = 0; v < (int)pathBars.size(); v++)              // Recorrerá todas las barras de entrada pertenecientes a pathBars (pestaña "Paths")
+                if (pathBars[v]->input32.empty()) emptyValues++;        // Si hay una barra vacía, se sumará un valor a emptyValues
+
+             // La comprobación de las barras termBars debe ser manual, ya que solo la barra de password puede estar vacía, a pesar de que las demás no
+
+            if (!termBars[0]->input.empty() && !termBars[1]->input.empty() &&       // Se comprueba de que solo la barra password
+                !termBars[2]->input.empty() && !termBars[3]->input.empty() &&       // de termBars sea la única vacía, y que ninguna de las demás no
+                !admPasswordBarPtr->input.empty() && emptyValues == 0)              // además de verificar de que emptyValues sea igual a 0, si no es igual a 0, alguna barra estaría vacía y esto no sería correcto para ejecutar lo de este if
             {
-                if (validIP(termBars[0]->input))
+                if (validIP(termBars[0]->input))                                    // Se valida de que la IP sea válida, si llega a ser válida, procederá con el if
                 {
+                    // Se realiza la carga de la configuración digitada en cada barra a las variables del programa
                     free(configurations[0]);  configurations[0]  = strdup(termBars[0]->input.data());         // IP
                     free(configurations[1]);  configurations[1]  = strdup(termBars[3]->input.data());         // Usuario
                     free(configurations[2]);  configurations[2]  = strdup(termBars[4]->input.data());         // Contrasena
@@ -51,185 +64,226 @@ void screenConfigUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpd
                     free(configurations[8]);  configurations[8]  = strdup(extraBars[5]->input.data());        // Columna Voto
                     free(configurations[9]);  configurations[9]  = strdup(extraBars[4]->input.data());        // Columna Votos
                     free(configurations[10]); configurations[10] = strdup(extraBars[2]->input.data());        // Columna Nombre partidos
-                    free(configurations[11]); configurations[11] = strdup(extraBars[3]->input.data());        // Columna Nulo
+                    free(configurations[11]); configurations[11] = strdup(extraBars[3]->input.data());        // Partido nulo
                     free(configurations[12]); configurations[12] = strdup(pathBars[0]->input.data());         // Font programa
                     free(configurations[13]); configurations[13] = strdup(pathBars[1]->input.data());         // Font PDF
                     free(configurations[14]); configurations[14] = strdup(pathBars[2]->input.data());         // Nombre PDF
-                }
-                else { invalidIp = true; }
-            }
-            else { inputEmpty = true; }
 
-            if (!invalidIp && !inputEmpty)
-            {
-                statusCodeUpdating = updateData();
-                objectCreation();
+                    statusCodeUpdating = updateData();                        // Se actualiza la información de la base de datos y se verifica que la configuración sea correcta, el código de estado de la función se guarda en statusCodeUpdating
+                    std::string oldConfigSelected = configSelected;           // Se guarda la última pestaña actual dentro de oldConfigSelected, esto para evitar de que el reinicio de los objetos hagan que la pestaña actual cambie
+                    objectCreation();                                         // Se vuelven a crear los objetos, debido a que deben de ser actualizados dependiendo del código de estado que haya devuelto updateData()
+                    configSelected = oldConfigSelected;                       // Se reasigna configSelected al valor que tenía previamente
 
-                if (statusCodeUpdating == 0)
-                {
-                    fs::path pathToConfig = fs::current_path() / ".config";
-                    std::ofstream cfgFile(pathToConfig);
-                    std::string outCredentials =
-                        "[Credentials]\nserver="s + *server + "\nuser="s + *user +
-                        "\npassword="s + *password + "\ndatabase="s + *database +
-                        "\nport="s + *port + "\nadmPassword="s + *admPassword + "\n"s;
-                    std::string outExtra =
-                        "\n[Extra]\nnameColumnPartidosNombre="s + *nameColumnPartidosNombre +
-                        "\nnameColumnNuloPartido="s + *nameColumnNuloPartido +
-                        "\nnameColumnVotosNombre="s + *nameColumnVotosNombre +
-                        "\nnameColumnVotoNombre="s + *nameColumnVotoNombre +
-                        "\nnameTableEstudiantes="s + *nameTableEstudiantes +
-                        "\nnameTablePartidos="s + *nameTablePartidos + "\n"s;
-                    std::string outPaths =
-                        "\n[Paths]\npathProgramFont="s + *pathProgramFont +
-                        "\npathPdfFont="s + *pathPdfFont +
-                        "\ninformeName="s + *informeName + "\n"s;
-                    cfgFile << outCredentials + outExtra + outPaths << std::endl;
-                    cfgFile.close();
-                    currentScreen = fromAdmin ? ADMINMENU : MAINMENU;
-                    fromAdmin = false;
+                    if (statusCodeUpdating == 0)                              // Si el updateData() NO tuvo errores, procederá a escribir en el archivo de configuración la configuración que está usando el programa
+                    {
+                        fs::path pathToConfig = fs::current_path() / ".config";                       // Busca al archivo .config en la carpeta actual, hay que recordar que este archivo es el archivo de configuración
+                        std::ofstream cfgFile(pathToConfig);                                          // Se procede a guardar en modo escritura la variable que almacena la ruta del archivo de confiuración
+                        std::string outCredentials =                                                  // Se empiezan a crear los strings que se escribirán en el archivo de configuración
+                            "[Credentials]\nserver="s + *server + "\nuser="s + *user +
+                            "\npassword="s + *password + "\ndatabase="s + *database +
+                            "\nport="s + *port + "\nadmPassword="s + *admPassword + "\n"s;
+                        std::string outExtra =
+                            "\n[Extra]\nnameColumnPartidosNombre="s + *nameColumnPartidosNombre +
+                            "\nnameColumnNuloPartido="s + *nameColumnNuloPartido +
+                            "\nnameColumnVotosNombre="s + *nameColumnVotosNombre +
+                            "\nnameColumnVotoNombre="s + *nameColumnVotoNombre +
+                            "\nnameTableEstudiantes="s + *nameTableEstudiantes +
+                            "\nnameTablePartidos="s + *nameTablePartidos + "\n"s;
+                        std::string outPaths =
+                            "\n[Paths]\npathProgramFont="s + *pathProgramFont +
+                            "\npathPdfFont="s + *pathPdfFont +
+                            "\ninformeName="s + *informeName + "\n"s;
+                        cfgFile << outCredentials + outExtra + outPaths << std::endl;                 // Se escriben los strings dentro del archivo de configuracion
+                        cfgFile.close();                                                              // Se cierra el archivo
+                        currentScreen = fromAdmin ? ADMINMENU : MAINMENU;                             // Y si la pantalla CONFIGURATION se cargó desde ADMINMENU, procederá a nombrar a currentScreen como ADMINMENU, sino, como MAINMENU
+                        fromAdmin = false;                                                            // fromAdmin se declara false, ya que se debe de resetear la variable por que no se necesita más
+                    }
+                    else                                                    // En caso de que updateData() SÍ tuvo errores...
+                    {
+                        errorUpdating = true;                                                                           // Cargará a errorUpdating como true, esta variable verifica si hubo errores en la actualización de los datos
+                        fs::path pathToLogs = fs::current_path() / "logs.txt";                                          // Se busca el archivo logs.txt para escribir el error que hubo
+                        std::ofstream logFile(pathToLogs, std::ios::app);                                               // El archivo logs.txt se abre en modo de escritura y se guarda en logFile
+                        logFile << "[ " << std::chrono::system_clock::now() << " ]  | >>> " << outQuery << "\n";        // Se escribe en el siguiente formato el error: "[ hora ] | >>> error"
+                        logFile.close();                                                                                // Se cierra el archivo
+                        loadConfig();                                                                                   // Se procede a cargar a las barras de entrada la configuraación previa
+                    }
                 }
-                else
-                {
-                    errorUpdating = true;
-                    fs::path pathToLogs = fs::current_path() / "logs.txt";
-                    std::ofstream logFile(pathToLogs, std::ios::app);
-                    logFile << "[ " << std::chrono::system_clock::now() << " ]  | >>> " << outQuery << "\n";
-                    logFile.close();
-                    loadConfig();
-                }
+                else { invalidIp = true; }            // Si la IP digitada era inválida, declarará a invalidIp como verdadero, para posteriormente enviar un mensaje sobre esto en el frontend
             }
+            else { inputEmpty = true; }               // Si alguna barra se encuentra vacía, inputEmpty se declara como verdadero, para posteriormente enviar un mensaje sobre esto en el frontend
+
         }
     }
 
     // Procesamiento de barras de entrada segun pestaña activa
-    if (configSelected == configbuttons[0]->name)   // Credenciales
-    {
-        for (int b = 0; b < (int)termBars.size(); b++)
-        {
-            if (IsKeyPressed(KEY_TAB))
-            {
-                if (termBars[b]->status > 1 && b + 1 < (int)termBars.size())
-                { termBars[b]->status = 0; termBars[b + 1]->status = 2; beam = 0; break; }
-                else if (termBars[b]->status > 1 && b + 1 == (int)termBars.size())
-                { termBars[b]->status = 0; admPasswordBarPtr->status = 2; beam = 0; break; }
-                else if (admPasswordBarPtr->status > 1)
-                { termBars[0]->status = 2; admPasswordBarPtr->status = 0; beam = 0; break; }
-            }
-            else termBars[b]->status = isPressed(termBars[b]);
 
-            if (termBars[b]->status > 1)
+    if (configSelected == configbuttons[0]->name)   // Si la pestaña activa es "Credenciales"...
+    {
+        for (int b = 0; b < (int)termBars.size(); b++)      // Recorrerá cada barra de la pestaña actual
+        {
+            if (IsKeyPressed(KEY_TAB))                      // Si se presiona la tecla TAB, procederá a cambiar entre barras | El funcionamiento es casi idéntico a como las funciones TAB en la pestaña "Terminal" de screen_adminmenu.cpp
             {
-                if (termBars[b]->name != termBars[1]->name)
-                    inputfunc("backend", termBars[b], 45, "allchars", mediumFontSize, WHITE);
-                else
-                    inputfunc("backend", termBars[b], 45, "numberonly", mediumFontSize, WHITE);
+                if (termBars[b]->status > 1 && b + 1 < (int)termBars.size())            // Si la barra actual tiene un estado mayor a 1, es decir, se está interactuando con la barra directamente, y la barra es menor al total de barras, entonces...
+                {
+                    termBars[b]->status = 0;                                            // La barra actual pasa a tener un estado igual a cero, ya que el punto de usar TAB es cambiar de barras
+                    termBars[b + 1]->status = 2;                                        // Y la barra siguiente pasa a tener un estado igual a 2, lo suficiente como para poder recibir datos de entrada
+                    beam = 0; break;                                                    // Ahora, el parpadeo de la barra parpadeante se reinicia a cero, y se rompe el bucle
+                }
+                else if (termBars[b]->status > 1 && b + 1 == (int)termBars.size())      // En caso de que la barra actual tenga un estado mayor a 1, es decir, se está interactuando directamente, y también es igual a la última barra, entonces...
+                {
+                    termBars[b]->status = 0;                                            // La barra actual procede a tener un estado igual a cero, para no seguir interactuando más con ella
+                    admPasswordBarPtr->status = 2;                                      // Y, ahora se interactuará con admPasswordBar, tiene que pasar a esta barra por que en este caso la última barra está fuera del vector termBars
+                    beam = 0; break;                                                    // El parpadeo se reinicia a cero y se rompe el bucle
+                }
+                else if (admPasswordBarPtr->status > 1)                                 // En caso de que admPasswordBar tenga un estado mayor a 1, es decir, se está interactuando directamente, entonces...
+                {
+                    admPasswordBarPtr->status = 0;                                      // La barra admPasswordBar pasa a estado cero para dejar de interactuar con ella
+                    termBars[0]->status = 2;                                            // La primera barra del vector pasa a ser la barra activa
+                    beam = 0; break;                                                    // El parpadeo se reinicia a cero y se rompe el bucle
+                }
+            }
+            else termBars[b]->status = isPressed(termBars[b]);                          // En caso de que no se presione la tecla TAB, entonces solo estará vigilando el estado de la barra actual
+
+            if (termBars[b]->status > 1)                                                // Y si la barra actual está interactuandose directamente...
+            {
+                if (termBars[b]->name != termBars[1]->name)                                         // Si la barra NO es igual al índice uno de termBars (termBars[1] es el puerto) entonces...
+                    inputfunc("backend", termBars[b], 45, "allchars", mediumFontSize, WHITE);       // El modo de entrada será allchars
+                else                                                                                // En caso de que la barra sí sea igual al índice uno de termBars, entonces...
+                    inputfunc("backend", termBars[b], 45, "numberonly", mediumFontSize, WHITE);     // Solo recibirá números con el modo de entrada numberonly
             }
         }
-        admPasswordBarPtr->status = isPressed(admPasswordBarPtr);
-        if (admPasswordBarPtr->status > 1)
-            inputfunc("backend", admPasswordBarPtr, 25, "allchars", mediumFontSize, WHITE);
+        admPasswordBarPtr->status = isPressed(admPasswordBarPtr);         // Como admPasswordBar está fuera del vector termBars, hay que verificar su estado fuera del bucle
+        if (admPasswordBarPtr->status > 1)                                // Si se está interactuando con la barra, entonces...
+            inputfunc("backend", admPasswordBarPtr, 25, "allchars", mediumFontSize, WHITE);       // Se recibirán datos de entrada de la barra actual
     }
-    else if (configSelected == configbuttons[1]->name)  // Extra
+    else if (configSelected == configbuttons[1]->name)  // Si la pestaña activa es "Extra"...
     {
         for (int b = 0; b < (int)extraBars.size(); b++)
         {
             if (IsKeyPressed(KEY_TAB))
             {
-                if (extraBars[b]->status > 1 && b + 1 < (int)extraBars.size())
-                { extraBars[b]->status = 0; extraBars[b + 1]->status = 2; beam = 0; break; }
-                else if (extraBars[b]->status > 1 && b + 1 == (int)extraBars.size())
-                { extraBars[b]->status = 0; extraBars[0]->status = 2; beam = 0; break; }
+                if (extraBars[b]->status > 1 && b + 1 < (int)extraBars.size())          // Si la barra actual tiene un estado mayor a 1, es decir, se está interactuando con la barra directamente, y la barra es menor al total de barras, entonces...
+                {
+                    extraBars[b]->status = 0;                                           // La barra actual pasa a tener un estado igual a cero, ya que el punto de usar TAB es cambiar de barras
+                    extraBars[b + 1]->status = 2;                                       // Y la barra siguiente pasa a tener un estado igual a 2, lo suficiente como para poder recibir datos de entrada
+                    beam = 0; break;                                                    // El parpadeo se reinicia a cero y rompe el bucle
+                }
+                else if (extraBars[b]->status > 1 && b + 1 == (int)extraBars.size())    // En caso de que la barra actual tenga un estado mayor a 1, es decir, se está interactuando directamente, y también es igual a la última barra, entonces...
+                {
+                    extraBars[b]->status = 0;                                           // La barra actual procede a tener un estado igual a cero, para no seguir interactuando más con ella
+                    extraBars[0]->status = 2;                                           // El estado de la siguiente barra cambiará a 2, suficiente para activarse y recibir datos de entrada
+                    beam = 0; break;                                                    // El parpadeo se reinicia a cero y rompe el bucle
+                }
             }
-            else extraBars[b]->status = isPressed(extraBars[b]);
+            else extraBars[b]->status = isPressed(extraBars[b]);                        // En caso de que NO se presione la tecla TAB, solo estará vigilando el estado de cada barra
 
-            if (extraBars[b]->status > 1)
-                inputfunc("backend", extraBars[b], 45, "allchars", littleFontSize, WHITE);
+            if (extraBars[b]->status > 1)                                               // Si el estado de la barra actual es superior a 1, es decir, se está interactuando con esa barra
+                inputfunc("backend", extraBars[b], 45, "allchars", littleFontSize, WHITE);        // Se recibirán datos de entrada de la barra actual
         }
     }
-    else if (configSelected == configbuttons[2]->name)  // Paths
+    else if (configSelected == configbuttons[2]->name)  // Si la pestaña activa es "Paths"...
     {
         for (int b = 0; b < (int)pathBars.size(); b++)
         {
             if (IsKeyPressed(KEY_TAB))
             {
-                if (pathBars[b]->status > 1 && b + 1 < (int)pathBars.size())
-                { pathBars[b]->status = 0; pathBars[b + 1]->status = 2; beam = 0; break; }
-                else if (pathBars[b]->status > 1 && b + 1 == (int)pathBars.size())
-                { pathBars[b]->status = 0; pathBars[0]->status = 2; beam = 0; break; }
+                if (pathBars[b]->status > 1 && b + 1 < (int)pathBars.size())            // Si la barra actual tiene un estado mayor a 1, es decir, se está interactuando con la barra directamente, y la barra es menor al total de barras, entonces...
+                {
+                    pathBars[b]->status = 0;                                            // La barra actual pasa a tener un estado igual a cero, ya que el punto de usar TAB es cambiar de barras
+                    pathBars[b + 1]->status = 2;                                        // Y la barra siguiente pasa a tener un estado igual a 2, lo suficiente como para poder recibir datos de entrada
+                    beam = 0; break;                                                    // El parpadeo se reinicia a cero y rompe el bucle
+                }
+                else if (pathBars[b]->status > 1 && b + 1 == (int)pathBars.size())      // En caso de que la barra actual tenga un estado mayor a 1, es decir, se está interactuando directamente, y también es igual a la última barra, entonces...
+                {
+                    pathBars[b]->status = 0;                                            // La barra actual procede a tener un estado igual a cero, para no seguir interactuando más con ella
+                    pathBars[0]->status = 2;                                            // El estado de la siguiente barra cambiará a 2, suficiente para activarse y recibir datos de entrada
+                    beam = 0; break;                                                    // El parpadeo se reinicia a cero y rompe el bucle
+                }
             }
-            else pathBars[b]->status = isPressed(pathBars[b]);
+            else pathBars[b]->status = isPressed(pathBars[b]);                          // En caso de que NO se presione la tecla TAB, solo estará vigilando el estado de cada barra
 
-            if (pathBars[b]->status > 1)
-                inputfunc("backend", pathBars[b], 45, "allchars", mediumFontSize, WHITE);
+            if (pathBars[b]->status > 1)                                                // Si el estado de la barra actual es superior a 1, es decir, se está interactuando con esa barra
+                inputfunc("backend", pathBars[b], 45, "allchars", mediumFontSize, WHITE);         // Se recibirán datos de entrada de la barra actual
         }
     }
 }
 
-void screenConfigDraw(bool &inputEmpty, bool &invalidIp, bool &errorUpdating, bool &errorConfig)
+// Frontend de CONFIGURATION
+
+void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirven principalmente
+                      bool &invalidIp,                  // para saber si ocurrieron errores
+                      bool &errorUpdating,              // en alguna parte del backend y mostrar
+                      bool &errorConfig)                // algun mensaje en este frontend
 {
-    DrawTextEx(fontTtf, "Panel de Configuracion"s.data(),
+    DrawTextEx(fontTtf, "Panel de Configuración"s.data(),                                         // Procede a escribir el título "Panel de Configuración"
                (Vector2){(float)centertext("Panel de Configuracion"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.05)},
                fontSize, 2, BLACK);
 
-    drawSelected(configbuttons, littleFontSize, configSelected);
-    DrawRectangle(adminPanel[0], adminPanel[1] + terminalBarPtr->ysize - 1,
+    drawSelected(configbuttons, littleFontSize, configSelected);                      // Dibuja las pestañas de CONFIGURATION
+    DrawRectangle(adminPanel[0], adminPanel[1] + terminalBarPtr->ysize - 1,           // Dibuja el rectángulo de fondo
                   adminPanel[2], adminPanel[3], VOCADORADOSUAVE);
 
-    if (configSelected == configbuttons[0]->name)
+    if (configSelected == configbuttons[0]->name)                                     // Si la pestaña actual es "Credenciales"
     {
-        for (int b = 0; b < (int)termBars.size(); b++)
+        for (int b = 0; b < (int)termBars.size(); b++)                                // Recorrerá cada barra de datos de entrada...
         {
-            DrawTextEx(fontTtf, termBars[b]->name.data(),
+            DrawTextEx(fontTtf, termBars[b]->name.data(),                             // Dibujará el nombre de la barra
                        (Vector2){(float)screenWidth * 0.15f,
                                   (float)termBars[b]->yloc + ((termBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
                        mediumFontSize, 0, BLACK);
-            PrettyDrawRectangle(termBars[b]);
-            inputfunc("frontend", termBars[b], 0, "allchars", mediumFontSize);
+            PrettyDrawRectangle(termBars[b]);                                         // Y dibujará la barra misma
+            inputfunc("frontend", termBars[b], 0, "allchars", mediumFontSize);        // Además del contenido que tiene
         }
-        DrawTextEx(fontTtf, admPasswordBarPtr->name.data(),
+        DrawTextEx(fontTtf, admPasswordBarPtr->name.data(),                           // Como admPasswordBar es una barra independiente, hay que dibujar su nombre fuera del bucle
                    (Vector2){(float)screenWidth * 0.15f,
                               (float)admPasswordBarPtr->yloc + ((admPasswordBarPtr->ysize * 0.5f) - (mediumFontSize * 0.5f))},
                    mediumFontSize, 0, BLACK);
-        PrettyDrawRectangle(admPasswordBarPtr);
-        inputfunc("frontend", admPasswordBarPtr, 0, "allchars", mediumFontSize);
+        PrettyDrawRectangle(admPasswordBarPtr);                                       // Llamar a PrettyDrawRectangle para que dibuje a la barra misma
+        inputfunc("frontend", admPasswordBarPtr, 0, "allchars", mediumFontSize);      // Y llamar a inputfunc() para que dibuje su contenido
     }
-    else if (configSelected == configbuttons[1]->name)
+    else if (configSelected == configbuttons[1]->name)                                // Si la pestaña actual es "Extra"
     {
-        for (int b = 0; b < (int)extraBars.size(); b++)
+        for (int b = 0; b < (int)extraBars.size(); b++)                               // Recorrerá cada barra de datos de entrada...
         {
-            DrawTextEx(fontTtf, extraBars[b]->name.data(),
+            DrawTextEx(fontTtf, extraBars[b]->name.data(),                            // Dibujará el nombre de cada barra
                        (Vector2){(float)screenWidth * 0.15f,
                                   (float)extraBars[b]->yloc + ((extraBars[b]->ysize * 0.5f) - (littleFontSize * 0.5f))},
                        littleFontSize, 0, BLACK);
-            PrettyDrawRectangle(extraBars[b]);
-            inputfunc("frontend", extraBars[b], 0, "allchars", littleFontSize);
+            PrettyDrawRectangle(extraBars[b]);                                        // Y dibujará la barra misma
+            inputfunc("frontend", extraBars[b], 0, "allchars", littleFontSize);       // Además del contenido que tiene
         }
     }
-    else if (configSelected == configbuttons[2]->name)
+    else if (configSelected == configbuttons[2]->name)                                // Si la pestaña actual es "Paths"
     {
-        for (int b = 0; b < (int)pathBars.size(); b++)
+        for (int b = 0; b < (int)pathBars.size(); b++)                                // Recorrerá cada barra de datos de entrada...
         {
-            DrawTextEx(fontTtf, pathBars[b]->name.data(),
+            DrawTextEx(fontTtf, pathBars[b]->name.data(),                             // Dibujará el nombre de cada barra
                        (Vector2){(float)screenWidth * 0.15f,
                                   (float)pathBars[b]->yloc + ((pathBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
                        mediumFontSize, 0, BLACK);
-            PrettyDrawRectangle(pathBars[b]);
-            inputfunc("frontend", pathBars[b], 0, "allchars", mediumFontSize);
+            PrettyDrawRectangle(pathBars[b]);                                         // Y dibujará la barra misma
+            inputfunc("frontend", pathBars[b], 0, "allchars", mediumFontSize);        // Además del contenido que tiene
         }
     }
 
-    PrettyDrawRectangle(saveConfigPtr);
-    DrawTextEx(fontTtf, saveConfigPtr->name.data(),
+    PrettyDrawRectangle(saveConfigPtr);                                               // Dibuja al final el botón de guardar la configuración
+    DrawTextEx(fontTtf, saveConfigPtr->name.data(),                                   // Y dibuja el nombre de ese botón también
                (Vector2){saveConfigPtr->xloc + (float)centertext(saveConfigPtr->name, saveConfigPtr->xsize, mediumFontSize),
                           saveConfigPtr->yloc + (float)((saveConfigPtr->ysize - mediumFontSize) / 2)},
                mediumFontSize, 0, BLACK);
-    if (inputEmpty) {shortmessage("Los datos se encuentran vacios", fontSize, inputEmpty);}
-    else if (invalidIp) {shortmessage("La IP digitada es invalida", fontSize, invalidIp);}
-    else if (errorUpdating || errorConfig)
+
+    // Estas líneas sirven para mostrar los mensajes en caso de algún error
+
+    if (inputEmpty) {shortmessage("Los datos se encuentran vacios", fontSize, inputEmpty);}           // Si inputEmpty se activa, es por que una barra se encuentra vacía, entonces llamará a shortmessage() para mostrar el mensaje escrito
+    else if (invalidIp) {shortmessage("La IP digitada es invalida", fontSize, invalidIp);}            // Si invalidIp se activa, es por que una IP digitada es inválida, entonces llamará a shortmessage() para mostrar el mensaje escrito
+    else if (errorUpdating || errorConfig)            // Si errorUpdating se activa, es por algun error en la configuracion, como también errorConfig, entonces...
     {
-        std::string errorMessage = "";
+        std::string errorMessage = "";    // Define a errorMessage, que será el string que almacenará alguno de los siguientes mensajes
+
+        /* Se comparan los códigos de estado tanto los de statusCodeUpdating como los de statusCodeConfig, estos códigos de estado son los que la función de cada uno retorna,
+           si no son iguales a cero, significa que hubo un error, y aquí  está el significado de cada código de estado de cada función */
+
         if      (statusCodeUpdating == 127) errorMessage = "Error | La IP del servidor no existe";
         else if (statusCodeUpdating == 1)   errorMessage = "Error en la conexion a la base de datos";
         else if (statusCodeUpdating == 3)   errorMessage = "Error con el nombre de la base de datos";
@@ -244,7 +298,7 @@ void screenConfigDraw(bool &inputEmpty, bool &invalidIp, bool &errorUpdating, bo
         else if (statusCodeUpdating == 20)  errorMessage = "Error desconocido";
         else if (statusCodeConfig == 1)     errorMessage = "Error | No se encontro el archivo de configuracion";
         else if (statusCodeConfig == 2)     errorMessage = "Error | Faltaron parametros en el archivo de configuracion";
-        if (errorConfig)   shortmessage(errorMessage, mediumFontSize, errorConfig, 450);
-        else               shortmessage(errorMessage, mediumFontSize, errorUpdating, 450);
+        if (errorConfig)   shortmessage(errorMessage, mediumFontSize, errorConfig, 450);      // Si errorConfig era el que se encontraba en true, llamará a la función shortmessage con errorConfig entre los argumentos
+        else               shortmessage(errorMessage, mediumFontSize, errorUpdating, 450);    // en caso contrario, llamará a errorUpdating
     }
 }

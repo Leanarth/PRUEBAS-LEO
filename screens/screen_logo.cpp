@@ -7,7 +7,8 @@
 #include <fstream>
 #include <chrono>
 
-// BACKEND DE LA PANTALLA > LOGO <
+// BACKEND DE LA PANTALLA  LOGO 
+
 void screenLogoUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpdating)      // Es función void ya que no retorna nada cuando termina, necesita a currentScreen, errorConfig y errorUpdating para modificar sus valores a nivel global
 {
     framesCounter++;              // framesCounter actúa como contador, los FPS (Frames Per Second) del programa son 60, 1 segundo es igual a 60 FPS, entonces 120 son 2 segundos
@@ -52,7 +53,7 @@ void screenLogoUpdate(Screen& currentScreen, bool& errorConfig, bool& errorUpdat
     }
 }
 
-// FRONTEND DE LA PANTALLA > LOGO <
+// FRONTEND DE LA PANTALLA LOGO 
 void screenLogoDraw()
 {
     // Pantalla de carga sin contenido visual por ahora
