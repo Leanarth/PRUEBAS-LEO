@@ -4,121 +4,121 @@
 #include "../ui/input.hpp"
 #include "../ui/drawing.hpp"
 
-void screenConfirmationUpdate(Screen& currentScreen,
-                              bool& existstudent, bool& correctstudent,
-                              int& verifyvote)
+// Esta función se encarga del backend de la pantalla CONFIRMATION
+
+void screenConfirmationUpdate(Screen& currentScreen,      // Necesita la variable de la pantalla actual
+                              bool& existstudent,         // Necesita la variable existstudent para conocer su valor mostrar si el estudiante existe o no
+                              bool& correctstudent,       // Necesita la variable correctstudent para modificar su valor y confirmar si el estudiante es el correcto o no
+                              int& verifyvote)            // Necesita la variable verifyvote para modificar su valor y confirmar si el partido seleccionado es el correcto o no
 {
-    if (!existstudent)
+    if (!existstudent)        // Si el estudiante NO existe en la base de datos...
     {
-        if (isPressed(regresarPtr) == 4)
+        if (isPressed(regresarPtr) == 4)      // Verificará si se presiona el botón regresar, si el estado del botón llega a ser 4, es decir, llega a recibir un clic
         {
-            cedulaBarPtr->status = 4;
-            correctstudent = false;
-            cedulaPtr->selfquery  = "SELECT * FROM Estudiantes WHERE Cedula = '";
-            votarPtr->selfquery   = "UPDATE Estudiantes SET Voto = '";
-            regresarPtr->xloc     = cedulaPtr->xloc * 0.7;
-            currentScreen = MAINMENU;
+            cedulaBarPtr->status = 4;         // El estado de la barra de datos de entrada que recibe la cédula, se activa al nombrar su estado igual a 4
+            cedulaPtr->selfquery  = "SELECT * FROM Estudiantes WHERE Cedula = '";       // Se reinicia la query del botón cedula
+            regresarPtr->xloc     = cedulaPtr->xloc * 0.7;                              // El valor del botón regresar se reinicia a su valor original
+            currentScreen = MAINMENU;                                                   // Y ahora la pantalla actual se modifica a MAINMENU, para que el siguiente frame la pantalla sea la del menú principal
         }
-        return;
+        return;           // Retorno de la función, no se necesita hacer nada más
     }
-
-    if (isPressed(regresarPtr) == 4)
+    else                      // Si el estudiante SÍ existe en la base de datos...
     {
-        if (!correctstudent)
+        if (isPressed(regresarPtr) == 4)          // Si se presiona el botón regresar...
         {
-            cedulaBarPtr->status = 4;
-            correctstudent = false;
-            cedulaPtr->selfquery  = "SELECT * FROM Estudiantes WHERE Cedula = '";
-            votarPtr->selfquery   = "UPDATE Estudiantes SET Voto = '";
-            regresarPtr->xloc     = cedulaPtr->xloc * 0.7;
-            currentScreen = MAINMENU;
+            if (!correctstudent) {                    // Se verificará de que el estudiante NO se haya confirmado, si el estudiante NO se ha confirmado significará que anteriormente estaba en la pantalla MAINMENU, entonces...
+                cedulaBarPtr->status = 4;             // La barra de la cedula empezará a recibir datos de entrada
+                cedulaPtr->selfquery  = "SELECT * FROM Estudiantes WHERE Cedula = '";       // Se reinicia la query del botón cedula
+                currentScreen = MAINMENU;             // La pantalla actual ahora se modifica a MAINMENU, para que en el siguiente frame la pantalla sea la del menú principal
+            }
+            else  currentScreen = VOTATION;           // En caso de que el estudiante SÍ se haya confirmado, significa que anteriormente estaba en la pantalla VOTATION, entonces únicamente se devolverá a esa pantalla
+            return;       // Retorno de la función, no se necesita hacer nada más
         }
-        else { currentScreen = VOTATION; }
-        return;
-    }
 
-    if (isPressed(continuarPtr) == 4)
-    {
-        if (!correctstudent)
+        if (isPressed(continuarPtr) == 4)         // Si se presiona el botón continuar...
         {
-            correctstudent = true;
-            continuarPtr->selfquery = cedulaPtr->selfquery + "' && Voto = '0'"s;
-            sendquery(continuarPtr->selfquery.data(), 0, 0);
-            verifyvote = outQuery.length();
-            currentScreen = verifyvote > 1 ? VOTATION : ENDING;
-        }
-        else
-        {
-            // El estudiante confirma su voto
-            votarPtr->selfquery += "1' WHERE Cedula = '"s + cedulaBarPtr->input + "'";
-            sendquery(votarPtr->selfquery.data(), 0, 0, 0);
-            votarPtr->selfquery  = "UPDATE Partidos SET Votos = Votos + 1 WHERE Nombre = '";
-            votarPtr->selfquery += partidoSelected;
-            votarPtr->selfquery += "';";
-            sendquery(votarPtr->selfquery.data(), 0, 0, 0);
-            currentScreen = ENDING;
+            if (!correctstudent)                      // Se verificará de que el estudiante NO se haya confirmado, si el estudiante NO se ha confirmado significará que anteriormente estaba en la pantalla MAINMENU, entonces...
+            {
+                correctstudent = true;                // Declara a correctstudent como verdadero, es decir, confirma de que sí es el estudiante correcto
+                continuarPtr->selfquery = cedulaPtr->selfquery + "' && Voto = '0'"s;    // Se arma la query para verificar si el estudiante ya ha votado
+                sendquery(continuarPtr->selfquery.data(), 0, 0);                        // y se envía
+                verifyvote = outQuery.length();                                         // Se almacena el tamaño de la respuesta de la base de datos respecto a la query enviada anteriormente
+                currentScreen = verifyvote > 1 ? VOTATION : ENDING;                     // Si el tamaño de la respuesta es mayor a 1, significa que NO ha votado, y envía al estudiante a la pantalla VOTATION, sino, a ENDING diciendole que ya votó
+            }
+            else           // En caso de que el estudiante SÍ se haya confirmado, significa que anteriormente estaba en la pantalla VOTATION, así que...
+            {
+                votarPtr->selfquery += "1' WHERE Cedula = '"s + cedulaBarPtr->input + "'";                // Arma la query para asignar que el estudiane ha votado
+                sendquery(votarPtr->selfquery.data(), 0, 0, 0);                                           // Envía la query armada a la base de datos
+                votarPtr->selfquery  = "UPDATE Partidos SET Votos = Votos + 1 WHERE Nombre = '"s +        // Arma una query para sumarle 1 a la cantidad de votos del partido por el que el estudiante haya votado
+                                                                         partidoSelected + "';"s;
+                sendquery(votarPtr->selfquery.data(), 0, 0, 0);                                           // Envía la query a la base de datos
+                currentScreen = ENDING;                                                                   // Y procede a cambiar a la pantalla ENDING para despedirse del estudiante
+            }
         }
     }
 }
 
-void screenConfirmationDraw(bool existstudent, bool correctstudent,
-                            const std::string& studentName)
+// Frontend de CONFIRMATION
+
+void screenConfirmationDraw(bool existstudent,                  // Necesita saber si el estudiante existe en la base de datos
+                            bool correctstudent,                // Neceista también saber si el estudiante se ha confirmado
+                            const std::string& studentName)     // Y necesita el nombre del estudiante
 {
-    if (!correctstudent && existstudent)
+    if (!correctstudent && existstudent)              // Si NO se ha confirmado de que el estudiante sea el correcto pero el estudiante SÍ existe...
     {
-        DrawTextEx(fontTtf, "Verifique si su nombre es correcto:"s.data(),
+        DrawTextEx(fontTtf, "Verifique si su nombre es correcto:"s.data(),                                                      // Mostrará un mensaje para decirle al estudiante que confirme su nombre
                    (Vector2){(float)centertext("Verifique si su nombre es correcto:"s, screenWidth, fontSize),
                               (float)(screenHeight * 0.2)},
                    fontSize, 2, BLACK);
-        DrawTextEx(fontTtf, studentName.data(),
+        DrawTextEx(fontTtf, studentName.data(),                                                                                 // Luego, mostrará el nombre del estudiante
                    (Vector2){(float)centertext(studentName, screenWidth, fontSize),
                               (float)(screenHeight * 0.3)},
                    fontSize, 2, BLACK);
-        PrettyDrawRectangle(continuarPtr);
-        PrettyDrawRectangle(regresarPtr);
+        PrettyDrawRectangle(continuarPtr);                                                                                      // Dibujará el botón de continuar
+        PrettyDrawRectangle(regresarPtr);                                                                                       // Como también ibujará el botón de regresar
         DrawTextEx(fontTtf, continuarPtr->name.data(),
-                   (Vector2){continuarPtr->xloc + (float)centertext(continuarPtr->name, continuarPtr->xsize, fontSize),
+                   (Vector2){continuarPtr->xloc + (float)centertext(continuarPtr->name, continuarPtr->xsize, fontSize),         // Luego dibujará el nombre del botón continuar
                               continuarPtr->yloc + (float)((continuarPtr->ysize - fontSize) / 2)},
                    fontSize, 2, BLACK);
-        DrawTextEx(fontTtf, regresarPtr->name.data(),
+        DrawTextEx(fontTtf, regresarPtr->name.data(),                                                                           // Y luego dibujará el nombre de regresar
                    (Vector2){regresarPtr->xloc + (float)centertext(regresarPtr->name, regresarPtr->xsize, fontSize),
                               regresarPtr->yloc + (float)((regresarPtr->ysize - fontSize) / 2)},
                    fontSize, 2, BLACK);
     }
-    else if (!existstudent)
+    else if (!existstudent)                           // Si el estudiante NO existe en la base de datos...
     {
-        DrawTextEx(fontTtf, "Usted no se encontro en la base de datos del VOCA"s.data(),
+        DrawTextEx(fontTtf, "Usted no se encontro en la base de datos del VOCA"s.data(),                                        // Mostrará un mensaje diciendole al estudiante que no se encontró en la base de datos
                    (Vector2){(float)centertext("Usted no se encontro en la base de datos del VOCA"s, screenWidth, fontSize),
                               (float)(screenHeight * 0.2)},
                    fontSize, 2, BLACK);
-        DrawTextEx(fontTtf, "Verifique que su cedula fue digitada correctamente:"s.data(),
+        DrawTextEx(fontTtf, "Verifique que su cedula fue digitada correctamente:"s.data(),                                      // Y que verifique que digitó bien la cédula
                    (Vector2){(float)centertext("Verifique que su cedula fue digitada correctamente:"s, screenWidth, fontSize),
                               (float)(screenHeight * 0.3)},
                    fontSize, 2, BLACK);
-        DrawTextEx(fontTtf, cedulaBarPtr->input.data(),
+        DrawTextEx(fontTtf, cedulaBarPtr->input.data(),                                                                         // Y mostrará la cédula digitada
                    (Vector2){(float)centertext(cedulaBarPtr->input, screenWidth, fontSize),
                               (float)(screenHeight * 0.4)},
                    fontSize, 2, BLACK);
-        PrettyDrawRectangle(regresarPtr);
-        DrawTextEx(fontTtf, regresarPtr->name.data(),
+        PrettyDrawRectangle(regresarPtr);                                                                                       // Esta vez solo dibujará el botón de regresar
+        DrawTextEx(fontTtf, regresarPtr->name.data(),                                                                           // Y el nombre del botón regresar
                    (Vector2){regresarPtr->xloc + (float)centertext(regresarPtr->name, regresarPtr->xsize, fontSize),
                               regresarPtr->yloc + (float)((regresarPtr->ysize - fontSize) / 2)},
                    fontSize, 2, BLACK);
     }
-    else
+    else                                              // Si ninguno de los dos if ocurrieron, significa que lo que corresponde dibujar sería el mensaje para confirmar el voto, entonces...
     {
-        std::string mselected = "Selecciono "s + partidoSelected + " es correcto?"s;
+        std::string mselected = "Selecciono "s + partidoSelected + " es correcto?"s;                                            // Mostrará un mensaje diciendo que confirme el partido por el que votó, y el nombre del partido
         DrawTextEx(fontTtf, mselected.data(),
                    (Vector2){(float)centertext(mselected, screenWidth, fontSize),
                               (float)(screenHeight * 0.2)},
                    fontSize, 2, BLACK);
-        PrettyDrawRectangle(continuarPtr);
-        PrettyDrawRectangle(regresarPtr);
-        DrawTextEx(fontTtf, continuarPtr->name.data(),
+        PrettyDrawRectangle(continuarPtr);                                                                                      // Dibujará el botón continuar
+        PrettyDrawRectangle(regresarPtr);                                                                                       // Como también dibujará el botón de regresar
+        DrawTextEx(fontTtf, continuarPtr->name.data(),                                                                          // Procederá a dibujar el nombre del botón continuar
                    (Vector2){continuarPtr->xloc + (float)centertext(continuarPtr->name, continuarPtr->xsize, fontSize),
                               continuarPtr->yloc + (float)((continuarPtr->ysize - fontSize) / 2)},
                    fontSize, 2, BLACK);
-        DrawTextEx(fontTtf, regresarPtr->name.data(),
+        DrawTextEx(fontTtf, regresarPtr->name.data(),                                                                           // Como también dibujará el nombre del botón regresar
                    (Vector2){regresarPtr->xloc + (float)centertext(regresarPtr->name, regresarPtr->xsize, fontSize),
                               regresarPtr->yloc + (float)((regresarPtr->ysize - fontSize) / 2)},
                    fontSize, 2, BLACK);
