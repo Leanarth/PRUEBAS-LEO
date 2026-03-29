@@ -55,10 +55,10 @@ void screenConfigUpdate(Screen& currentScreen,            // La función necesit
                     // Se realiza la carga de la configuración digitada en cada barra a las variables del programa
                     free(configurations[0]);  configurations[0]  = strdup(termBars[0]->input.data());         // IP
                     free(configurations[1]);  configurations[1]  = strdup(termBars[3]->input.data());         // Usuario
-                    free(configurations[2]);  configurations[2]  = strdup(termBars[4]->input.data());         // Contrasena
+                    free(configurations[2]);  configurations[2]  = strdup(termBars[4]->input.data());         // Contraseña
                     free(configurations[3]);  configurations[3]  = strdup(termBars[2]->input.data());         // BD
                     free(configurations[4]);  configurations[4]  = strdup(termBars[1]->input.data());         // Puerto
-                    free(configurations[5]);  configurations[5]  = strdup(admPasswordBarPtr->input.data());   // Contrasena admin
+                    free(configurations[5]);  configurations[5]  = strdup(admPasswordBarPtr->input.data());   // Contraseña admin
                     free(configurations[6]);  configurations[6]  = strdup(extraBars[0]->input.data());        // Tabla Estudiantes
                     free(configurations[7]);  configurations[7]  = strdup(extraBars[1]->input.data());        // Tabla Partidos
                     free(configurations[8]);  configurations[8]  = strdup(extraBars[5]->input.data());        // Columna Voto

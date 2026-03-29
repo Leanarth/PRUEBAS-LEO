@@ -267,7 +267,7 @@ int objectCreation()
 
     // Barras de credenciales del terminal de administrador
     std::string nameTermCred[] = {"IP de BD:", "Puerto de BD:", "Nombre de BD:",
-                                  "Usuario de BD:", "Contrasena de BD:"};
+                                  "Usuario de BD:", "Contraseña de BD:"};
     for (int b = 0; b < 5; b++)
     {
         auto credBar = std::make_unique<inputBar>();
@@ -328,7 +328,7 @@ int objectCreation()
 
     // admPasswordBar
     auto admPasswordBar = std::make_unique<inputBar>();
-    admPasswordBar->name    = "Contrasena del panel de administracion:";
+    admPasswordBar->name    = "Contraseña del panel de administracion:";
     admPasswordBar->xloc    = (screenWidth * 0.15) + ((admPasswordBar->name.length() * mediumFontSize) / 2) + (screenWidth * 0.022);
     admPasswordBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.14) * (int)termBars.size());
     admPasswordBar->xsize   = termBars[0]->xsize / 2;
