@@ -49,7 +49,8 @@ export LD_LIBRARY_PATH=$PWD/bin/linux:$LD_LIBRARY_PATH              # En linux, 
 if [ $? -eq 0 ]; then                 # Verifica el código de estado del compilado, si ocurrió con éxito (código de estado 0) procederá a declararlo con permisos de ejecución
   rm ./bin/linux/main
 else
-  echo "\nHubo un error en el programa"
+  echo "\nHubo un error en el programa, recurda borrarlo manualmente ya que debido al error compiler.sh no lo hará, la ruta del programa se encuentra en bin/linux/main"
+  echo "\nSi el error habla sobre memory leaks relacionados con libcrypto, pueden ignorar el error, no es culpa de nuestro código, sino de libcrypto"
   exit
 fi
 
