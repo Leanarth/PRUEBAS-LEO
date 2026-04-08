@@ -402,3 +402,8 @@ std::vector<double> statistics(std::string mode,                          // El 
         return dataVec;                                                               // Retorna el vector
     }
 }
+
+bool alert(std::string bontonActual)
+{
+    return true;
+}
