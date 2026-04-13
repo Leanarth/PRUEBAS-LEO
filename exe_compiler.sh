@@ -14,7 +14,7 @@ cmd=$cmd" ./*/*.cpp  ./*.cpp"                                                   
 cmd=$cmd" -I ./deps/windows/lib/ -I ./deps/windows/mariadb/ -I ./deps/windows/mysql/ -I ./deps/windows/src/ -I ./config/ -I ./db/ -I ./platform/ -I ./reports/ -I ./screens/ -I ./ui/ -L ./deps/windows/lib/"  # Le dice al compilador dónde están las carpetas con las dependencias
 cmd=$cmd" -L ./deps/windows/mariadb/ -L ./deps/windows/mysql/ -L ./deps/windows/src/ -L ./config/ -L ./db/ -L ./platform/ -L ./reports/ -L ./screens/ -L ./ui/"  # Le dice al compilador dónde están las librerías necesarias
 cmd=$cmd" -lkernel32 -static -lws2_32 -lGlU32 -lOpenGL32 -lhpdf -lstdc++ -llibpng16 -llibmariadb -lzlib -llibcrypto_static -llibssl_static -lmysqlclient -lm -lraylib -lgdi32 -lwinmm"                  # Le dice al compilador cuáles librerías debe de llamar
-cmd=$cmd" -o ./bin/windows/main.exe"                                                                                                                                  # Le dice al compilador el nombre del archivo de salida, el cual se llama main
+cmd=$cmd" -o ./build/bin/windows/main.exe"                                                                                                                                  # Le dice al compilador el nombre del archivo de salida, el cual se llama main
 
 echo "Comando ejecutado:\n\n$cmd\n\n"                                                                                                     # Muestra el comando para compilar en la pantalla
 $cmd                                                                    # Ejecuta el comando para compilar | Es normal si aparecen advertencias en morado, pero si hay un error, aparecerá en rojo, y no logrará concluir la compilación
@@ -24,22 +24,22 @@ $cmd                                                                    # Ejecut
 if  [ $? -eq 0 ]; then                                                  # Si el compilado fue exitoso (código de estado 0) procede a eliminar el .rar viejo y crear uno nuevo
   echo "\nSe pudo crear el archivo compilado con éxito"
   echo "Eliminando .rar anterior para crear el actualizado..."
-  rm ./bin/windows/SistemaVotaciones.rar
-  chmod +x ./bin/windows/main.exe
-  mv ./bin/windows/main.exe "./bin/windows/Sistema de Votaciones.exe"   # Renombro el ejecutable de "main.exe" a "Sistema de Votaciones.exe"
-  rar a -ep ./bin/windows/SistemaVotaciones.rar ./bin/windows/dlls/*
-  rar a -ep1 ./bin/windows/SistemaVotaciones.rar ./bin/windows/mariadb-11.4.10-winx64/*
-  rar a ./bin/windows/SistemaVotaciones.rar ./bin/windows/VC_redist.x64.exe
-  rar a ./bin/windows/SistemaVotaciones.rar ./fonts/*
-  rar a -ep ./bin/windows/SistemaVotaciones.rar "./bin/windows/Sistema de Votaciones.exe"
-  rm "./bin/windows/Sistema de Votaciones.exe"
+  rm ./build/bin/windows/SistemaVotaciones.rar
+  chmod +x ./build/bin/windows/main.exe
+  mv ./build/bin/windows/main.exe "./build/bin/windows/Sistema de Votaciones.exe"   # Renombro el ejecutable de "main.exe" a "Sistema de Votaciones.exe"
+  rar a -ep ./build/bin/windows/SistemaVotaciones.rar ./build/bin/windows/dlls/*
+  rar a -ep1 ./build/bin/windows/SistemaVotaciones.rar ./build/bin/windows/mariadb-11.4.10-winx64/*
+  rar a ./build/bin/windows/SistemaVotaciones.rar ./build/bin/windows/VC_redist.x64.exe
+  rar a ./build/bin/windows/SistemaVotaciones.rar ./fonts/*
+  rar a -ep ./build/bin/windows/SistemaVotaciones.rar "./build/bin/windows/Sistema de Votaciones.exe"
+  rm "./build/bin/windows/Sistema de Votaciones.exe"
 else
   echo "\nLa creación del compilado tuvo errores, abortando..."
   exit
 fi
 
 if  [ $? -eq 0 ]; then      # Si el comprimido con sus dependencias se compiló correctamente (código de estado 0) mostrará un mensaje de que todo ocurrió perfectamente
-  echo "\n\nArchivo ./bin/windows/SistemaVotaciones.rar creado con éxito listo para su uso"
+  echo "\n\nArchivo ./build/bin/windows/SistemaVotaciones.rar creado con éxito listo para su uso"
 else                        # Si el comprimido tuvo errores, mostrará un mensaje diciendo de que falló
   echo "\n\nNo se pudo crear el comprimido con éxito"
   exit

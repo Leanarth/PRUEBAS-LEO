@@ -94,7 +94,7 @@ std::string ptyfunc(std::string sqlinput,         // Comando a ejecutar
 
     PROCESS_INFORMATION pi{};                           // Crea una estructura que contendrá la información del proceso actual
     CreateProcessW(NULL, cmd.data(), NULL, NULL, FALSE,                                 // Ahora con esta línea, ejecuta el comando armado previamente al incio de la función
-                   EXTENDED_STARTUPINFO_PRESENT, NULL, NULL, &si.StartupInfo, &pi)
+                   EXTENDED_STARTUPINFO_PRESENT, NULL, NULL, &si.StartupInfo, &pi);
     CloseHandle(hPipeInWrite);                          // Ahora, se cierran los pipes que eran de la pseudoconsola
     CloseHandle(hPipeInRead);                           // ya que si estos pipes no se cierran debidamente
     CloseHandle(hPipeOutWrite);                         // el programa estará esperando recibir datos de entrada eternamente
