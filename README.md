@@ -7,8 +7,11 @@ Primero que nada, para poder ejecutar el programa, actualmente hay 2 compiladore
 
 Lo ideal sería compilar el código ejecutando compiler.sh
 
-## Organización del Proyecto
+# Organización del Proyecto
 Ahora sí, para entender mejor el código, esta vez, está organizado de la siguiente manera:
+
+## build/
+Posee los archivos de tipo objeto (.o) y archivos binarios como comprimidos, aquí se guardan los compilados de resultado de compiler.sh y el .rar resultante de exe_compiler.sh
 
 ## config/
 Esta carpeta lo que contiene son las funciones relacionadas a la configuración del programa, como la carga de los valores del archivo de configuración, el cual es un archivo oculto en la carpeta, llamado ".config", el cual tiene este formato:
@@ -46,6 +49,9 @@ Esta carpeta contiene las dos funciones relacionadas a la base de datos en ./db/
 
 * sendquery(): Se encarga de enviar las queries a la base de datos, utiliza la conexión primaria del programa ("conn") y almacena el resultado en una variable global llamada "outQuery".
 * updateData(): Su propósito es actualizar información de la base de datos y cargarla al programa; sirve para verificar si el archivo de configuración está correctamente configurado.
+
+## fonts/
+Esta carpeta almacena las fuentes de las letras, sin ellas, las letras del programa y del PDF de informe se verían feas y poco adecuadas, solo posee dos archivos .tff
 
 ## platform/
 Se encarga de la funcionalidad multiplataforma. Existe mucho código que necesita verificar si se compilará para windows o para linux, además de ser compatibles con UTF-8, UTF-16 y UTF-32. (Explicación detallada en ./platform/README.txt).
