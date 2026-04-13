@@ -99,6 +99,9 @@ Existen 7 pantallas:
         - Configuración: Entra a la pantalla CONFIGURATION en caso de que se necesite configurar algo
         - Actualizar: En caso de que hayan datos que deban ser actualizados
         - Salir: Sale del panel de administración
+  - VOTATION: Pantalla de votación.
+  - CONFIRMATION: Pantalla para confirmar el estudiante, y también sirve para confirmar el voto.
+  - ENDING: Pantalla de despedida y agradecimiento
 
 ## ui/
 Su contenido son principalmente funciones relacionadas a agarrar datos del backend y mostrarlas en el frontend:
