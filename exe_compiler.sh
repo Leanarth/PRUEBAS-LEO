@@ -11,8 +11,8 @@ echo "\nCompilando en mínima optimización...\n\n" && cmd="x86_64-w64-mingw32-g
 # Añade el resto de argumentos para el compilador:
 
 cmd=$cmd" ./*/*.cpp  ./*.cpp"                                                                                                                                    # Le dice al compilador dónde están los archivos para compilar
-cmd=$cmd" -I ./deps/windows/lib/ -I ./deps/windows/mariadb/ -I ./deps/windows/mysql/ -I ./deps/windows/src/ -I ./config/ -I ./db/ -I ./platform/ -I ./reports/ -I ./screens/ -I ./ui/ -L ./deps/windows/lib/"  # Le dice al compilador dónde están las carpetas con las dependencias
-cmd=$cmd" -L ./deps/windows/mariadb/ -L ./deps/windows/mysql/ -L ./deps/windows/src/ -L ./config/ -L ./db/ -L ./platform/ -L ./reports/ -L ./screens/ -L ./ui/"  # Le dice al compilador dónde están las librerías necesarias
+cmd=$cmd" -I ./build/deps/windows/lib/ -I ./build/deps/windows/mariadb/ -I ./build/deps/windows/mysql/ -I ./build/deps/windows/src/ -I ./config/ -I ./db/ -I ./platform/ -I ./reports/ -I ./screens/ -I ./ui/ -L ./build/deps/windows/lib/"  # Le dice al compilador dónde están las carpetas con las dependencias
+cmd=$cmd" -L ./build/deps/windows/mariadb/ -L ./build/deps/windows/mysql/ -L ./build/deps/windows/src/ -L ./config/ -L ./db/ -L ./platform/ -L ./reports/ -L ./screens/ -L ./ui/"  # Le dice al compilador dónde están las librerías necesarias
 cmd=$cmd" -lkernel32 -static -lws2_32 -lGlU32 -lOpenGL32 -lhpdf -lstdc++ -llibpng16 -llibmariadb -lzlib -llibcrypto_static -llibssl_static -lmysqlclient -lm -lraylib -lgdi32 -lwinmm"                  # Le dice al compilador cuáles librerías debe de llamar
 cmd=$cmd" -o ./build/bin/windows/main.exe"                                                                                                                                  # Le dice al compilador el nombre del archivo de salida, el cual se llama main
 

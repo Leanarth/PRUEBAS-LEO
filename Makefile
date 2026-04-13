@@ -9,7 +9,7 @@ CXXFLAGS = -fsanitize=address -g -O0 -std=c++20 # Modo de depuración
 # Carpetas del proyecto
 #
 SRC_DIRS = config db platform reports screens ui
-DEPS_DIR = $(shell find ./deps/linux -maxdepth 1 -type d)
+DEPS_DIR = $(shell find ./build/deps/linux -maxdepth 1 -type d)
 OBJ_DIR = build/obj
 BIN_DIR = build/bin/linux
 TARGET = $(BIN_DIR)/main
@@ -29,7 +29,7 @@ CXXFLAGS += $(INC_FLAGS)
 #
 # Enlazado de dependencias
 #
-LDFLAGS = -L./deps/linux/src -L./deps/linux/demo -L./deps/linux/mysql -L./deps/linux/include -lhpdf -lpng -lstdc++ -lmysqlclient -lz -lssl -lcrypto -lresolv -lm -lraylib -lGL -lraylib -lm -lpthread -ldl -lrt -lX11 -latomic -fsanitize=address
+LDFLAGS = -L./build/deps/linux/src -L./build/deps/linux/demo -L./build/deps/linux/mysql -L./build/deps/linux/include -lhpdf -lpng -lstdc++ -lmysqlclient -lz -lssl -lcrypto -lresolv -lm -lraylib -lGL -lraylib -lm -lpthread -ldl -lrt -lX11 -latomic -fsanitize=address
 LDFLAGS += -Wl,-rpath,'$$ORIGIN'
 
 # Regla principal
@@ -47,4 +47,4 @@ $(OBJ_DIR)/%.o: %.cpp
 
 # Limpiar los archivos después
 clean:
-	rm build/bin/linux/main build/obj/*
+	rm -r build/bin/linux/main build/obj/*
