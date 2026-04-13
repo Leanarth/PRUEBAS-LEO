@@ -1,17 +1,27 @@
-## Compiladores Automáticos
+# Compiladores Automáticos
 Primero que nada, para poder ejecutar el programa, actualmente hay 2 compiladores automáticos:
 
 * ./compiler.sh: Se encarga de específicamente compilar el programa en el entorno de Linux.
 * ./exe_compiler.sh: Se encarga de compilar específicamente un ejecutable para windows, osea un archivo .exe, pero desde linux, además de cargar sus dependencias y archivos importantes, se comprime todo en un rar para que solo deba descomprimirse y ejecutarse.
 * Dependencias: exe_compiler tiene 2 dependencias muy importantes para poder funcionar, tener mingw para c++ y rar instalado en linux.
 
-Lo ideal sería compilar el código ejecutando compiler.sh
+Lo ideal sería compilar el código ejecutando compiler.sh para debuggear en el entorno de Linux, y para ya usarlo el día de las votaciones ejecutar exe_compiler.sh
 
 # Organización del Proyecto
-Ahora sí, para entender mejor el código, esta vez, está organizado de la siguiente manera:
+A continuación, se explicarán las carpetas y archivos más importantes.
+
+## main.cpp y globals.cpp
+Son los archivos principales del programa:
+
+* main.cpp: es el archivo con el flujo principal del programa, este es el que se encarga de llamar a las funciones y subfunciones de los demás archivos.
+* globals.cpp: este archivo posee las variables globales del programa, son las variables más importantes que se llaman entre las funciones y subfunciones.
 
 ## build/
 Posee los archivos de tipo objeto (.o) y archivos binarios como comprimidos, aquí se guardan los compilados de resultado de compiler.sh y el .rar resultante de exe_compiler.sh
+
+* linux: esta carpeta contiene archivos necesarios para la ejecución en linux.
+* deps: es la carpeta con las dependencias principales del programa, como las librerías mysql, libHaru, Raylib, etc, dependiendo del sistema operativo.
+* windows: posee los dlls y archivos necesarios para la ejecución en windows.
 
 ## config/
 Esta carpeta lo que contiene son las funciones relacionadas a la configuración del programa, como la carga de los valores del archivo de configuración, el cual es un archivo oculto en la carpeta, llamado ".config", el cual tiene este formato:
