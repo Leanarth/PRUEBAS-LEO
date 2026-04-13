@@ -32,19 +32,27 @@ CXXFLAGS += $(INC_FLAGS)
 LDFLAGS = -L./build/deps/linux/src -L./build/deps/linux/demo -L./build/deps/linux/mysql -L./build/deps/linux/include -lhpdf -lpng -lstdc++ -lmysqlclient -lz -lssl -lcrypto -lresolv -lm -lraylib -lGL -lraylib -lm -lpthread -ldl -lrt -lX11 -latomic -fsanitize=address
 LDFLAGS += -Wl,-rpath,'$$ORIGIN'
 
+#
 # Regla principal
+#
 all: $(TARGET)
 
+#
 # Creación de main
+#
 $(TARGET): $(OBJS)
 	@mkdir -p $(dir $@)
 	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
+#
 # Regla para compilar los .cpp a .o
+#
 $(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+#
 # Limpiar los archivos después
+#
 clean:
 	rm -r build/bin/linux/main build/obj/*
