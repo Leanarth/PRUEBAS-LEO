@@ -3,7 +3,7 @@
 #
 CXX = g++
 CXXFLAGS = -fsanitize=address -g -O0 -std=c++20 # Modo de depuración
-# CXXFLAGS = -fsanitize=address -g -O0 -std=c++20 # Modo release
+# CXXFLAGS = -s -DNDEBUG -O3 -std=c++20 # Modo release
 
 #
 # Carpetas del proyecto

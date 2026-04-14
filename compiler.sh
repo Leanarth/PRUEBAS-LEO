@@ -11,7 +11,7 @@
 # Lo que hace este compilador es ejecutar el comando make y ejecutar el programa, el comando make se encarga del compilado del programa, solo que make es más rapido debido a que solo recompila desde cero los archivos que hayan sido modificados
 # El comando make para funcionar, lo que hace es leer un archivo llamado Makefile, el cual posee toda la configuración de compilado
 
-make
+make --makefile=./build/Makefile 
 
 if [ $? -ne 0 ]; then
   echo ""
