@@ -1,10 +1,10 @@
-!!! SOBRE EL ARCHIVO DE CONFIGURACIÓN !!!
+# Acerca del archivo de configuración
 
-El nombre del archivo es .config, se encuentra en la carpeta del programa, si no se ve en su explorador de archivos, es por que es lo ideal, al comenzar con un punto el archivo se "esconde" entre los archivos
-Si está en Linux, puede ejecutar el comando ls -la en la carpeta del programa para buscar entre los archivos "escondidos"
-Lo ideal sería que el archivo tenga algún tipo de encriptación, pero aún no he decidido incorporarla hasta que ya dominen el código en su mayor totalidad
+El nombre del archivo es .config, se encuentra en la carpeta del programa, si no se ve en su explorador de archivos, es por que es lo ideal, al comenzar con un punto el archivo se "esconde" entre los archivos.
+Si está en Linux, puede ejecutar el comando ls -la en la carpeta del programa para buscar entre los archivos "escondidos".
+Lo ideal sería que el archivo tenga algún tipo de encriptación, pero aún no he decidido incorporarla hasta que ya dominen el código en su mayor totalidad.
 
-────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
 [Credentials]           │ [Credentials] Es la sección del archivo de configuración en la que se configuran los valores para la autenticación a la base de datos, como la contraseña del panel de administración
 server=127.0.0.0        │ server: es la dirección IP del servidor de la base de datos, es 127.0.0.0 de manera predeterminada, ya que 127.0.0.0 apunta a la propia computadora en la que se esté ejecutando
 user=root               │ user: es el usuario a autenticar al servidor de la base de datos
@@ -12,7 +12,7 @@ password=0th3r@N0n      │ password: es la contraseña a usar para la autentica
 database=Votaciones     │ database: es el nombre de la base de datos
 port=3306               │ port: es el puerto de la base de datos
 admPassword=1234        │ admPassword: es la contraseña del panel de administración del programa
-────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
 
 ────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 [Extra]                                 │ [Extra] Es la sección en la que se encuentran configuraciones poco probables que se modifiquen, es principalmente si ocurren cambios en los nombres de los recursos que se necesitan de la base de datos
