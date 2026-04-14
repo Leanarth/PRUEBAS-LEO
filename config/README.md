@@ -12,9 +12,7 @@ password=0th3r@N0n      │ password: es la contraseña a usar para la autentica
 database=Votaciones     │ database: es el nombre de la base de datos
 port=3306               │ port: es el puerto de la base de datos
 admPassword=1234        │ admPassword: es la contraseña del panel de administración del programa
-```
 
-────────────────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 [Extra]                                 │ [Extra] Es la sección en la que se encuentran configuraciones poco probables que se modifiquen, es principalmente si ocurren cambios en los nombres de los recursos que se necesitan de la base de datos
 nameColumnPartidosNombre=Nombre         │ nameColumnPartidosNombre: es el nombre de la columna en la tabla de los partidos que contenga el nombre de los partidos, ejemplo: BLAZE se encuentra en la columna Nombre, de la tabla Partidos
 nameColumnNuloPartido=NULO              │ nameColumnNuloPartido: es el nombre del partido que se usará para votar nulo, ejemplo: NULO va a ser el nombre del partido que servirá para votar nulo
@@ -22,11 +20,9 @@ nameColumnVotosNombre=Votos             │ nameColumnVotosNombre: es el nombre 
 nameColumnVotoNombre=Voto               │ nameColumnVotoNombre: es el nombre de la columna que deba de encontrarse en la tabla de los estudiantes, que especifique si un estudiante votó o no, ejemplo: En la columna Voto, veo que Ronald sí votó
 nameTableEstudiantes=Estudiantes        │ nameTableEstudiantes: es el nombre de la tabla que contenga la información de los estudiantes
 nameTablePartidos=Partidos              │ nameTablePartidos: es el nombre de la tabla que contenga información de los partidos
-────────────────────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-────────────────────────────────────────────────────────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 [Paths]                                                 │ [Paths] Es la sección que tiene las rutas de los fonts, además del nombre del archivo de informe sobre la cantidad de votos de cada partido
 pathProgramFont=./fonts/GoMonoNerdFont-Regular.ttf      │ pathProgramFont: es la ruta que contiene el font del programa
 pathPdfFont=./fonts/LibertinusMono-Regular.ttf          │ pathPdfFont: es la ruta que contiene el font a usar en el pdf de informe
 informeName=Informe VOCA Votaciones 2026.pdf            │ informeName: es el nombre del archivo PDF de informe
-────────────────────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+```
