@@ -49,8 +49,11 @@ void screenConfirmationUpdate(Screen& currentScreen,      // Necesita la variabl
             {
                 votarPtr->selfquery += "1' WHERE Cedula = '"s + cedulaBarPtr->input + "'";                // Arma la query para asignar que el estudiane ha votado
                 sendquery(votarPtr->selfquery.data(), 0, 0, 0);                                           // Envía la query armada a la base de datos
-                votarPtr->selfquery  = "UPDATE Partidos SET Votos = Votos + 1 WHERE Nombre = '"s +        // Arma una query para sumarle 1 a la cantidad de votos del partido por el que el estudiante haya votado
+                votarPtr->selfquery = "UPDATE Partidos SET Votos = Votos + 1 WHERE Nombre = '"s +         // Arma una query para sumarle 1 a la cantidad de votos del partido por el que el estudiante haya votado
                                                                          partidoSelected + "';"s;
+                sendquery(votarPtr->selfquery.data(), 0, 0, 0);                                           // Envía la query a la base de datos
+                votarPtr->selfquery = "UPDATE Estudiantes SET Laboratorio = '"s + *labName +              // Arma la query para identificar el laboratorio donde se ejerció el voto
+                                                "' WHERE Cedula = '"s + cedulaBarPtr->input +"'"s;        // en el registro igual a la cédula del votante digitado en cedulaBar
                 sendquery(votarPtr->selfquery.data(), 0, 0, 0);                                           // Envía la query a la base de datos
                 currentScreen = ENDING;                                                                   // Y procede a cambiar a la pantalla ENDING para despedirse del estudiante
             }

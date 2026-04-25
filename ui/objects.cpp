@@ -272,10 +272,10 @@ int objectCreation()
     {
         auto credBar = std::make_unique<inputBar>();
         credBar->name    = nameTermCred[b];
-        credBar->xloc    = (screenWidth * 0.15) + ((credBar->name.length() * mediumFontSize) / 2) + (screenWidth * 0.022);
-        credBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.14) * b);
-        credBar->xsize   = mediumFontSize * 30;
-        credBar->ysize   = mediumFontSize * 2;
+        credBar->xloc    = (screenWidth * 0.15) + ((credBar->name.length() * littleFontSize) / 2) + (screenWidth * 0.022);
+        credBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.12) * b);
+        credBar->xsize   = littleFontSize * 30;
+        credBar->ysize   = littleFontSize * 2;
         credBar->status  = 0;
         credBar->input   = "";
         credBar->input32 = U"";
@@ -297,7 +297,7 @@ int objectCreation()
         auto extraBar = std::make_unique<inputBar>();
         extraBar->name    = nameExtra[b];
         extraBar->xloc    = (screenWidth * 0.15) + ((extraBar->name.length() * littleFontSize) / 2) + (screenWidth * 0.022);
-        extraBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.13) * b);
+        extraBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.12) * b);
         extraBar->xsize   = littleFontSize * 30;
         extraBar->ysize   = littleFontSize * 2;
         extraBar->status  = 0;
@@ -326,11 +326,11 @@ int objectCreation()
         adminObj.push_back(std::move(pathBar));
     }
 
-    // admPasswordBar
+    // admPasswordBar es la barra en la pantalla CONFIGURATION en la que se puede configurar la contraseña para entrar al panel de administracion
     auto admPasswordBar = std::make_unique<inputBar>();
     admPasswordBar->name    = "Contraseña del panel de administracion:";
-    admPasswordBar->xloc    = (screenWidth * 0.15) + ((admPasswordBar->name.length() * mediumFontSize) / 2) + (screenWidth * 0.022);
-    admPasswordBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.14) * (int)termBars.size());
+    admPasswordBar->xloc    = (screenWidth * 0.15) + ((admPasswordBar->name.length() * littleFontSize) / 2) + (screenWidth * 0.022);
+    admPasswordBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.12) * (int)termBars.size());
     admPasswordBar->xsize   = termBars[0]->xsize / 2;
     admPasswordBar->ysize   = termBars[0]->ysize;
     admPasswordBar->status  = 0;
@@ -338,6 +338,19 @@ int objectCreation()
     admPasswordBar->input32 = U"";
     admPasswordBarPtr = admPasswordBar.get();
     adminObj.push_back(std::move(admPasswordBar));
+
+    // labNameBar es la barra en la pantalla CONFIGURATION en la que se configura el nombre del laboratorio actual
+    auto labNameBar = std::make_unique<inputBar>();
+    labNameBar->name    = "Nombre del laboratorio actual:";
+    labNameBar->xloc    = (screenWidth * 0.15) + ((labNameBar->name.length() * littleFontSize) / 2) + (screenWidth * 0.022);
+    labNameBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.12) *( (int)termBars.size()+1));
+    labNameBar->xsize   = termBars[0]->xsize / 2;
+    labNameBar->ysize   = termBars[0]->ysize;
+    labNameBar->status  = 0;
+    labNameBar->input   = "";
+    labNameBar->input32 = U"";
+    labNameBarPtr = labNameBar.get();
+    adminObj.push_back(std::move(labNameBar));
 
     // adminTerminal (cuadro de salida de la terminal)
     auto adminTerminal = std::make_unique<inputBar>();

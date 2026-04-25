@@ -225,5 +225,7 @@ int updateData()              /* Esta función se encarga de cargar información
         }
     }
 
+    if (((std::string)*labName).empty()) {return -1;}
+
     return 0;               // Retorna 0, código de estado exitoso
 }

@@ -26,7 +26,7 @@ continuar con configurations[1]... y así hasta completar a todos
 
 std::vector<char*> configurations = {
     strdup("server="), strdup("user="), strdup("password="), strdup("database="),
-    strdup("port="), strdup("admPassword="), strdup("nameTableEstudiantes="),
+    strdup("port="), strdup("admPassword="), strdup("labName="), strdup("nameTableEstudiantes="),
     strdup("nameTablePartidos="), strdup("nameColumnVotoNombre="),
     strdup("nameColumnVotosNombre="), strdup("nameColumnPartidosNombre="),
     strdup("nameColumnNuloPartido="), strdup("pathProgramFont="),
@@ -37,20 +37,21 @@ std::vector<char*> configurations = {
 char** admPassword             = &configurations[5];    // admPassword apunta al índice 5, el cual es el de la contraseña del panel de admistración
 char** password                = &configurations[2];    // password apunta al índice 2, el cual es igual a la contraseña que se utiliza en la conexión del programa a la la base de datos
 char** database                = &configurations[3];    // database apunta al índice 3, el cual es el nombre de la base de datos que se utiliza en la conexión del programa a la base de datos
+char** labName                 = &configurations[6];    // labName apunta al índice 6, el cual es el nombre del laboratorio en el que se encuentra la computadora actual
 char** server                  = &configurations[0];    // server apunta al índice 0, el cual es la IP del servidor MySQL al cual se realiza la conexión del programa a la base de datos
 char** user                    = &configurations[1];    // user apunta al índice 1, el cual es el nombre de usuario que se utiliza en la conexión del programa a la base de datos
 char** port                    = &configurations[4];    // port apunta al índice 4, el cual es el número de puerto que se utiliza en la conexión del programa a la base de datos
 
-char** nameColumnPartidosNombre = &configurations[10];  // Estos valores son valores extra que
-char** nameColumnNuloPartido    = &configurations[11];  // decidí agregar, ya que no sé si
-char** nameColumnVotosNombre    = &configurations[9];   // en algún momento algun valor de la
-char** nameColumnVotoNombre     = &configurations[8];   // base de datos puede llegar a cambiar
-char** nameTableEstudiantes     = &configurations[6];   // como nombres de columnas o tablas de
-char** nameTablePartidos        = &configurations[7];   // la base de datos en caso de usar una distinta
+char** nameColumnPartidosNombre = &configurations[11];  // Estos valores son valores extra que
+char** nameColumnNuloPartido    = &configurations[12];  // decidí agregar, ya que no sé si
+char** nameColumnVotosNombre    = &configurations[10];   // en algún momento algun valor de la
+char** nameColumnVotoNombre     = &configurations[9];   // base de datos puede llegar a cambiar
+char** nameTableEstudiantes     = &configurations[7];   // como nombres de columnas o tablas de
+char** nameTablePartidos        = &configurations[8];   // la base de datos en caso de usar una distinta
 
-char** pathProgramFont          = &configurations[12];  // Estos valores son rutas a los fonts
-char** pathPdfFont              = &configurations[13];  // necesarios para el programa y el PDF de informe
-char** informeName              = &configurations[14];  // como también la definición del nombre de salida del PDF
+char** pathProgramFont          = &configurations[13];  // Estos valores son rutas a los fonts
+char** pathPdfFont              = &configurations[14];  // necesarios para el programa y el PDF de informe
+char** informeName              = &configurations[15];  // como también la definición del nombre de salida del PDF
 
 // ── MySQL ─────────────────────────────────────────────────────────────────────
 MYSQL_RES* res  = nullptr;    // Variable que almacena un puntero a la respuesta de las queries a la base de datos MySQL
@@ -151,17 +152,18 @@ sqlobject* sinVotarPtr          = nullptr;
 inputBar*  barAdminTerminalPtr  = nullptr;
 inputBar*  admPasswordBarPtr    = nullptr;
 inputBar*  adminTerminalPtr     = nullptr;
-inputBar*  actBarPtr            = nullptr;
 inputBar*  terminalBarPtr       = nullptr;
+inputBar*  labNameBarPtr        = nullptr;
 inputBar*  cedulaBarPtr         = nullptr;
-button*    opcionActPtr         = nullptr;
-button*    votarPtr             = nullptr;
-button*    cedulaPtr            = nullptr;
-button*    continuarPtr         = nullptr;
-button*    regresarPtr          = nullptr;
-button*    exitAdminPtr         = nullptr;
-button*    resTogglePtr         = nullptr;
-button*    informePtr           = nullptr;
-button*    saveConfigPtr        = nullptr;
+inputBar*  actBarPtr            = nullptr;
 button*    enterConfigPtr       = nullptr;
+button*    saveConfigPtr        = nullptr;
+button*    continuarPtr         = nullptr;
+button*    opcionActPtr         = nullptr;
+button*    resTogglePtr         = nullptr;
+button*    exitAdminPtr         = nullptr;
+button*    regresarPtr          = nullptr;
+button*    informePtr           = nullptr;
 button*    refreshPtr           = nullptr;
+button*    cedulaPtr            = nullptr;
+button*    votarPtr             = nullptr;

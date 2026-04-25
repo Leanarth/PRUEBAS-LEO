@@ -192,9 +192,8 @@ inline std::string inputfunc(std::string mode,                            // Ver
         else                          // Si el modo es "boolean"
         {
             int codepoint = GetCharPressed();                                               // Declara a codepoint, que almacenará cualquier carácter presionado
-            if (codepoint == 48 || codepoint == 49) {bar->input = (char32_t)codepoint;}     // Si el carácter presionado es un uno o un cero, entonces el valor de la barra de entrada será el carácter digitado
+            if (codepoint == 48 || codepoint == 49) {bar->input32 = (char32_t)codepoint; bar->input = (char)codepoint;}     // Si el carácter presionado es un uno o un cero, entonces el valor de la barra de entrada será el carácter digitado
             showBeam    = false;                                                            // No se necesita que haya una barra parpadeante, entonces showBeam se desactiva
-            bar->status = isPressed(bar);                                                   // Se actualiza el estado de la barra
             if (bar->status == 4)                                                           // Si se recibe un clic en la barra...
             {
                 if (bar->input == "0") {bar->input = "1"; bar->input32 = U"1";}             // En caso de que el valor anterior de la barra haya sido 0, lo cambiará a 1 por el clic, tanto en las propiedad input como en input32

@@ -11,7 +11,8 @@
 # Lo que hace este compilador es ejecutar el comando make y ejecutar el programa, el comando make se encarga del compilado del programa, solo que make es más rapido debido a que solo recompila desde cero los archivos que hayan sido modificados
 # El comando make para funcionar, lo que hace es leer un archivo llamado Makefile, el cual posee toda la configuración de compilado
 
-make --makefile=./build/Makefile 
+
+which main
 
 if [ $? -ne 0 ]; then
   echo ""
@@ -22,13 +23,22 @@ if [ $? -ne 0 ]; then
   echo "    sudo dnf install make"
   echo "    "
   echo "Depende del instalador de su sistema"
+  exit 1
 fi
 
-# Ejecutar el archivo compilado:
-export LD_LIBRARY_PATH=$PWD/build/bin/linux:$LD_LIBRARY_PATH              # En linux, el ejecutable necesita la librería dinámica que se encuentra en la carpeta bin/linux para poder ejecutarse, entonces la almacena en la variable LD_LIBRARY_PATH
-./build/bin/linux/main
+make --makefile=./build/Makefile                                          # Se procede a compilar
 
-if [ $? -eq 0 ]; then
+if [ $? -ne 0 ]; then                                                     # Si la compilación falla, envía un mensaje diciendo que falló, y sale del programa
+  echo ""
+  echo "El programa tuvo errores en su compilación"
+  echo ""
+  exit 1
+fi
+
+export LD_LIBRARY_PATH=$PWD/build/bin/linux:$LD_LIBRARY_PATH              # En linux, el ejecutable necesita la librería dinámica que se encuentra en la carpeta bin/linux para poder ejecutarse, entonces la almacena en la variable LD_LIBRARY_PATH
+./build/bin/linux/main                                                    # Se ejecuta el binario
+
+if [ $? -eq 0 ]; then                                                     # Se comprueba el estado del programa
   echo ""
   echo "El programa fue ejecutado de manera exitosa"
 else

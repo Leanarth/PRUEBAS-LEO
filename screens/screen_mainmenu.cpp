@@ -32,7 +32,7 @@ void screenMainmenuUpdate(Screen& currentScreen,          // Necesita la variabl
         cedulaPtr->status = 0;                                    // El estado del botón cedula ahora será igual a cero
         cedulaBarPtr->status = 0;                                 // El estado de cedulaBar ahora será igual a cero para no recibir más datos de entrada
         cedulaPtr->selfquery += cedulaBarPtr->input;              // Se procede a armar la query con el contenido de la barra cedulaBar para verificar si el estudiante existe en la base de datos
-        sendquery((cedulaPtr->selfquery + "'"s).data(), 1, 1);    // Se envía la query, recortando para que la output solo sea después de la primera columna, y antes de la última columna (por esos los "1,1" como argumentos en la función)
+        sendquery((cedulaPtr->selfquery + "'"s).data(), 1, 2);    // Se envía la query, recortando para que la output solo sea después de la primera columna, y antes de la última columna (por esos los "1,1" como argumentos en la función)
 
         if (!outQuery.empty())                            // Si outQuery (la respuesta de la query) NO se encuentra vacía, entonces...
         {

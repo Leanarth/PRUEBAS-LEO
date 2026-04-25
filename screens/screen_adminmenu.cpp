@@ -207,7 +207,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                 // Ahora, los objetos opcionAct y actBar deben ser actualizados, ya que no se les nombró en objectCreation() ciertos valores, estos valores se nombran dependiendo de los tamaños de las columnas de la tabla actual y sus nombres
 
                 opcionActPtr->xsize = maxLenName;                                                       // opcionAct es el botón de la lista desplegable, su tamaño se calcula dependiendo del nombre más largo de las columnas de la tabla actual
-                opcionActPtr->yloc  = screenHeight * 0.25 + (littleFontSize * 2) * quancolumns +        // La ubicación de la altura del botón se calcula dependiendo de la ubicación de la última columna
+                opcionActPtr->yloc  = screenHeight * 0.23 + (littleFontSize * 2) * quancolumns +        // La ubicación de la altura del botón se calcula dependiendo de la ubicación de la última columna
                                       screenHeight * 0.02 * quancolumns;
                 actBarPtr->yloc     = opcionActPtr->yloc;                                               // actBar es la barra de entrada de la columna que se quiera actualizar, su ubicación de la altura será la misma a opcionAct
                 actBarPtr->xloc     = opcionActPtr->xloc + opcionActPtr->xsize + screenWidth * 0.02;    // Su ubicación en el eje x depende de la ubicación en ancho del botón opcionAct, mas el ancho del botón, mas un espacio extra enre el botón
@@ -215,8 +215,12 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                 if (columnsVec[co]->fromTable == tableSelected)                                         // Ahora, si recordamos que estamos en un bucle desde la línea 29, podemos usarlo para buscar cuales son las columnas de la tabla actual
                 {
                     opcionActPtr->status = isPressed(opcionActPtr);                                     // Se verifica el estado de opcionAct
-                    if (opcionActPtr->status > 1 && (int)opcionesAct.size() < quancolumns)             // En caso de que se llegue a presionar opcionAct, para abrir la lista desplegable, y el vector opcionesAct es menor a la cantidad de columnas...
+                    if (opcionActPtr->status > 1 && (int)opcionesAct.size() < quancolumns)              // En caso de que se llegue a presionar opcionAct, para abrir la lista desplegable, y el vector opcionesAct es menor a la cantidad de columnas...
                     {
+                        if (opcionActPtr->status == 4) {                                                // Si se presiona el botón para escoger una opción...
+                            actBarPtr->input = "";                                                      // Se procederá a vaciar la barra actBar
+                            actBarPtr->input32 = U"";                                                   // para que se limpie automáticamente al cambiar opciones
+                        }
                         cnt++;                                                                          // Aumenta el contador, se usa para que opcionesAct no se llene infinitamente
                         auto opc = std::make_unique<sqlobject>();                                       // Se declara un objeto temporal llamado opc, el cual servorá para guardar entre las opciones a la columna actual del ciclo for padre
                         opc->name   = columnsVec[co]->name;                                             // El nombre será el de la columna actual del ciclo for padre
@@ -254,7 +258,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                     if (opcSelectedPtr->name != opcionActPtr->name)                               // Si la opción seleccionada NO es la opción vacía
                     {
                         actBarPtr->status = isPressed(actBarPtr);                                 // Verifica el estado de la barra de entrada de la opción seleccionada
-                        if      (opcSelectedPtr->type == "tinyint") {                             // Si el tipo de la columna es booleano/tinyint...
+                        if (opcSelectedPtr->type == "tinyint") {                                  // Si el tipo de la columna es booleano/tinyint...
                           modeInput = "boolean";                                                  // modeInput será "boolean"
                           actBarPtr->ysize = littleFontSize * 2;                                  // ysize será un tamaño más pequeño, y
                           actBarPtr->xsize = littleFontSize * 2;                                  // xsize también, para que den la ilusión de que es una casila
@@ -267,6 +271,7 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                                                          littleFontSize, WHITE,                   // El tamaño del font será littleFontSize, y la letra será blanca, aunque no aplica por ser desde el backend
                                                          8*(opcSize-1), 120*(opcSize-1)*2, 8*(opcSize-1));    // Se usa opcSize para lidiar con bugs de muchas repeticiones por segundo de esta función al estar dentro del bucle for padre...
                                                          //littleFontSize, WHITE);                // si no me explico bien, descomente esta línea y comente las dos anteriores, vaya a la pestaña "Actualizar" y escriba/borre/muevase en actBar
+                            if (actBarPtr->status == 4 && modeInput == "boolean") {break;}        // Si el estado es 4 y es booleano debe de romper el bucle, ya que si no se rompe, inputfunc() recibirá esto muchas veces, y cambiará mucho su valor
 
                         if (IsKeyPressed(KEY_ENTER) && !actBarPtr->input.empty())                 // Si se presiona ENTER y actBar no se encuentra vacío...
                         {

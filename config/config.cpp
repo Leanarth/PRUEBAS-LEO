@@ -24,6 +24,7 @@ password=0th3r@N0n\n\
 database=Votaciones\n\
 port=3306\n\
 admPassword=1234\n\
+labName=\n\
 \n\
 [Extra]\n\
 nameColumnPartidosNombre=Nombre\n\
@@ -100,6 +101,7 @@ int loadConfig()    // Nombro a la función loadConfig() sin argumentos ya que n
     termBars[3]->input32 = UTF8ToUTF32(*user);                        /**/              termBars[3]->input = *user;
     termBars[4]->input32 = UTF8ToUTF32(*password);                    /**/              termBars[4]->input = *password;
     admPasswordBarPtr->input32 = UTF8ToUTF32(*admPassword);           /**/              admPasswordBarPtr->input = *admPassword;
+    labNameBarPtr->input32 = UTF8ToUTF32(*labName);                   /**/              labNameBarPtr->input = *labName;
     extraBars[0]->input32 = UTF8ToUTF32(*nameTableEstudiantes);       /**/              extraBars[0]->input = *nameTableEstudiantes;
     extraBars[1]->input32 = UTF8ToUTF32(*nameTablePartidos);          /**/              extraBars[1]->input = *nameTablePartidos;
     extraBars[2]->input32 = UTF8ToUTF32(*nameColumnPartidosNombre);   /**/              extraBars[2]->input = *nameColumnPartidosNombre;

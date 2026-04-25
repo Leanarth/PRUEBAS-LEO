@@ -215,7 +215,7 @@ std::string drawcolumns(std::vector<sqlobject*> &cTables,                   // V
                                     (screenWidth * 0.018);
             newMax = (int)cVector[number]->name.size() * fsize;                                 // Calcula el tamaño del nombre de la columna actual
 
-            cVector[number]->yloc = screenHeight * 0.25 +                                       // Aquí calcula sus coordenadas en el eje y
+            cVector[number]->yloc = screenHeight * 0.23 +                                       // Aquí calcula sus coordenadas en el eje y
                                     ((fsize * 2) * quancolumns) +
                                     (screenHeight * 0.02 * quancolumns);
 
@@ -251,7 +251,7 @@ std::string drawcolumns(std::vector<sqlobject*> &cTables,                   // V
             quancolumns++;                                                                      // Hay que recordar que desde la línea 43 estamos en un bucle que recorre todas las columnas, quancolumns almacena la cantidad total de columnas
             if (newMax    > oldMax)    {oldMax    = newMax;}                                    // Si el tamaño del nombre de la columna actual es mayor que al último valor que se obtuvo, oldMax ahora tendrá ese valor, esto sirve para opcionAct
             if (newMaxBar > oldMaxBar) {oldMaxBar = newMaxBar;}                                 // Lo mismo de la línea anterior, ahora con el tamaño de la barra de entrada, esto sirve para ayudar el tamaño de actBar en la pestaña "Actualizar"
-            lastColumnMeasures = (int)(cVector[number]->yloc + cVector[number]->ysize + (fsize * 2));  // También ayuda en la pestaña "Actualizar", esto sirve para indicar la posición de la última columna dibujada
+            lastColumnMeasures = (int)(cVector[number]->yloc + cVector[number]->ysize + (fsize * 1.2));  // También ayuda en la pestaña "Actualizar", esto sirve para indicar la posición de la última columna dibujada
         }
     }
 

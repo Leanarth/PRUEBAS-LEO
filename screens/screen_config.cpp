@@ -59,15 +59,16 @@ void screenConfigUpdate(Screen& currentScreen,            // La función necesit
                     free(configurations[3]);  configurations[3]  = strdup(termBars[2]->input.data());         // BD
                     free(configurations[4]);  configurations[4]  = strdup(termBars[1]->input.data());         // Puerto
                     free(configurations[5]);  configurations[5]  = strdup(admPasswordBarPtr->input.data());   // Contraseña admin
-                    free(configurations[6]);  configurations[6]  = strdup(extraBars[0]->input.data());        // Tabla Estudiantes
-                    free(configurations[7]);  configurations[7]  = strdup(extraBars[1]->input.data());        // Tabla Partidos
-                    free(configurations[8]);  configurations[8]  = strdup(extraBars[5]->input.data());        // Columna Voto
-                    free(configurations[9]);  configurations[9]  = strdup(extraBars[4]->input.data());        // Columna Votos
-                    free(configurations[10]); configurations[10] = strdup(extraBars[2]->input.data());        // Columna Nombre partidos
-                    free(configurations[11]); configurations[11] = strdup(extraBars[3]->input.data());        // Partido nulo
-                    free(configurations[12]); configurations[12] = strdup(pathBars[0]->input.data());         // Font programa
-                    free(configurations[13]); configurations[13] = strdup(pathBars[1]->input.data());         // Font PDF
-                    free(configurations[14]); configurations[14] = strdup(pathBars[2]->input.data());         // Nombre PDF
+                    free(configurations[6]);  configurations[6]  = strdup(labNameBarPtr->input.data());       // Nombre de laboratorio
+                    free(configurations[7]);  configurations[7]  = strdup(extraBars[0]->input.data());        // Tabla Estudiantes
+                    free(configurations[8]);  configurations[8]  = strdup(extraBars[1]->input.data());        // Tabla Partidos
+                    free(configurations[9]);  configurations[9]  = strdup(extraBars[5]->input.data());        // Columna Voto
+                    free(configurations[10]); configurations[10]  = strdup(extraBars[4]->input.data());       // Columna Votos
+                    free(configurations[11]); configurations[11] = strdup(extraBars[2]->input.data());        // Columna Nombre partidos
+                    free(configurations[12]); configurations[12] = strdup(extraBars[3]->input.data());        // Partido nulo
+                    free(configurations[13]); configurations[13] = strdup(pathBars[0]->input.data());         // Font programa
+                    free(configurations[14]); configurations[14] = strdup(pathBars[1]->input.data());         // Font PDF
+                    free(configurations[15]); configurations[15] = strdup(pathBars[2]->input.data());         // Nombre PDF
 
                     statusCodeUpdating = updateData();                        // Se actualiza la información de la base de datos y se verifica que la configuración sea correcta, el código de estado de la función se guarda en statusCodeUpdating
                     std::string oldConfigSelected = configSelected;           // Se guarda la última pestaña actual dentro de oldConfigSelected, esto para evitar de que el reinicio de los objetos hagan que la pestaña actual cambie
@@ -81,7 +82,7 @@ void screenConfigUpdate(Screen& currentScreen,            // La función necesit
                         std::string outCredentials =                                                  // Se empiezan a crear los strings que se escribirán en el archivo de configuración
                             "[Credentials]\nserver="s + *server + "\nuser="s + *user +
                             "\npassword="s + *password + "\ndatabase="s + *database +
-                            "\nport="s + *port + "\nadmPassword="s + *admPassword + "\n"s;
+                            "\nport="s + *port + "\nadmPassword="s + *admPassword + "\nlabName="s + *labName + "\n"s;
                         std::string outExtra =
                             "\n[Extra]\nnameColumnPartidosNombre="s + *nameColumnPartidosNombre +
                             "\nnameColumnNuloPartido="s + *nameColumnNuloPartido +
@@ -138,6 +139,12 @@ void screenConfigUpdate(Screen& currentScreen,            // La función necesit
                 else if (admPasswordBarPtr->status > 1)                                 // En caso de que admPasswordBar tenga un estado mayor a 1, es decir, se está interactuando directamente, entonces...
                 {
                     admPasswordBarPtr->status = 0;                                      // La barra admPasswordBar pasa a estado cero para dejar de interactuar con ella
+                    labNameBarPtr->status = 2;                                          // La barra labNameBar pasa a ser la barra activa
+                    beam = 0; break;                                                    // El parpadeo se reinicia a cero y se rompe el bucle
+                }
+                else if (labNameBarPtr->status > 1)                                     // En caso de que labNameBar tenga un estado mayor a 1, es decir, se está interactuando directamente, entonces...
+                {
+                    labNameBarPtr->status = 0;                                          // La barra labNameBar pasa a estado cero para dejar de interactuar con ella
                     termBars[0]->status = 2;                                            // La primera barra del vector pasa a ser la barra activa
                     beam = 0; break;                                                    // El parpadeo se reinicia a cero y se rompe el bucle
                 }
@@ -147,14 +154,17 @@ void screenConfigUpdate(Screen& currentScreen,            // La función necesit
             if (termBars[b]->status > 1)                                                // Y si la barra actual está interactuandose directamente...
             {
                 if (termBars[b]->name != termBars[1]->name)                                         // Si la barra NO es igual al índice uno de termBars (termBars[1] es el puerto) entonces...
-                    inputfunc("backend", termBars[b], 45, "allchars", mediumFontSize, WHITE);       // El modo de entrada será allchars
+                    inputfunc("backend", termBars[b], 45, "allchars", littleFontSize, WHITE);       // El modo de entrada será allchars
                 else                                                                                // En caso de que la barra sí sea igual al índice uno de termBars, entonces...
-                    inputfunc("backend", termBars[b], 45, "numberonly", mediumFontSize, WHITE);     // Solo recibirá números con el modo de entrada numberonly
+                    inputfunc("backend", termBars[b], 45, "numberonly", littleFontSize, WHITE);     // Solo recibirá números con el modo de entrada numberonly
             }
         }
         admPasswordBarPtr->status = isPressed(admPasswordBarPtr);         // Como admPasswordBar está fuera del vector termBars, hay que verificar su estado fuera del bucle
+        labNameBarPtr->status = isPressed(labNameBarPtr);                 // labNameBar está fuera del vector termBars, hay que verificar su estado fuera del bucle
         if (admPasswordBarPtr->status > 1)                                // Si se está interactuando con la barra, entonces...
-            inputfunc("backend", admPasswordBarPtr, 25, "allchars", mediumFontSize, WHITE);       // Se recibirán datos de entrada de la barra actual
+            inputfunc("backend", admPasswordBarPtr, 25, "allchars", littleFontSize, WHITE);       // Se recibirán datos de entrada de la barra actual
+        if (labNameBarPtr->status > 1)                                // Si se está interactuando con la barra, entonces...
+            inputfunc("backend", labNameBarPtr, 25, "allchars", littleFontSize, WHITE);       // Se recibirán datos de entrada de la barra actual
     }
     else if (configSelected == configbuttons[1]->name)  // Si la pestaña activa es "Extra"...
     {
@@ -230,17 +240,23 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
         {
             DrawTextEx(fontTtf, termBars[b]->name.data(),                             // Dibujará el nombre de la barra
                        (Vector2){(float)screenWidth * 0.15f,
-                                  (float)termBars[b]->yloc + ((termBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
-                       mediumFontSize, 0, BLACK);
+                                  (float)termBars[b]->yloc + ((termBars[b]->ysize * 0.5f) - (littleFontSize * 0.5f))},
+                       littleFontSize, 0, BLACK);
             PrettyDrawRectangle(termBars[b]);                                         // Y dibujará la barra misma
-            inputfunc("frontend", termBars[b], 0, "allchars", mediumFontSize);        // Además del contenido que tiene
+            inputfunc("frontend", termBars[b], 0, "allchars", littleFontSize);        // Además del contenido que tiene
         }
         DrawTextEx(fontTtf, admPasswordBarPtr->name.data(),                           // Como admPasswordBar es una barra independiente, hay que dibujar su nombre fuera del bucle
                    (Vector2){(float)screenWidth * 0.15f,
-                              (float)admPasswordBarPtr->yloc + ((admPasswordBarPtr->ysize * 0.5f) - (mediumFontSize * 0.5f))},
-                   mediumFontSize, 0, BLACK);
+                              (float)admPasswordBarPtr->yloc + ((admPasswordBarPtr->ysize * 0.5f) - (littleFontSize * 0.5f))},
+                   littleFontSize, 0, BLACK);
         PrettyDrawRectangle(admPasswordBarPtr);                                       // Llamar a PrettyDrawRectangle para que dibuje a la barra misma
-        inputfunc("frontend", admPasswordBarPtr, 0, "allchars", mediumFontSize);      // Y llamar a inputfunc() para que dibuje su contenido
+        inputfunc("frontend", admPasswordBarPtr, 0, "allchars", littleFontSize);      // Y llamar a inputfunc() para que dibuje su contenido
+        DrawTextEx(fontTtf, labNameBarPtr->name.data(),                               // Como labNameBar es una barra independiente, hay que dibujar su nombre fuera del bucle
+                   (Vector2){(float)screenWidth * 0.15f,
+                              (float)labNameBarPtr->yloc + ((labNameBarPtr->ysize * 0.5f) - (littleFontSize * 0.5f))},
+                   littleFontSize, 0, BLACK);
+        PrettyDrawRectangle(labNameBarPtr);                                           // Llamar a PrettyDrawRectangle para que dibuje a la barra misma
+        inputfunc("frontend", labNameBarPtr, 0, "allchars", littleFontSize);          // Y llamar a inputfunc() para que dibuje su contenido
     }
     else if (configSelected == configbuttons[1]->name)                                // Si la pestaña actual es "Extra"
     {
@@ -284,7 +300,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
         /* Se comparan los códigos de estado tanto los de statusCodeUpdating como los de statusCodeConfig, estos códigos de estado son los que la función de cada uno retorna,
            si no son iguales a cero, significa que hubo un error, y aquí  está el significado de cada código de estado de cada función */
 
-        if      (statusCodeUpdating == 127) errorMessage = "Error | La IP del servidor no existe";
+        if      (statusCodeUpdating == -1)  errorMessage = "Por favor, escriba el nombre del laboratorio actual";
         else if (statusCodeUpdating == 1)   errorMessage = "Error en la conexion a la base de datos";
         else if (statusCodeUpdating == 3)   errorMessage = "Error con el nombre de la base de datos";
         else if (statusCodeUpdating == 6)   errorMessage = "Error en el nombre de la tabla de los estudiantes";
@@ -296,6 +312,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
         else if (statusCodeUpdating == 12)  errorMessage = "Error en la ruta de la fuente de la letra del programa";
         else if (statusCodeUpdating == 13)  errorMessage = "Error en la ruta de la fuente de la letra para el PDF";
         else if (statusCodeUpdating == 20)  errorMessage = "Error desconocido";
+        else if (statusCodeUpdating == 127) errorMessage = "Error | La IP del servidor no existe";
         else if (statusCodeConfig == 1)     errorMessage = "Error | No se encontro el archivo de configuracion";
         else if (statusCodeConfig == 2)     errorMessage = "Error | Faltaron parametros en el archivo de configuracion";
         if (errorConfig)   shortmessage(errorMessage, mediumFontSize, errorConfig, 450);      // Si errorConfig era el que se encontraba en true, llamará a la función shortmessage con errorConfig entre los argumentos
