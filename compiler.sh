@@ -14,10 +14,13 @@
 ls ./build/deps/linux.tar.xz
 
 if [ $? -eq 0 ]; then
+  tar -xvf ./build/bin.tar.xz
   tar -xvf ./build/deps/linux.tar.xz
   tar -xvf ./build/deps/windows.tar.xz
+  mv bin ./build/bin
   mv linux ./build/deps
   mv windows ./build/deps
+  rm ./build/bin.tar.xz
   rm ./build/deps/linux.tar.xz
   rm ./build/deps/windows.tar.xz
   sleep 1
