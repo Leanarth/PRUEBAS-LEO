@@ -12,7 +12,7 @@
 # El comando make para funcionar, lo que hace es leer un archivo llamado Makefile, el cual posee toda la configuración de compilado
 
 
-which main
+which make
 
 if [ $? -ne 0 ]; then
   echo ""
