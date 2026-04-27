@@ -60,11 +60,8 @@ void screenConfirmationUpdate(Screen& currentScreen,      // Necesita la variabl
         }
     }
 }
-
-// Frontend de CONFIRMATION
-
 void screenConfirmationDraw(bool existstudent,                  // Necesita saber si el estudiante existe en la base de datos
-                            bool correctstudent,                // Neceista también saber si el estudiante se ha confirmado
+                            bool correctstudent,                // Necesita también saber si el estudiante se ha confirmado
                             const std::string& studentName)     // Y necesita el nombre del estudiante
 {
     if (!correctstudent && existstudent)              // Si NO se ha confirmado de que el estudiante sea el correcto pero el estudiante SÍ existe...
@@ -72,41 +69,41 @@ void screenConfirmationDraw(bool existstudent,                  // Necesita sabe
         DrawTextEx(fontTtf, "Verifique si su nombre es correcto:"s.data(),                                                      // Mostrará un mensaje para decirle al estudiante que confirme su nombre
                    (Vector2){(float)centertext("Verifique si su nombre es correcto:"s, screenWidth, fontSize),
                               (float)(screenHeight * 0.2)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, WHITE);                                                                                         // WHITE porque flota sobre el fondo negro
         DrawTextEx(fontTtf, studentName.data(),                                                                                 // Luego, mostrará el nombre del estudiante
                    (Vector2){(float)centertext(studentName, screenWidth, fontSize),
                               (float)(screenHeight * 0.3)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, WHITE);                                                                                         // WHITE porque flota sobre el fondo negro
         PrettyDrawRectangle(continuarPtr);                                                                                      // Dibujará el botón de continuar
-        PrettyDrawRectangle(regresarPtr);                                                                                       // Como también ibujará el botón de regresar
+        PrettyDrawRectangle(regresarPtr);                                                                                       // Como también dibujará el botón de regresar
         DrawTextEx(fontTtf, continuarPtr->name.data(),
-                   (Vector2){continuarPtr->xloc + (float)centertext(continuarPtr->name, continuarPtr->xsize, fontSize),         // Luego dibujará el nombre del botón continuar
+                   (Vector2){continuarPtr->xloc + (float)centertext(continuarPtr->name, continuarPtr->xsize, fontSize),        // Luego dibujará el nombre del botón continuar
                               continuarPtr->yloc + (float)((continuarPtr->ysize - fontSize) / 2)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, BLACK);                                                                                         // BLACK porque el botón es beige
         DrawTextEx(fontTtf, regresarPtr->name.data(),                                                                           // Y luego dibujará el nombre de regresar
                    (Vector2){regresarPtr->xloc + (float)centertext(regresarPtr->name, regresarPtr->xsize, fontSize),
                               regresarPtr->yloc + (float)((regresarPtr->ysize - fontSize) / 2)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, BLACK);                                                                                         // BLACK porque el botón es beige
     }
     else if (!existstudent)                           // Si el estudiante NO existe en la base de datos...
     {
         DrawTextEx(fontTtf, "Usted no se encontro en la base de datos del VOCA"s.data(),                                        // Mostrará un mensaje diciendole al estudiante que no se encontró en la base de datos
                    (Vector2){(float)centertext("Usted no se encontro en la base de datos del VOCA"s, screenWidth, fontSize),
                               (float)(screenHeight * 0.2)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, WHITE);                                                                                         // WHITE porque flota sobre el fondo negro
         DrawTextEx(fontTtf, "Verifique que su cedula fue digitada correctamente:"s.data(),                                      // Y que verifique que digitó bien la cédula
                    (Vector2){(float)centertext("Verifique que su cedula fue digitada correctamente:"s, screenWidth, fontSize),
                               (float)(screenHeight * 0.3)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, WHITE);                                                                                         // WHITE porque flota sobre el fondo negro
         DrawTextEx(fontTtf, cedulaBarPtr->input.data(),                                                                         // Y mostrará la cédula digitada
                    (Vector2){(float)centertext(cedulaBarPtr->input, screenWidth, fontSize),
                               (float)(screenHeight * 0.4)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, WHITE);                                                                                         // WHITE porque flota sobre el fondo negro
         PrettyDrawRectangle(regresarPtr);                                                                                       // Esta vez solo dibujará el botón de regresar
         DrawTextEx(fontTtf, regresarPtr->name.data(),                                                                           // Y el nombre del botón regresar
                    (Vector2){regresarPtr->xloc + (float)centertext(regresarPtr->name, regresarPtr->xsize, fontSize),
                               regresarPtr->yloc + (float)((regresarPtr->ysize - fontSize) / 2)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, BLACK);                                                                                         // BLACK porque el botón es beige
     }
     else                                              // Si ninguno de los dos if ocurrieron, significa que lo que corresponde dibujar sería el mensaje para confirmar el voto, entonces...
     {
@@ -114,16 +111,16 @@ void screenConfirmationDraw(bool existstudent,                  // Necesita sabe
         DrawTextEx(fontTtf, mselected.data(),
                    (Vector2){(float)centertext(mselected, screenWidth, fontSize),
                               (float)(screenHeight * 0.2)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, WHITE);                                                                                         // WHITE porque flota sobre el fondo negro
         PrettyDrawRectangle(continuarPtr);                                                                                      // Dibujará el botón continuar
         PrettyDrawRectangle(regresarPtr);                                                                                       // Como también dibujará el botón de regresar
         DrawTextEx(fontTtf, continuarPtr->name.data(),                                                                          // Procederá a dibujar el nombre del botón continuar
                    (Vector2){continuarPtr->xloc + (float)centertext(continuarPtr->name, continuarPtr->xsize, fontSize),
                               continuarPtr->yloc + (float)((continuarPtr->ysize - fontSize) / 2)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, BLACK);                                                                                         // BLACK porque el botón es beige
         DrawTextEx(fontTtf, regresarPtr->name.data(),                                                                           // Como también dibujará el nombre del botón regresar
                    (Vector2){regresarPtr->xloc + (float)centertext(regresarPtr->name, regresarPtr->xsize, fontSize),
                               regresarPtr->yloc + (float)((regresarPtr->ysize - fontSize) / 2)},
-                   fontSize, 2, BLACK);
+                   fontSize, 2, BLACK);                                                                                         // BLACK porque el botón es beige
     }
 }

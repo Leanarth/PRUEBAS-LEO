@@ -62,12 +62,12 @@ MYSQL*     conn = nullptr;    // Variable que almacenará un puntero a la conexi
 // ── Colors ────────────────────────────────────────────────────────────────────
 // Los valores de los colores se definen en RGB y Alpha (RGBA) | Alpha es la transparencia del color, si Alpha es 0, es transparente, si es 255, es totalmente sólido
 // Por ejemplo, el VOCAVERDE tiene un valor de ROJO = 0
-Color VOCAVERDE         = {0,   200, 100, 255};
-Color VOCAVERDESUAVE    = {153, 255, 153, 255};
-Color VOCAAMARILLO      = {255, 255, 0,   255};
-Color VOCAAMARILLOSUAVE = {255, 255, 204, 255};
-Color VOCADORADO        = {239, 184, 16,  255};
-Color VOCADORADOSUAVE   = {255, 255, 132, 255};
+Color VOCAVERDE         = {245, 235, 210, 255};  // Beige pastel (botón normal)
+Color VOCAVERDESUAVE    = {250, 244, 228, 255};  // Beige muy suave (tablas normal)
+Color VOCAAMARILLO      = {220, 200, 160, 255};  // Beige más cálido (hover)
+Color VOCAAMARILLOSUAVE = {250, 244, 228, 255};  // Beige suave
+Color VOCADORADO        = {220, 200, 160, 255};  // Beige cálido (seleccionado)
+Color VOCADORADOSUAVE   = {245, 235, 210, 255};  // Beige pastel
 
 // ── File / query state ────────────────────────────────────────────────────────
 std::ofstream configFile;   // Variable que servirá para almacenar el contenido del archivo de configuración

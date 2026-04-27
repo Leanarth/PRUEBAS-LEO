@@ -422,8 +422,8 @@ int objectCreation()
             table->xsize       = screenWidth * 0.1;
             table->ysize       = screenHeight * 0.05;
             table->status      = 0;
-            table->normalColor = VOCAVERDESUAVE;
-            table->highColor   = VOCAVERDE;
+            table->normalColor = VOCAVERDE;       // Beige pastel en reposo, igual que los botones normales
+            table->highColor   = VOCADORADO;      // Beige cálido al tener hover o estar seleccionada
             tablesVec.push_back(table.get());
             adminObj.push_back(std::move(table));
         }

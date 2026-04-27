@@ -56,20 +56,20 @@ void screenMainmenuDraw()
     DrawTextEx(fontTtf, "Digite su cedula en este campo"s.data(),                                                       // Se muestra un mensaje diciendo de que por favor digite la cédula en la barra
                (Vector2){(float)centertext("Digite su cedula en este campo"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.23)},
-               fontSize, 2, BLACK);
+               fontSize, 2, WHITE);                                                                                     // WHITE porque el fondo ahora es negro, texto negro sobre negro sería invisible
     DrawTextEx(fontTtf, "con uno de los siguientes formatos"s.data(),                                                   // Se agrega en la pantalla el mensaje "con los siguientes formatos"
                (Vector2){(float)centertext("con uno de los siguientes formatos"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.3)},
-               fontSize, 2, BLACK);
+               fontSize, 2, WHITE);                                                                                     // WHITE por la misma razón: fondo negro
     DrawTextEx(fontTtf, "101110111 | 123456789012 | AZ0000-11111"s.data(),                                              // Y se agregan a la pantalla los tipos de formatos a ingresar
                (Vector2){(float)centertext("101110111 | 123456789012 | AZ0000-11111"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.37)},
-               fontSize, 2, BLACK);
+               fontSize, 2, WHITE);                                                                                     // WHITE por la misma razón: fondo negro
     PrettyDrawRectangle(cedulaBarPtr);                                                                                  // Se dibuja el rectángulo de la barra de datos de entrada de la cédula
     PrettyDrawRectangle(cedulaPtr);                                                                                     // Y también se dibuja el botón de la cédula
     DrawTextEx(fontTtf, cedulaPtr->name.data(),
                (Vector2){cedulaPtr->xloc + (float)centertext(cedulaPtr->name, cedulaPtr->xsize, fontSize),
                           cedulaPtr->yloc + (float)((cedulaPtr->ysize - fontSize) / 2)},
-               fontSize, 2, BLACK);
+               fontSize, 2, BLACK);                                                                                     // BLACK porque el botón es beige, y el negro contrasta bien sobre beige
     inputfunc("frontend", cedulaBarPtr, 0, "allchars", fontSize);                                                       // Se procede a dibujar el contenido de la barra de la cédula
 }

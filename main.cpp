@@ -110,7 +110,7 @@ int main(void)
 
         // ── Frontend (drawing) ────────────────────────────────────────────────
         BeginDrawing();                       // Función que inicia el "dibujado" en el frontend
-        ClearBackground(RAYWHITE);            // Limpia el background y lo "pinta" de color RAYWHITE
+        ClearBackground({45, 45, 48, 255});  // Gris oscuro pastel, menos agresivo que el negro puro, da contraste sin ser brusco
         screenWidth  = GetScreenWidth();      // El tamaño de screenWidth es actualizado
         screenHeight = GetScreenHeight();     // El tamaño de screenHeight es actualizado
 

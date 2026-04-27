@@ -592,7 +592,7 @@ void screenAdminmenuDraw(bool &invalidCredentials,                              
     DrawTextEx(fontTtf, "Panel de Administracion"s.data(),                                      // Y escribe el título "Panel de Administracion"
                (Vector2){(float)centertext("Panel de Administracion"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.05)},
-               fontSize, 2, BLACK);
+               fontSize, 2, WHITE);
 
     // ── Consultar ──────────────────────────────────────────────────────────────────────────
     if (adminSelected == butnames[0])                                                                         // Si la pestaña actual es "Consultar"
@@ -650,7 +650,7 @@ void screenAdminmenuDraw(bool &invalidCredentials,                              
         drawSelected(tablesVec, littleFontSize, tableSelected);                                               // Dibuja las tablas
         DrawTextEx(fontTtf, explorarFinalOutput.data(),                                                       // Y dibuja la salida de la información de la tabla actual
                    (Vector2){(float)(screenWidth * 0.13), (float)(explorarSquare[1] * 1.095)},
-                   littleFontSize, 2, BLACK);
+                   littleFontSize, 2, WHITE);
     }
     // ── Resultados ─────────────────────────────────────────────────────────────────────────
     else if (adminSelected == butnames[5])                                                                    // Si la pestaña actual es resultados
@@ -660,12 +660,12 @@ void screenAdminmenuDraw(bool &invalidCredentials,                              
         DrawTextEx(fontTtf, resTogglePtr->name.data(),                                                                          // Dibujará el nombre del botón
                    (Vector2){(float)(resTogglePtr->xloc + littleFontSize / 2),
                               (float)(resTogglePtr->yloc + littleFontSize / 3)},
-                   littleFontSize, 2, BLACK);
+                   littleFontSize, 2, WHITE);
         PrettyDrawRectangle(informePtr);                                                      // Dibujará el botón para hacer el informe en PDF
         DrawTextEx(fontTtf, informePtr->name.data(),                                          // Dibujará el nombre del botón del PDF
                    (Vector2){(float)(informePtr->xloc + (informePtr->xsize * 0.5) - (informePtr->name.length() * littleFontSize) * 0.35),
                               (float)(informePtr->yloc + (informePtr->ysize * 0.5) - littleFontSize * 0.5)},
-                   littleFontSize, 2, BLACK);
+                   littleFontSize, 2, WHITE);
         // Verificación de errores de la función informe() relacionados a la creación del PDF
         if (pdfError)            shortmessage("ERROR: Ocurrio un error al crear el PDF", fontSize, pdfError);                     // Si se activa pdfError desde la función informe(), mostrará ese mensaje
         else if (pdfFontError)   shortmessage("ERROR: Ocurrio un error al cargar la fuente de texto", fontSize, pdfFontError);    // Si hubo un error con la fuente de texto, se activa pdfFontError desde la función informe(), y muestra ese mensaje

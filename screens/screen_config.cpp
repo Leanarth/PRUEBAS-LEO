@@ -228,7 +228,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
     DrawTextEx(fontTtf, "Panel de Configuración"s.data(),                                         // Procede a escribir el título "Panel de Configuración"
                (Vector2){(float)centertext("Panel de Configuracion"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.05)},
-               fontSize, 2, BLACK);
+               fontSize, 2, WHITE);                                                               // WHITE porque el título flota sobre el fondo negro
 
     drawSelected(configbuttons, littleFontSize, configSelected);                      // Dibuja las pestañas de CONFIGURATION
     DrawRectangle(adminPanel[0], adminPanel[1] + terminalBarPtr->ysize - 1,           // Dibuja el rectángulo de fondo
@@ -240,23 +240,17 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
         {
             DrawTextEx(fontTtf, termBars[b]->name.data(),                             // Dibujará el nombre de la barra
                        (Vector2){(float)screenWidth * 0.15f,
-                                  (float)termBars[b]->yloc + ((termBars[b]->ysize * 0.5f) - (littleFontSize * 0.5f))},
-                       littleFontSize, 0, BLACK);
+                                  (float)termBars[b]->yloc + ((termBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
+                       mediumFontSize, 0, WHITE);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
             PrettyDrawRectangle(termBars[b]);                                         // Y dibujará la barra misma
-            inputfunc("frontend", termBars[b], 0, "allchars", littleFontSize);        // Además del contenido que tiene
+            inputfunc("frontend", termBars[b], 0, "allchars", mediumFontSize);        // Además del contenido que tiene
         }
         DrawTextEx(fontTtf, admPasswordBarPtr->name.data(),                           // Como admPasswordBar es una barra independiente, hay que dibujar su nombre fuera del bucle
                    (Vector2){(float)screenWidth * 0.15f,
-                              (float)admPasswordBarPtr->yloc + ((admPasswordBarPtr->ysize * 0.5f) - (littleFontSize * 0.5f))},
-                   littleFontSize, 0, BLACK);
+                              (float)admPasswordBarPtr->yloc + ((admPasswordBarPtr->ysize * 0.5f) - (mediumFontSize * 0.5f))},
+                   mediumFontSize, 0, WHITE);                                         // WHITE porque la etiqueta flota sobre el fondo oscuro del panel
         PrettyDrawRectangle(admPasswordBarPtr);                                       // Llamar a PrettyDrawRectangle para que dibuje a la barra misma
-        inputfunc("frontend", admPasswordBarPtr, 0, "allchars", littleFontSize);      // Y llamar a inputfunc() para que dibuje su contenido
-        DrawTextEx(fontTtf, labNameBarPtr->name.data(),                               // Como labNameBar es una barra independiente, hay que dibujar su nombre fuera del bucle
-                   (Vector2){(float)screenWidth * 0.15f,
-                              (float)labNameBarPtr->yloc + ((labNameBarPtr->ysize * 0.5f) - (littleFontSize * 0.5f))},
-                   littleFontSize, 0, BLACK);
-        PrettyDrawRectangle(labNameBarPtr);                                           // Llamar a PrettyDrawRectangle para que dibuje a la barra misma
-        inputfunc("frontend", labNameBarPtr, 0, "allchars", littleFontSize);          // Y llamar a inputfunc() para que dibuje su contenido
+        inputfunc("frontend", admPasswordBarPtr, 0, "allchars", mediumFontSize);      // Y llamar a inputfunc() para que dibuje su contenido
     }
     else if (configSelected == configbuttons[1]->name)                                // Si la pestaña actual es "Extra"
     {
@@ -265,7 +259,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
             DrawTextEx(fontTtf, extraBars[b]->name.data(),                            // Dibujará el nombre de cada barra
                        (Vector2){(float)screenWidth * 0.15f,
                                   (float)extraBars[b]->yloc + ((extraBars[b]->ysize * 0.5f) - (littleFontSize * 0.5f))},
-                       littleFontSize, 0, BLACK);
+                       littleFontSize, 0, WHITE);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
             PrettyDrawRectangle(extraBars[b]);                                        // Y dibujará la barra misma
             inputfunc("frontend", extraBars[b], 0, "allchars", littleFontSize);       // Además del contenido que tiene
         }
@@ -277,7 +271,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
             DrawTextEx(fontTtf, pathBars[b]->name.data(),                             // Dibujará el nombre de cada barra
                        (Vector2){(float)screenWidth * 0.15f,
                                   (float)pathBars[b]->yloc + ((pathBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
-                       mediumFontSize, 0, BLACK);
+                       mediumFontSize, 0, WHITE);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
             PrettyDrawRectangle(pathBars[b]);                                         // Y dibujará la barra misma
             inputfunc("frontend", pathBars[b], 0, "allchars", mediumFontSize);        // Además del contenido que tiene
         }
@@ -287,7 +281,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
     DrawTextEx(fontTtf, saveConfigPtr->name.data(),                                   // Y dibuja el nombre de ese botón también
                (Vector2){saveConfigPtr->xloc + (float)centertext(saveConfigPtr->name, saveConfigPtr->xsize, mediumFontSize),
                           saveConfigPtr->yloc + (float)((saveConfigPtr->ysize - mediumFontSize) / 2)},
-               mediumFontSize, 0, BLACK);
+               mediumFontSize, 0, BLACK);                                             // BLACK porque el botón guardar es beige
 
     // Estas líneas sirven para mostrar los mensajes en caso de algún error
 
@@ -300,7 +294,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
         /* Se comparan los códigos de estado tanto los de statusCodeUpdating como los de statusCodeConfig, estos códigos de estado son los que la función de cada uno retorna,
            si no son iguales a cero, significa que hubo un error, y aquí  está el significado de cada código de estado de cada función */
 
-        if      (statusCodeUpdating == -1)  errorMessage = "Por favor, escriba el nombre del laboratorio actual";
+        if      (statusCodeUpdating == 127) errorMessage = "Error | La IP del servidor no existe";
         else if (statusCodeUpdating == 1)   errorMessage = "Error en la conexion a la base de datos";
         else if (statusCodeUpdating == 3)   errorMessage = "Error con el nombre de la base de datos";
         else if (statusCodeUpdating == 6)   errorMessage = "Error en el nombre de la tabla de los estudiantes";
@@ -312,7 +306,6 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
         else if (statusCodeUpdating == 12)  errorMessage = "Error en la ruta de la fuente de la letra del programa";
         else if (statusCodeUpdating == 13)  errorMessage = "Error en la ruta de la fuente de la letra para el PDF";
         else if (statusCodeUpdating == 20)  errorMessage = "Error desconocido";
-        else if (statusCodeUpdating == 127) errorMessage = "Error | La IP del servidor no existe";
         else if (statusCodeConfig == 1)     errorMessage = "Error | No se encontro el archivo de configuracion";
         else if (statusCodeConfig == 2)     errorMessage = "Error | Faltaron parametros en el archivo de configuracion";
         if (errorConfig)   shortmessage(errorMessage, mediumFontSize, errorConfig, 450);      // Si errorConfig era el que se encontraba en true, llamará a la función shortmessage con errorConfig entre los argumentos

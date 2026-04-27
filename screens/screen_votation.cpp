@@ -29,16 +29,16 @@ void screenVotationDraw(bool& votoBlanco)           // Necesita a la variable vo
     DrawTextEx(fontTtf, "Por favor, escoja un partido por el que desea votar"s.data(),                                            // En el frontend mostrará un mensaje diciendo de que vote por algún partido
                (Vector2){(float)centertext("Por favor, escoja un partido por el que desea votar"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.1)},
-               fontSize, 2, BLACK);
+               fontSize, 2, WHITE);                                                                                               // WHITE porque flota sobre el fondo negro
     DrawTextEx(fontTtf, "O si lo desea, puede votar nulo"s.data(),                                                                // Además de que comunicará que puede votar nulo
                (Vector2){(float)centertext("O si lo desea, puede votar nulo"s, screenWidth, fontSize),
                           (float)(screenHeight * 0.2)},
-               fontSize, 2, BLACK);
+               fontSize, 2, WHITE);                                                                                               // WHITE porque flota sobre el fondo negro
     drawSelected(partidosVec, littleFontSize * 1.5, partidoSelected);                                                             // Dibujará a los partidos disponibles
     PrettyDrawRectangle(votarPtr);                                                                                                // Dibujará el botón para votar
     DrawTextEx(fontTtf, votarPtr->name.data(),                                                                                    // Y dibujará el nombre de ese botón
                (Vector2){votarPtr->xloc + (float)centertext(votarPtr->name, continuarPtr->xsize, fontSize),
                           votarPtr->yloc + (float)((votarPtr->ysize - fontSize) / 2)},
-               fontSize, 2, BLACK);
+               fontSize, 2, BLACK);                                                                                               // BLACK porque el botón es beige
     if (votoBlanco) shortmessage("Tiene que seleccionar una opción", mediumFontSize, votoBlanco);                                 // Si votoBlanco es verdadero, es decir, se intentó votar por ninguna opción, aparecerá un mensaje
 }
