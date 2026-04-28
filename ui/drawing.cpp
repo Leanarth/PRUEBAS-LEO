@@ -235,8 +235,12 @@ std::string drawcolumns(std::vector<sqlobject*> &cTables,                   // V
                            (Vector2){(float)(screenWidth * 0.12),
                                       (float)(cVector[number]->yloc + (cVector[number]->ysize * 0.5) - (fsize * 0.5))},
                            fsize, 2, BLACK);
-                PrettyDrawRectangle(cVector[number]);                                           // Dibuja ahora la barra de entrada de la columna actual con sus respectivos colores
-                cVector[number]->status = isPressed(cVector[number]);                           // Se verifica el estado de la columna, para detectar si debe de recibir datos de entrada o no
+                // Se calcula el hover por separado sin afectar el estado real de escritura
+                int tempStatus = isPressed(cVector[number]);                                    // Se obtiene el estado temporal solo para el efecto visual del hover
+                if (tempStatus == 1 && cVector[number]->status <= 1)                           // Si hay hover y la columna no estaba activa, se aplica el hover solo visualmente
+                    cVector[number]->status = 1;                                               // Se aplica el estado hover sin interrumpir la escritura
+                PrettyDrawRectangle(cVector[number]);                                           // Dibuja la barra con el hover ya reflejado
+                cVector[number]->status = isPressed(cVector[number]);                           // Ahora sí se actualiza el estado real para la lógica de escritura
                 if (cVector[number]->status > 1)                                                // Si se interactúa con la columna, entonces recibirá datos de entrada
                 {
                     if (cVector[number]->status == 4) {tabRestart = true;}                      // Si la columna recibe un clic, entonces tabRestart se activará, esto para reiniciar la función de tabulación y avisar que la columna actual cambió

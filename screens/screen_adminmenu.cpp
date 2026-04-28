@@ -586,12 +586,19 @@ void screenAdminmenuDraw(bool &invalidCredentials,                              
                          std::string& modeInput,                                                // el modo de entrada de la columna actual
                          std::string &outResultsMode)                                           // y el tipo de modo para la gráfica en "Resultados"
 {
+    // Se actualiza el estado de cada botón no seleccionado cada frame para que PrettyDrawRectangle
+    // detecte el hover y cambie el grosor del borde dorado correctamente
+    TraceLog(LOG_INFO, "Mouse: %d %d", GetMouseX(), GetMouseY());
+    for (int i = 0; i < (int)adminButtons.size(); i++)
+        if (adminButtons[i]->name != adminSelected)    // Solo los no seleccionados, el seleccionado lo dibuja drawSelected manualmente siempre resaltado
+            adminButtons[i]->status = isPressed(adminButtons[i]);
+
     drawSelected(adminButtons, littleFontSize, adminSelected);                                  // Empieza a dibujar los botones de las pestañas del panel de administración
     DrawRectangle(adminPanel[0], adminPanel[1] + terminalBarPtr->ysize - 1,                     // Dibuja el cuadro del fonto
                   adminPanel[2], adminPanel[3], VOCADORADOSUAVE);
-    DrawTextEx(fontTtf, "Panel de Administracion"s.data(),                                      // Y escribe el título "Panel de Administracion"
+    DrawTextEx(fontTtf, "PANEL DE ADMINISTRACION"s.data(),                                      // Y escribe el título "Panel de Administracion"
                (Vector2){(float)centertext("Panel de Administracion"s, screenWidth, fontSize),
-                          (float)(screenHeight * 0.05)},
+                          (float)(screenHeight * 0.01)}, // Se sube el título acercándolo más al borde superior
                fontSize, 2, WHITE);
 
     // ── Consultar ──────────────────────────────────────────────────────────────────────────
@@ -604,6 +611,7 @@ void screenAdminmenuDraw(bool &invalidCredentials,                              
     else if (adminSelected == butnames[2])                                                                    // Si la pestaña actual es "Actualizar"
     {
         oldSelected = drawcolumns(tablesVec, columnsVec, tableSelected, littleFontSize, adminSelected);       // Dibuja las columnas y tablas normalmente y...
+        opcionActPtr->status = isPressed(opcionActPtr);                                                       // Se actualiza el estado del botón cada frame para detectar hover correctamente
         PrettyDrawRectangle(opcionActPtr);                                                                    // Dibuja la opción de la lista desplegable
         if (opcionActPtr->status > 1)                                                                         // Si el estado del botón es mayor a uno, es decir, está recibiendo interacción alguna, entonces...
         {

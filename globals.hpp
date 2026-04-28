@@ -79,6 +79,7 @@ extern float explorarSquare[4];
 extern float mediumFontSize;
 extern float littleFontSize;
 extern float adminPanel[4];
+extern float configPanel[4];    // Panel separado para la pantalla de configuración
 extern float outSquare[4];
 extern float screenHeight;
 extern float screenWidth;

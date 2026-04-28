@@ -33,6 +33,12 @@ int objectCreation()
     adminPanel[2] = screenWidth;
     adminPanel[3] = screenHeight * 0.9;
 
+    // Panel de configuración con posición independiente del panel de administración
+    configPanel[0] = 0.0;
+    configPanel[1] = screenHeight * 0.13;  // Más arriba que adminPanel, se puede ajustar independientemente
+    configPanel[2] = screenWidth;
+    configPanel[3] = screenHeight * 0.9;
+
     /* A continuación, se iniciará la creación de los objetos, pero hay que primero entender esto:
        Siempre se le tiene que asignar un tipo auto a la hora de crear el objeto, y después de escribir auto, se le pasa como argumento el nombre del objeto
        Además, los objetos se deben de crear con un puntero, los punteros se crean por medio de std::make_unique y se le pasa de argumento el tipo de objeto que se desea crear, por ejemplo, si quiero crear un botón, iniciaría su creación así:
@@ -87,7 +93,7 @@ int objectCreation()
         auto btn = std::make_unique<button>();                      // Declaro a btn, el puntero temporal para cada botón
         btn->name        = butnames[i];                             // Declaro que el nombre de btn, será según el índice en el bucle actual pero usandolo para acceder a un índice en butnames, por ejemplo, si i vale 0, el nombre será "Consultar"
         btn->xloc        = adminPanel[2] / 7.22 * i + (7.22 * i);   // Declaro la ubicación en X (ubicación en el ancho de la pantalla), esto debe de cambiar según el índice en el bucle, así declaro a todos en diferentes posiciones
-        btn->yloc        = adminPanel[1] + screenHeight * 0.005;    // Declaro la posición en el eje Y (altura)
+        btn->yloc = adminPanel[1] - screenHeight * 0.03;    // Se sube el botón restando en vez de sumar, alejándolo del panel hacia arriba    
         btn->xsize       = adminPanel[2] / 7.22;                    // Declaro el ancho del botón
         btn->ysize       = adminPanel[3] * 0.05;                    // Declaro el tamaño de la altura del botón
         btn->outLog      = "";                                      // Esta variable almacenará los resultados de las queries según el botón en el panel de administracion, para más información revisar la función logfunction() en ui/drawing.cpp
@@ -104,10 +110,10 @@ int objectCreation()
     {
         auto btn = std::make_unique<button>();
         btn->name        = confignames[i];
-        btn->xloc        = adminPanel[2] / 7.22 * (i + 2) + (7.22 * (i + 2));
-        btn->yloc        = adminPanel[1] + screenHeight * 0.005;
-        btn->xsize       = adminPanel[2] / 7.22;
-        btn->ysize       = adminPanel[3] * 0.05;
+        btn->xloc        = configPanel[2] / 7.22 * (i + 2) + (7.22 * (i + 2));    // Usa configPanel para posicionarse independientemente del panel de administración
+        btn->yloc        = screenHeight * 0.08;    // Se bajan las pestañas un poco más
+        btn->xsize       = configPanel[2] / 7.22;
+        btn->ysize       = configPanel[3] * 0.05;
         btn->outLog      = "";
         btn->status      = 0;
         btn->highColor   = VOCADORADOSUAVE;                         // Se declara el color del botón cuando tenga que ser resaltado
@@ -187,10 +193,10 @@ int objectCreation()
     // exitAdmin button
     auto exitAdmin = std::make_unique<button>();
     exitAdmin->name   = "Salir";
-    exitAdmin->xloc   = screenWidth * 0.02;
-    exitAdmin->yloc   = screenHeight * 0.02;
-    exitAdmin->xsize  = screenWidth * 0.02;
-    exitAdmin->ysize  = screenWidth * 0.02;
+    exitAdmin->xloc   = screenWidth * 0.01;
+    exitAdmin->yloc   = screenHeight * 0.01;
+    exitAdmin->xsize  = screenWidth * 0.01;
+    exitAdmin->ysize  = screenWidth * 0.01;
     exitAdmin->status = 0;
     exitAdminPtr = exitAdmin.get();
     adminObj.push_back(std::move(exitAdmin));
@@ -198,10 +204,10 @@ int objectCreation()
     // enterConfig button
     auto enterConfig = std::make_unique<button>();
     enterConfig->name   = "Configuracion";
-    enterConfig->xloc   = screenWidth - (screenWidth * 0.02 * 2);
-    enterConfig->yloc   = screenHeight * 0.02;
-    enterConfig->xsize  = screenWidth * 0.02;
-    enterConfig->ysize  = screenWidth * 0.02;
+    enterConfig->xloc   = screenWidth - (screenWidth * 0.01 * 2);
+    enterConfig->yloc   = screenHeight * 0.01;
+    enterConfig->xsize  = screenWidth * 0.01;
+    enterConfig->ysize  = screenWidth * 0.01;
     enterConfig->status = 0;
     enterConfigPtr = enterConfig.get();
     adminObj.push_back(std::move(enterConfig));
@@ -273,7 +279,7 @@ int objectCreation()
         auto credBar = std::make_unique<inputBar>();
         credBar->name    = nameTermCred[b];
         credBar->xloc    = (screenWidth * 0.15) + ((credBar->name.length() * littleFontSize) / 2) + (screenWidth * 0.022);
-        credBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.12) * b);
+        credBar->yloc    = screenHeight * 0.22 + ((screenHeight * 0.09) * b);    // Espaciado razonable entre barras
         credBar->xsize   = littleFontSize * 30;
         credBar->ysize   = littleFontSize * 2;
         credBar->status  = 0;
@@ -297,7 +303,7 @@ int objectCreation()
         auto extraBar = std::make_unique<inputBar>();
         extraBar->name    = nameExtra[b];
         extraBar->xloc    = (screenWidth * 0.15) + ((extraBar->name.length() * littleFontSize) / 2) + (screenWidth * 0.022);
-        extraBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.12) * b);
+        extraBar->yloc    = screenHeight * 0.22 + ((screenHeight * 0.09) * b);
         extraBar->xsize   = littleFontSize * 30;
         extraBar->ysize   = littleFontSize * 2;
         extraBar->status  = 0;
@@ -316,7 +322,7 @@ int objectCreation()
         auto pathBar = std::make_unique<inputBar>();
         pathBar->name    = namePaths[b];
         pathBar->xloc    = (screenWidth * 0.15) + ((pathBar->name.length() * mediumFontSize) / 2) + (screenWidth * 0.022);
-        pathBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.17) * b);
+        pathBar->yloc    = screenHeight * 0.22 + ((screenHeight * 0.12) * b);
         pathBar->xsize   = mediumFontSize * 30;
         pathBar->ysize   = mediumFontSize * 2;
         pathBar->status  = 0;
@@ -330,7 +336,7 @@ int objectCreation()
     auto admPasswordBar = std::make_unique<inputBar>();
     admPasswordBar->name    = "Contraseña del panel de administracion:";
     admPasswordBar->xloc    = (screenWidth * 0.15) + ((admPasswordBar->name.length() * littleFontSize) / 2) + (screenWidth * 0.022);
-    admPasswordBar->yloc    = screenHeight * 0.17 + ((screenHeight * 0.12) * (int)termBars.size());
+    admPasswordBar->yloc    = screenHeight * 0.22 + ((screenHeight * 0.09) * (int)termBars.size());
     admPasswordBar->xsize   = termBars[0]->xsize / 2;
     admPasswordBar->ysize   = termBars[0]->ysize;
     admPasswordBar->status  = 0;

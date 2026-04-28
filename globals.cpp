@@ -94,6 +94,7 @@ float explorarSquare[4];    // Lista que guardará ubicacion en el eje x, ubicac
 float mediumFontSize;       // Tamaño del font del programa mediano
 float littleFontSize;       // Tamaño del font del programa pequeño
 float adminPanel[4];        // Lista que guardará ubicacion en el eje x, ubicacion en el eje y, tamaño de ancho y tamaño de alto, para un rectángulo que se usará de fondo para todo el panel de administración
+float configPanel[4];       // Lista separada para el panel de configuración, permite ajustar su posición independientemente del panel de administración
 float outSquare[4];         // Lista que guardará ubicacion en el eje x, ubicacion en el eje y, tamaño de ancho y tamaño de alto, para un rectángulo que se usará de fondo para el resultado de las pestañas en el panel de administración
 float screenHeight;         // Valor del tamaño de alto de la ventana
 float screenWidth;          // Valor del tamaño de ancho de la ventana

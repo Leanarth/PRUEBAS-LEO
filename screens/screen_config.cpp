@@ -216,7 +216,7 @@ void screenConfigUpdate(Screen& currentScreen,            // La función necesit
                 inputfunc("backend", pathBars[b], 45, "allchars", mediumFontSize, WHITE);         // Se recibirán datos de entrada de la barra actual
         }
     }
-}
+}  
 
 // Frontend de CONFIGURATION
 
@@ -225,14 +225,19 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
                       bool &errorUpdating,              // en alguna parte del backend y mostrar
                       bool &errorConfig)                // algun mensaje en este frontend
 {
-    DrawTextEx(fontTtf, "Panel de Configuración"s.data(),                                         // Procede a escribir el título "Panel de Configuración"
-               (Vector2){(float)centertext("Panel de Configuracion"s, screenWidth, fontSize),
-                          (float)(screenHeight * 0.05)},
+    DrawTextEx(fontTtf, "PANEL DE CONFIGURACION"s.data(),                                         // Procede a escribir el título "Panel de Configuración"
+               (Vector2){(float)(centertext("Panel de Configuracion"s, screenWidth, fontSize) - screenWidth * 0.02f),
+                          (float)(screenHeight * 0.02)},
                fontSize, 2, WHITE);                                                               // WHITE porque el título flota sobre el fondo negro
 
-    drawSelected(configbuttons, littleFontSize, configSelected);                      // Dibuja las pestañas de CONFIGURATION
-    DrawRectangle(adminPanel[0], adminPanel[1] + terminalBarPtr->ysize - 1,           // Dibuja el rectángulo de fondo
-                  adminPanel[2], adminPanel[3], VOCADORADOSUAVE);
+    // Se actualiza el estado de cada botón de pestaña cada frame para detectar hover correctamente
+    for (int i = 0; i < (int)configbuttons.size(); i++)
+        if (configbuttons[i]->name != configSelected)    // Solo los no seleccionados, el seleccionado lo maneja drawSelected manualmente
+            configbuttons[i]->status = isPressed(configbuttons[i]);
+
+    drawSelected(configbuttons, littleFontSize, configSelected);                     // Dibuja las pestañas de CONFIGURATION
+    DrawRectangle(configPanel[0], configPanel[1] + terminalBarPtr->ysize - 1,
+                  configPanel[2], configPanel[3], VOCADORADOSUAVE);    // Usa configPanel para dibujarse independientemente del panel de administración
 
     if (configSelected == configbuttons[0]->name)                                     // Si la pestaña actual es "Credenciales"
     {
@@ -241,14 +246,14 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
             DrawTextEx(fontTtf, termBars[b]->name.data(),                             // Dibujará el nombre de la barra
                        (Vector2){(float)screenWidth * 0.15f,
                                   (float)termBars[b]->yloc + ((termBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
-                       mediumFontSize, 0, WHITE);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
+                       mediumFontSize, 0, BLACK);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
             PrettyDrawRectangle(termBars[b]);                                         // Y dibujará la barra misma
             inputfunc("frontend", termBars[b], 0, "allchars", mediumFontSize);        // Además del contenido que tiene
         }
         DrawTextEx(fontTtf, admPasswordBarPtr->name.data(),                           // Como admPasswordBar es una barra independiente, hay que dibujar su nombre fuera del bucle
                    (Vector2){(float)screenWidth * 0.15f,
                               (float)admPasswordBarPtr->yloc + ((admPasswordBarPtr->ysize * 0.5f) - (mediumFontSize * 0.5f))},
-                   mediumFontSize, 0, WHITE);                                         // WHITE porque la etiqueta flota sobre el fondo oscuro del panel
+                   mediumFontSize, 0, BLACK);                                         // WHITE porque la etiqueta flota sobre el fondo oscuro del panel
         PrettyDrawRectangle(admPasswordBarPtr);                                       // Llamar a PrettyDrawRectangle para que dibuje a la barra misma
         inputfunc("frontend", admPasswordBarPtr, 0, "allchars", mediumFontSize);      // Y llamar a inputfunc() para que dibuje su contenido
     }
@@ -259,7 +264,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
             DrawTextEx(fontTtf, extraBars[b]->name.data(),                            // Dibujará el nombre de cada barra
                        (Vector2){(float)screenWidth * 0.15f,
                                   (float)extraBars[b]->yloc + ((extraBars[b]->ysize * 0.5f) - (littleFontSize * 0.5f))},
-                       littleFontSize, 0, WHITE);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
+                       littleFontSize, 0, BLACK);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
             PrettyDrawRectangle(extraBars[b]);                                        // Y dibujará la barra misma
             inputfunc("frontend", extraBars[b], 0, "allchars", littleFontSize);       // Además del contenido que tiene
         }
@@ -271,7 +276,7 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
             DrawTextEx(fontTtf, pathBars[b]->name.data(),                             // Dibujará el nombre de cada barra
                        (Vector2){(float)screenWidth * 0.15f,
                                   (float)pathBars[b]->yloc + ((pathBars[b]->ysize * 0.5f) - (mediumFontSize * 0.5f))},
-                       mediumFontSize, 0, WHITE);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
+                       mediumFontSize, 0, BLACK);                                     // WHITE porque las etiquetas flotan sobre el fondo oscuro del panel
             PrettyDrawRectangle(pathBars[b]);                                         // Y dibujará la barra misma
             inputfunc("frontend", pathBars[b], 0, "allchars", mediumFontSize);        // Además del contenido que tiene
         }
