@@ -617,7 +617,8 @@ void screenAdminmenuDraw(bool &invalidCredentials,                              
         {
             for (int counter = 0; counter < (int)opcionesAct.size(); counter++)                               // Recorrerá todo el vector de opciones y...
             {
-                PrettyDrawRectangle(opcionesAct[counter]);                                                    // Dibujará el cuadro de cada opción
+                opcionesAct[counter]->status = isPressed(opcionesAct[counter]);                               // Se actualiza el estado de cada opción cada frame para detectar hover correctamente
+                PrettyDrawRectangle(opcionesAct[counter]);                                                    // Dibujará el cuadro de cada opción con el estado ya actualizado
                 DrawTextEx(fontTtf, opcionesAct[counter]->name.data(),                                        // Además del nombre de cada opción
                            (Vector2){(float)(opcionActPtr->xloc + littleFontSize),
                                       (float)(opcionesAct[counter]->yloc + (opcionesAct[counter]->ysize * 0.5) - (littleFontSize * 0.5))},

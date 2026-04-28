@@ -92,8 +92,8 @@ int objectCreation()
     {
         auto btn = std::make_unique<button>();                      // Declaro a btn, el puntero temporal para cada botón
         btn->name        = butnames[i];                             // Declaro que el nombre de btn, será según el índice en el bucle actual pero usandolo para acceder a un índice en butnames, por ejemplo, si i vale 0, el nombre será "Consultar"
-        btn->xloc        = adminPanel[2] / 7.22 * i + (7.22 * i);   // Declaro la ubicación en X (ubicación en el ancho de la pantalla), esto debe de cambiar según el índice en el bucle, así declaro a todos en diferentes posiciones
-        btn->yloc = adminPanel[1] - screenHeight * 0.03;    // Se sube el botón restando en vez de sumar, alejándolo del panel hacia arriba    
+        btn->xloc        = adminPanel[2] / 7.22 * i + (7.22 * i) + screenWidth * 0.005;    // Se desplaza cada botón un 2% del ancho de la pantalla hacia la derecha respecto a su posición original, esto para que el conjunto de pestañas quede visualmente centrado en la barra superior del panel de administración
+        btn->yloc        = adminPanel[1] - screenHeight * 0.03;    // Se sube el botón restando en vez de sumar, alejándolo del panel hacia arriba    
         btn->xsize       = adminPanel[2] / 7.22;                    // Declaro el ancho del botón
         btn->ysize       = adminPanel[3] * 0.05;                    // Declaro el tamaño de la altura del botón
         btn->outLog      = "";                                      // Esta variable almacenará los resultados de las queries según el botón en el panel de administracion, para más información revisar la función logfunction() en ui/drawing.cpp
@@ -424,7 +424,7 @@ int objectCreation()
             auto table = std::make_unique<sqlobject>();
             table->name        = nametables[i];
             table->xloc        = (screenWidth * 0.12) + (screenWidth * 0.1 * i) + (screenWidth * 0.02 * i);
-            table->yloc        = screenHeight * 0.17;
+            table->yloc        = screenHeight * 0.16;    // Se sube la posición vertical de los botones de tablas reduciéndola de 0.17 a 0.16 para que queden mejor posicionados dentro del panel de administración
             table->xsize       = screenWidth * 0.1;
             table->ysize       = screenHeight * 0.05;
             table->status      = 0;

@@ -53,7 +53,10 @@ int logfunction(std::string selected,                                           
         outSquare[1] = lastColumnMeasures;
         outSquare[2] = screenWidth * 0.76;
         outSquare[3] = screenHeight - lastColumnMeasures - screenHeight * 0.04;
-        DrawRectangle(outSquare[0], outSquare[1], outSquare[2], outSquare[3], BLACK);
+        DrawRectangleRounded({outSquare[0], outSquare[1], outSquare[2], outSquare[3]},
+                             0.02f, 0, BLACK);                                              // Se dibuja el fondo negro del cuadro de resultados con esquinas ligeramente redondeadas
+        DrawRectangleRoundedLinesEx({outSquare[0], outSquare[1], outSquare[2], outSquare[3]},
+                                    0.02f, 0, 3.0f, DORADO_BORDE);                         // Se dibuja el borde dorado alrededor del cuadro de resultados, con el mismo color dorado que usan todos los botones del programa
     }
     else                                                                                            // Si SÍ se encuentra en "Terminal"...
     {                                                                                               // El recuadro usa las coordenadas del componente adminTerminal, que ya tiene su posición fija definida, sin recalcular nada
