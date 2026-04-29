@@ -228,7 +228,8 @@ void screenAdminmenuUpdate(Screen &currentScreen,
                         opc->yloc   = opcionActPtr->yloc + opcionActPtr->ysize * cnt;                   // Su ubicación en la altura de la pantalla será la de opcionAct mas su tamaño en altura, multiplicado por cnt para que no se sobrepongan
                         opc->xsize  = opcionActPtr->xsize;                                              // Su ancho será el mismo que opcionAct
                         opc->ysize  = opcionActPtr->ysize;                                              // Su altura será la misma que opcionAct
-                        opc->status = 0;                                                                // Su estado será 0, ya que no debe de haber recibido alguna interacción aún
+                        opc->status      = 0;                                                                // Su estado será 0, ya que no debe de haber recibido alguna interacción aún
+                        opc->normalColor = WHITE;                                                            // Fondo blanco en reposo para que sea consistente con el botón principal del desplegable
                         opc->type   = columnsVec[co]->type;                                             // Su tipo de dato será el mismo que el de la columna correspondiente
                         opc->maxlen = std::stoi(columnsVec[co]->maxlen);                                // Su tamaño máximo de datos de entrada será el mismo que el de la columna correspondiente
                         opc->id     = columnsVec[co]->id;                                               // Su id será el mismo que el de la columna correspondiente
@@ -654,8 +655,8 @@ void screenAdminmenuDraw(bool &invalidCredentials,                              
     // ── Explorar ───────────────────────────────────────────────────────────────────────────
     else if (adminSelected == butnames[4])                                                                    // Si la pestaña actual es "Explorar"
     {
-        DrawRectangle(explorarSquare[0], explorarSquare[1], explorarSquare[2], explorarSquare[3],             // Dibuja el cuadro de fondo de los datos de "Explorar"
-                      Fade(VOCADORADO, 0.5f));
+        DrawRectangle(explorarSquare[0], explorarSquare[1], explorarSquare[2], explorarSquare[3],             // Dibuja el cuadro de fondo de los datos de "Explorar" con el mismo color gris del fondo de la pantalla para que sea consistente visualmente
+                      {45, 45, 48, 255});
         drawSelected(tablesVec, littleFontSize, tableSelected);                                               // Dibuja las tablas
         DrawTextEx(fontTtf, explorarFinalOutput.data(),                                                       // Y dibuja la salida de la información de la tabla actual
                    (Vector2){(float)(screenWidth * 0.13), (float)(explorarSquare[1] * 1.095)},
@@ -665,16 +666,18 @@ void screenAdminmenuDraw(bool &invalidCredentials,                              
     else if (adminSelected == butnames[5])                                                                    // Si la pestaña actual es resultados
     {
         statistics("frontend", outResultsMode, percentages, partidosVec, screenWidth * 0.15, screenHeight * 0.5);               // Dibujará el gráfico
+        resTogglePtr->status = isPressed(resTogglePtr);                                                                         // Se actualiza el estado del botón cada frame para detectar hover correctamente
         PrettyDrawRectangle(resTogglePtr);                                                                                      // Dibujará el botón encargado de cambiar de porcentajes a cantidades
-        DrawTextEx(fontTtf, resTogglePtr->name.data(),                                                                          // Dibujará el nombre del botón
-                   (Vector2){(float)(resTogglePtr->xloc + littleFontSize / 2),
-                              (float)(resTogglePtr->yloc + littleFontSize / 3)},
-                   littleFontSize, 2, WHITE);
+        DrawTextEx(fontTtf, resTogglePtr->name.data(),                                                                          // Dibujará el nombre del botón centrado dentro de él
+                   (Vector2){resTogglePtr->xloc + (float)centertext(resTogglePtr->name, resTogglePtr->xsize, littleFontSize),
+                              (float)(resTogglePtr->yloc + (resTogglePtr->ysize - littleFontSize) / 2)},
+                   littleFontSize, 2, BLACK);                                                                                   // BLACK porque el botón es beige
+        informePtr->status = isPressed(informePtr);                                           // Se actualiza el estado del botón cada frame para detectar hover correctamente
         PrettyDrawRectangle(informePtr);                                                      // Dibujará el botón para hacer el informe en PDF
-        DrawTextEx(fontTtf, informePtr->name.data(),                                          // Dibujará el nombre del botón del PDF
-                   (Vector2){(float)(informePtr->xloc + (informePtr->xsize * 0.5) - (informePtr->name.length() * littleFontSize) * 0.35),
-                              (float)(informePtr->yloc + (informePtr->ysize * 0.5) - littleFontSize * 0.5)},
-                   littleFontSize, 2, WHITE);
+        DrawTextEx(fontTtf, informePtr->name.data(),                                          // Dibujará el nombre del botón del PDF centrado dentro de él
+                   (Vector2){informePtr->xloc + (float)centertext(informePtr->name, informePtr->xsize, littleFontSize),
+                              (float)(informePtr->yloc + (informePtr->ysize - littleFontSize) / 2)},
+                   littleFontSize, 2, BLACK);                                                 // BLACK porque el botón es beige
         // Verificación de errores de la función informe() relacionados a la creación del PDF
         if (pdfError)            shortmessage("ERROR: Ocurrio un error al crear el PDF", fontSize, pdfError);                     // Si se activa pdfError desde la función informe(), mostrará ese mensaje
         else if (pdfFontError)   shortmessage("ERROR: Ocurrio un error al cargar la fuente de texto", fontSize, pdfFontError);    // Si hubo un error con la fuente de texto, se activa pdfFontError desde la función informe(), y muestra ese mensaje

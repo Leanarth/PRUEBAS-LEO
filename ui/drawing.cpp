@@ -349,7 +349,13 @@ std::vector<double> statistics(std::string mode,                          // El 
                       (screenWidth * 0.04 * dataVec.size()) +                                           // Su ancho depende de la cantidad de partidos
                       (maxPartName * ((littleFontSize / 2) * dataVec.size())) + screenWidth * 0.02,
                       screenHeight * 0.003 * 100 + (littleFontSize * 3) + screenHeight * 0.04,          // Su alto cubre como máximo el 30% de la pantalla, sumando el espacio de los nombres y porcentajes
-                      Fade(VOCADORADO, 0.5f));                                                          // Se aplica un 50% de transparencia al color del fondo
+                      WHITE);                                                                           // Fondo blanco para que contraste con el fondo oscuro de la pantalla
+        DrawRectangleLines(posx - screenWidth * 0.02,                                                   // Dibuja el borde dorado alrededor del cuadro de resultados
+                           posy - screenHeight * 0.003 * 100 - screenHeight * 0.02,
+                           (screenWidth * 0.04 * dataVec.size()) +
+                           (maxPartName * ((littleFontSize / 2) * dataVec.size())) + screenWidth * 0.02,
+                           screenHeight * 0.003 * 100 + (littleFontSize * 3) + screenHeight * 0.04,
+                           DORADO_BORDE);                                                               // Usa el mismo color dorado que todos los botones del programa para ser consistente visualmente
 
         for (int item = 0; item < (int)dataVec.size(); item++)                                          // Recorre cada partido y dibuja su barra gráfca junto con su nombre y porcentaje
         {

@@ -129,6 +129,8 @@ int objectCreation()
     opcionAct->yloc   = 0;                          // Declaro su ubiación en el alto de la pantalla (es cero, ya que se declarará más tarde en la pestaña "Actualizar", para más informacion, revisar screens/screen_adminmenu.cpp)
     opcionAct->xsize  = 0;                          // Declaro su ancho (es cero, ya que se declarará después)
     opcionAct->ysize  = adminPanel[3] * 0.05;       // Declaro la altura del botón
+    opcionAct->normalColor = WHITE;                  // Fondo blanco en reposo para distinguirlo visualmente de los demás botones
+    opcionAct->highColor   = {245, 235, 210, 255};   // Beige pastel al tener hover o estar activo
     opcionActPtr = opcionAct.get();                 // opcionActPtr es el puntero que apuntará al puntero original del botón
     adminObj.push_back(std::move(opcionAct));       // Se introduce el botón a adminObj, y ahora adminObj tiene su propiedad
 

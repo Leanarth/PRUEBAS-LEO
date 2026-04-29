@@ -282,12 +282,12 @@ void screenConfigDraw(bool &inputEmpty,                 // Estas variables sirve
         }
     }
 
-    PrettyDrawRectangle(saveConfigPtr);                                               // Dibuja al final el botón de guardar la configuración
-    DrawTextEx(fontTtf, saveConfigPtr->name.data(),                                   // Y dibuja el nombre de ese botón también
+    saveConfigPtr->status = isPressed(saveConfigPtr);                                 // Se actualiza el estado del botón cada frame para detectar hover correctamente
+    PrettyDrawRectangle(saveConfigPtr);                                               // Dibuja al final el botón de guardar la configuración con el estado ya actualizado
+    DrawTextEx(fontTtf, saveConfigPtr->name.data(),                                   // Y dibuja el nombre de ese botón centrado dentro de él
                (Vector2){saveConfigPtr->xloc + (float)centertext(saveConfigPtr->name, saveConfigPtr->xsize, mediumFontSize),
                           saveConfigPtr->yloc + (float)((saveConfigPtr->ysize - mediumFontSize) / 2)},
-               mediumFontSize, 0, BLACK);                                             // BLACK porque el botón guardar es beige
-
+               mediumFontSize, 0, BLACK);                                             // BLACK porque el botón es beige
     // Estas líneas sirven para mostrar los mensajes en caso de algún error
 
     if (inputEmpty) {shortmessage("Los datos se encuentran vacios", fontSize, inputEmpty);}           // Si inputEmpty se activa, es por que una barra se encuentra vacía, entonces llamará a shortmessage() para mostrar el mensaje escrito
